@@ -1,4 +1,4 @@
-# Hostel Allocation and Roommate Matching System
+ # Hostel Allocation and Roommate Matching System
 
 A full-featured Django web application designed to streamline hostel room allocations and facilitate intelligent roommate matching for universities and educational institutions.
 
