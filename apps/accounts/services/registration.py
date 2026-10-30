@@ -89,3 +89,4 @@ def verify_and_register_student(
         )
 
     return user
+

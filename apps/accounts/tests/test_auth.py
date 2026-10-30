@@ -222,3 +222,4 @@ class TestAuthenticationAndVerification:
         assert h1.id in admin_hostels
         assert h2.id in admin_hostels
         assert can_warden_manage_hostel(admin, h2) is True
+

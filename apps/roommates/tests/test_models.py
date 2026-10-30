@@ -157,3 +157,4 @@ class TestRoommatesModels:
         )
         assert score.score == 87.50
         assert str(score) == 'RM101 <-> RM102: 87.50%'
+

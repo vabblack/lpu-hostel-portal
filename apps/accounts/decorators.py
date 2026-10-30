@@ -46,3 +46,4 @@ def warden_required(view_func):
 def student_required(view_func):
     """Restricts access exclusively to enrolled Students."""
     return role_required(Role.STUDENT)(view_func)
+

@@ -50,3 +50,4 @@ class TestFrontendUI:
         assert 'Alpha Boys Hostel' in content
         assert 'ABH' in content
         assert 'Boys Hostel' in content
+

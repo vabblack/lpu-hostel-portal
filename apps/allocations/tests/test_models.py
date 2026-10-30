@@ -169,3 +169,4 @@ class TestAllocationsModels:
                     end_date=end_date,
                     is_active=True
                 )
+

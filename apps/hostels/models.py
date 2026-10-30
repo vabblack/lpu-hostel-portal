@@ -2,7 +2,7 @@
 Hostels Models: Physical accommodation hierarchy, rooms, beds, facilities, and warden assignments.
 """
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -118,8 +118,11 @@ class WardenAssignment(models.Model):
         return f"{self.user.email} -> {self.hostel.code}{delegated}"
 
     def clean(self):
-        if self.user.role != 'WARDEN' and not self.user.is_superuser:
-            raise ValidationError(_('Assigned user must hold the WARDEN role.'))
+        try:
+            if self.user and self.user.role != 'WARDEN' and not self.user.is_superuser:
+                raise ValidationError(_('Assigned user must hold the WARDEN role.'))
+        except (AttributeError, ObjectDoesNotExist):
+            pass
 
 
 class Block(models.Model):

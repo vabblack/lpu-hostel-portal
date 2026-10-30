@@ -9,8 +9,8 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('apps.accounts.urls', namespace='accounts')),
-    path('hostels/', include('apps.hostels.urls', namespace='hostels')),
+    path('accounts/', include('apps.accounts.urls')),
+    path('hostels/', include('apps.hostels.urls')),
     path('', TemplateView.as_view(template_name='landing.html'), name='home'),
 ]
 

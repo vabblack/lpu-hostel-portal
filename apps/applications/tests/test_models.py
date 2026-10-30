@@ -117,3 +117,4 @@ class TestApplicationsModels:
         with pytest.raises(IntegrityError):
             with transaction.atomic():
                 ApplicationChoice.objects.create(application=application, hostel=hostel1, priority=1)
+

@@ -66,3 +66,4 @@ def can_warden_approve_allocation(user, hostel: Hostel) -> bool:
         ).exists()
 
     return False
+

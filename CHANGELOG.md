@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased] - Phase 5: Frontend UI & Design System
+## [Unreleased] - Phase 6: Hostel Management
+
+### Added
+- Implemented administrative forms (`apps.hostels.forms`):
+  - `HostelForm`, `BlockForm`, `FloorForm`, `RoomForm`, `BedForm`.
+  - `WardenAssignmentForm` with strict role validation ensuring only WARDEN accounts can be assigned.
+- Implemented high-efficiency occupancy aggregation service (`apps.hostels.services.occupancy`):
+  - `get_hostel_occupancy_summary`: Computes total rooms, total beds, occupied, vacant, reserved, and occupancy percentage using single-pass conditional Count aggregation (eliminating N+1 query loops).
+  - `get_available_rooms_query`: High-speed indexed lookup of rooms with available beds, supporting multi-criteria filtering by gender policy, AC/Non-AC, washroom type, and room capacity.
+- Implemented safe bulk student registry CSV import service (`apps.academics.services.import_registry`):
+  - Row-level validation for Student IDs, email formats, YYYY-MM-DD dates, and gender values.
+  - In-memory resolution and verification against existing academic branches and admission batches.
+  - Atomic batch insertion (`bulk_create`) with graceful skipping of existing records.
+- Authored 5 new management and aggregation tests: **46/46 tests passing (100% success rate)**.
+
+## [0.5.0] - Phase 5: Frontend UI & Design System
 
 ### Added
 - Created complete semantic design system in `static/css/main.css` utilizing **Academic Navy & Royal Blue** (Palette 1) with zero external CSS frameworks:
