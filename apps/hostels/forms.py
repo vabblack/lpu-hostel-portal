@@ -100,3 +100,4 @@ class WardenAssignmentForm(forms.ModelForm):
         if user and user.role != Role.WARDEN and not user.is_superuser:
             raise ValidationError(_('Only users holding the WARDEN role can be assigned to oversee hostels.'))
         return user
+

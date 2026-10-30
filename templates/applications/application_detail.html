@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Application #{{ application.id }} - Details{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <!-- Application Overview Card -->
+    <div class="card" style="margin-bottom: var(--space-6);">
+        <div class="flex justify-between items-center" style="margin-bottom: var(--space-3);">
+            <div>
+                <span style="font-size: var(--font-size-xs); color: var(--color-text-muted); text-transform: uppercase; font-weight: 700;">
+                    Accommodation Application
+                </span>
+                <h1 style="font-size: var(--font-size-2xl); font-weight: 800; color: var(--color-primary-dark);">
+                    Application #{{ application.id }}
+                </h1>
+            </div>
+            <span class="badge {% if application.status == 'ALLOCATED' or application.status == 'APPROVED' %}badge-success{% elif application.status == 'REJECTED' %}badge-danger{% elif application.status == 'WAITLISTED' %}badge-warning{% else %}badge-info{% endif %}"
+                  style="font-size: var(--font-size-sm); padding: 6px 14px;">
+                {{ application.get_status_display }}
+            </span>
+        </div>
+
+        <div class="grid grid-cols-3" style="font-size: var(--font-size-sm); border-top: 1px solid var(--color-border); padding-top: var(--space-3);">
+            <div><strong>Applicant:</strong> {{ application.student.full_name }} ({{ application.student.student_id }})</div>
+            <div><strong>Intake Cycle:</strong> {{ application.cycle.name }}</div>
+            <div><strong>Submitted At:</strong> {{ application.submitted_at|date:"M d, Y H:i" }}</div>
+        </div>
+    </div>
+
+    <!-- Status Stepper Component -->
+    <div class="card" style="margin-bottom: var(--space-6); padding: var(--space-5);">
+        <div class="flex justify-between items-center" style="position: relative; text-align: center;">
+            <div style="flex: 1;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background-color: var(--color-brand); color: white; margin: 0 auto var(--space-1) auto; display: flex; align-items: center; justify-content: center; font-weight: 700;">1</div>
+                <div style="font-size: var(--font-size-xs); font-weight: 600;">Submitted</div>
+            </div>
+            <div style="flex: 1;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background-color: {% if application.status != 'SUBMITTED' %}var(--color-brand){% else %}var(--color-border-dark){% endif %}; color: white; margin: 0 auto var(--space-1) auto; display: flex; align-items: center; justify-content: center; font-weight: 700;">2</div>
+                <div style="font-size: var(--font-size-xs); font-weight: 600;">Under Review</div>
+            </div>
+            <div style="flex: 1;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background-color: {% if application.status == 'APPROVED' or application.status == 'ALLOCATED' %}var(--color-brand){% else %}var(--color-border-dark){% endif %}; color: white; margin: 0 auto var(--space-1) auto; display: flex; align-items: center; justify-content: center; font-weight: 700;">3</div>
+                <div style="font-size: var(--font-size-xs); font-weight: 600;">Decision Approved</div>
+            </div>
+            <div style="flex: 1;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background-color: {% if application.status == 'ALLOCATED' %}var(--color-success){% else %}var(--color-border-dark){% endif %}; color: white; margin: 0 auto var(--space-1) auto; display: flex; align-items: center; justify-content: center; font-weight: 700;">4</div>
+                <div style="font-size: var(--font-size-xs); font-weight: 600;">Bed Allocated</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prioritized Choices -->
+    <div class="card" style="margin-bottom: var(--space-6);">
+        <h2 class="card-title">Prioritized Hostel Preferences</h2>
+        <div class="table-responsive" style="margin-top: var(--space-3);">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Preference Rank</th>
+                        <th>Hostel</th>
+                        <th>Gender Policy</th>
+                        <th>Preferred Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for choice in choices %}
+                        <tr>
+                            <td>
+                                <span class="badge {% if choice.priority == 1 %}badge-info{% else %}badge-secondary{% endif %}">
+                                    Priority {{ choice.priority }}
+                                </span>
+                            </td>
+                            <td>
+                                <strong>{{ choice.hostel.name }}</strong> ({{ choice.hostel.code }})
+                            </td>
+                            <td>{{ choice.hostel.get_gender_policy_display }}</td>
+                            <td>
+                                {% if choice.room %}
+                                    Room {{ choice.room.room_number }} ({{ choice.room.get_capacity_display }})
+                                {% else %}
+                                    <span style="color: var(--color-text-light);">Auto-Assign Room</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: var(--color-text-muted);">No choices recorded.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Application Status History Timeline -->
+    <div class="card" style="margin-bottom: var(--space-6);">
+        <h2 class="card-title">Application Status Timeline</h2>
+        <div class="table-responsive" style="margin-top: var(--space-3);">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Previous State</th>
+                        <th>New State</th>
+                        <th>Updated By</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in history %}
+                        <tr>
+                            <td>{{ entry.changed_at|date:"M d, Y H:i" }}</td>
+                            <td><span class="badge">{{ entry.from_status }}</span></td>
+                            <td><span class="badge badge-info">{{ entry.to_status }}</span></td>
+                            <td>{{ entry.changed_by.email|default:"Student / System" }}</td>
+                            <td>{{ entry.notes|default:"-" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--color-text-muted);">No status history available.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Administrative / Warden Review Panel -->
+    {% if review_form %}
+        <div class="card" style="border: 2px solid var(--color-brand); margin-bottom: var(--space-8);">
+            <div class="card-header">
+                <h2 class="card-title" style="color: var(--color-brand);">Official Application Review</h2>
+                <span class="badge badge-warning">Admin / Warden Authority</span>
+            </div>
+
+            <form method="post" action="{% url 'applications:review_action' application.id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">{{ review_form.status.label }}</label>
+                    {{ review_form.status }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">{{ review_form.notes.label }}</label>
+                    {{ review_form.notes }}
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Update Application Decision
+                </button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Application Review Queue - University Hostel Portal{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center" style="margin-bottom: var(--space-6);">
+    <div>
+        <h1 style="font-size: var(--font-size-2xl); font-weight: 800; color: var(--color-primary-dark);">
+            Application Review Queue
+        </h1>
+        <p style="color: var(--color-text-muted); font-size: var(--font-size-sm);">
+            Cycle: <strong>{{ active_cycle.name|default:"All Cycles" }}</strong> &bull; Filter applications by decision state.
+        </p>
+    </div>
+
+    <!-- Status Filters -->
+    <div class="flex gap-2">
+        <a href="{% url 'applications:queue' %}" class="btn btn-secondary" style="font-size: 0.8rem;">All</a>
+        <a href="{% url 'applications:queue' %}?status=SUBMITTED" class="btn btn-secondary" style="font-size: 0.8rem;">Submitted</a>
+        <a href="{% url 'applications:queue' %}?status=UNDER_REVIEW" class="btn btn-secondary" style="font-size: 0.8rem;">Under Review</a>
+        <a href="{% url 'applications:queue' %}?status=APPROVED" class="btn btn-secondary" style="font-size: 0.8rem;">Approved</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>App ID</th>
+                    <th>Student ID</th>
+                    <th>Applicant Name</th>
+                    <th>1st Choice Hostel</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                    <tr>
+                        <td><strong>#{{ app.id }}</strong></td>
+                        <td>{{ app.student.student_id }}</td>
+                        <td>{{ app.student.full_name }}</td>
+                        <td>
+                            {% with first_choice=app.choices.first %}
+                                {% if first_choice %}
+                                    {{ first_choice.hostel.name }} ({{ first_choice.hostel.code }})
+                                {% else %}
+                                    <span style="color: var(--color-text-light);">None</span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>
+                            <span class="badge {% if app.status == 'APPROVED' %}badge-success{% elif app.status == 'REJECTED' %}badge-danger{% elif app.status == 'WAITLISTED' %}badge-warning{% else %}badge-info{% endif %}">
+                                {{ app.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ app.submitted_at|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'applications:detail' app.id %}" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;">
+                                Review &rarr;
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--color-text-muted); padding: var(--space-8);">
+                            No applications currently found in this queue.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

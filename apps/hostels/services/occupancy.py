@@ -110,3 +110,4 @@ def get_available_rooms_query(
     ).filter(vacant_count__gt=0).order_by('floor__block__hostel__name', 'room_number')
 
     return queryset
+

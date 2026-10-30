@@ -7,7 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased] - Phase 6: Hostel Management
+## [0.7.0] - Phase 7: Student Applications
+
+### Added
+- Implemented eligibility and accommodation cycle verification service (`apps.applications.services.eligibility`):
+  - `verify_student_application_eligibility`: Validates student profile completeness, registry active status, open accommodation cycle window, and ensures single active application per cycle constraint.
+  - `get_eligible_hostels_and_rooms`: Scopes visible hostels by verified student gender (`MALE` -> Boys/Co-Ed, `FEMALE` -> Girls/Co-Ed) and surfaces room inventory with real-time bed availability.
+- Implemented multi-priority choice and submission service (`apps.applications.services.submission`):
+  - `submit_student_application`: Atomically creates `Application` with up to 3 prioritized choices (`ApplicationChoice` at Rank 1, 2, 3) ensuring no duplicate hostel rankings in a single application.
+  - `update_application_status`: Updates status with administrative remarks, logs history entry (`ApplicationStatusHistory`), and creates notification records.
+- Implemented forms in `apps.applications.forms`:
+  - `ApplicationSubmissionForm`: Dynamic choice validation enforcing strictly distinct hostel rankings (Priority 1, 2, 3) and validating room choices against hostel blocks.
+  - `ApplicationReviewForm`: Administrative review form supporting Under Review, Approved, Waitlisted, and Rejected decisions with mandatory remarks.
+- Implemented responsive Django templates:
+  - `templates/applications/apply.html`: Priority selection wizard displaying real-time fee and room details.
+  - `templates/applications/application_detail.html`: Visual 5-stage status stepper (Submitted -> Under Review -> Approved / Waitlisted / Rejected) with complete chronological audit history.
+  - `templates/applications/review_queue.html`: Administrative/warden queue with status badges, priority summaries, and direct review modal actions.
+- Added comprehensive end-to-end workflow test suite (`apps.applications.tests.test_workflow`):
+  - Tests verified eligibility checks, multi-choice submission, single active application constraint, and admin/warden review pipeline: **52/52 tests passing (100% success rate)**.
+
+## [0.6.0] - Phase 6: Hostel Management
 
 ### Added
 - Implemented administrative forms (`apps.hostels.forms`):

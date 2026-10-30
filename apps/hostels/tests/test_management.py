@@ -186,3 +186,4 @@ class TestHostelManagementAndOccupancy:
         reimport_result = import_student_registry_from_csv(csv_data)
         assert reimport_result['created_count'] == 0
         assert reimport_result['skipped_count'] == 2
+
