@@ -5,17 +5,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.shortcuts import redirect
-
-def home_redirect(request):
-    if request.user.is_authenticated:
-        return redirect('accounts:role_redirect')
-    return redirect('accounts:login')
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('apps.accounts.urls', namespace='accounts')),
-    path('', home_redirect, name='home'),
+    path('hostels/', include('apps.hostels.urls', namespace='hostels')),
+    path('', TemplateView.as_view(template_name='landing.html'), name='home'),
 ]
 
 if settings.DEBUG:

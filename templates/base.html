@@ -1,33 +1,92 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Hostel Allocation System{% endblock %}</title>
+    <meta name="description" content="University Hostel Allocation and Roommate Matching Portal">
+    <title>{% block title %}University Hostel Allocation System{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <header>
-        <nav>
-            {% if user.is_authenticated %}
-                <span>Signed in as: {{ user.email }} ({{ user.get_role_display }})</span>
-                <a href="{% url 'accounts:logout' %}">Sign Out</a>
-            {% else %}
-                <a href="{% url 'accounts:login' %}">Sign In</a>
-                <a href="{% url 'accounts:register' %}">Student Registration</a>
-            {% endif %}
-        </nav>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="container navbar-container">
+            <a href="{% url 'home' %}" class="navbar-brand">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Hostel Portal</span>
+            </a>
+
+            <nav>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        {% if user.is_student %}
+                            <li><a href="{% url 'accounts:student_placeholder' %}">Dashboard</a></li>
+                            <li><a href="{% url 'hostels:list' %}">Explore Hostels</a></li>
+                        {% elif user.is_warden %}
+                            <li><a href="{% url 'accounts:warden_placeholder' %}">Warden Dashboard</a></li>
+                            <li><a href="{% url 'hostels:list' %}">Assigned Hostels</a></li>
+                        {% elif user.is_admin %}
+                            <li><a href="/admin/">Admin Console</a></li>
+                            <li><a href="{% url 'hostels:list' %}">Hostels</a></li>
+                        {% endif %}
+
+                        <li>
+                            <span class="user-badge">
+                                {{ user.email }}
+                                <span class="badge {% if user.is_admin %}badge-danger{% elif user.is_warden %}badge-warning{% else %}badge-info{% endif %}">
+                                    {{ user.get_role_display }}
+                                </span>
+                            </span>
+                        </li>
+                        <li>
+                            <a href="{% url 'accounts:logout' %}" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;">Sign Out</a>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'hostels:list' %}">Explore Hostels</a></li>
+                        <li><a href="{% url 'accounts:login' %}">Sign In</a></li>
+                        <li>
+                            <a href="{% url 'accounts:register' %}" class="btn btn-primary" style="padding: 6px 14px;">Claim Account</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
     </header>
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Flash Message Alerts -->
+            {% if messages %}
+                <div class="messages-container">
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
+                            <span>{{ message }}</span>
+                            <button type="button" class="alert-close" aria-label="Close alert">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
-    <main>
-        {% block content %}{% endblock %}
+            {% block content %}{% endblock %}
+        </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container flex justify-between items-center">
+            <p>&copy; 2026 University Hostel Allocation & Roommate Matching System. All rights reserved.</p>
+            <p>Designed for academic scale & transactional integrity.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

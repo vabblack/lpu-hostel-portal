@@ -7,7 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased] - Phase 4: Authentication and Authorization
+## [Unreleased] - Phase 5: Frontend UI & Design System
+
+### Added
+- Created complete semantic design system in `static/css/main.css` utilizing **Academic Navy & Royal Blue** (Palette 1) with zero external CSS frameworks:
+  - Custom CSS variables for typography, spacing, border radiuses, and elevation shadows.
+  - Responsive layout grids and flex containers with mobile-first breakpoints.
+  - Buttons (`.btn-primary`, `.btn-secondary`, `.btn-outline`), status badges (`.badge-vacant`, `.badge-occupied`, `.badge-pending`), and stat cards.
+- Authored client-side interactions in `static/js/main.js`:
+  - Automatic dismissal and close handlers for system alerts.
+  - Tab navigation component.
+- Implemented core templates:
+  - `templates/base.html`: Responsive navigation bar with role badges, authentication links, and alert banners.
+  - `templates/landing.html`: Campus accommodation hero, feature highlights, and CTA banners.
+  - `templates/accounts/login.html`: Dual-identity sign-in card.
+  - `templates/accounts/register.html`: Two-column identity verification and registration form.
+  - `templates/hostels/hostel_list.html`: Hostels exploration grid with gender filtering and real-time capacity stats.
+  - `templates/hostels/hostel_detail.html`: Detailed block, floor, and room layout with individual bed status indicators.
+- Created `tests/test_frontend.py` verifying template rendering: **41/41 tests passing (100% success rate)**.
+
+## [0.4.0] - Phase 4: Authentication and Authorization
 
 ### Added
 - Implemented `verify_and_register_student` service (`apps.accounts.services.registration`):

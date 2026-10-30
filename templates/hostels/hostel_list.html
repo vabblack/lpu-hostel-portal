@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Explore Hostels - University Hostel Portal{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center" style="margin-bottom: var(--space-6);">
+    <div>
+        <h1 style="font-size: var(--font-size-2xl); font-weight: 800; color: var(--color-primary-dark);">
+            Campus Hostels
+        </h1>
+        <p style="color: var(--color-text-muted); font-size: var(--font-size-sm);">
+            Browse university accommodation inventory, facility configurations, and availability.
+        </p>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="flex gap-2">
+        <a href="{% url 'hostels:list' %}" class="btn btn-secondary" style="font-size: 0.8rem;">All Hostels</a>
+        <a href="{% url 'hostels:list' %}?gender=MALE" class="btn btn-secondary" style="font-size: 0.8rem;">Boys Hostels</a>
+        <a href="{% url 'hostels:list' %}?gender=FEMALE" class="btn btn-secondary" style="font-size: 0.8rem;">Girls Hostels</a>
+    </div>
+</div>
+
+{% if hostels %}
+    <div class="grid grid-cols-3">
+        {% for hostel in hostels %}
+            <div class="card flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center" style="margin-bottom: var(--space-2);">
+                        <span class="badge {% if hostel.gender_policy == 'MALE' %}badge-info{% elif hostel.gender_policy == 'FEMALE' %}badge-warning{% else %}badge-success{% endif %}">
+                            {{ hostel.get_gender_policy_display }}
+                        </span>
+                        <span class="badge badge-vacant">
+                            {{ hostel.get_status_display }}
+                        </span>
+                    </div>
+
+                    <h2 style="font-size: var(--font-size-xl); font-weight: 700; color: var(--color-primary-dark); margin-bottom: var(--space-1);">
+                        {{ hostel.name }}
+                    </h2>
+                    <p style="color: var(--color-text-muted); font-size: var(--font-size-xs); font-weight: 600; text-transform: uppercase; margin-bottom: var(--space-3);">
+                        Code: {{ hostel.code }} &bull; {{ hostel.university.code }}
+                    </p>
+
+                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-4);">
+                        {{ hostel.description|default:"Clean, secure campus residence offering multiple room formats, study spaces, and high-speed Wi-Fi."|truncatewords:20 }}
+                    </p>
+                </div>
+
+                <div style="border-top: 1px solid var(--color-border); padding-top: var(--space-4); margin-top: var(--space-3); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                        Total Capacity: <strong style="color: var(--color-primary-dark);">{{ hostel.total_capacity }} Beds</strong>
+                    </div>
+                    <a href="{% url 'hostels:detail' hostel.id %}" class="btn btn-outline" style="font-size: 0.8rem; padding: 4px 10px;">
+                        View Rooms &rarr;
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; padding: var(--space-10);">
+        <h3 style="color: var(--color-text-muted); margin-bottom: var(--space-2);">No Hostels Found</h3>
+        <p style="color: var(--color-text-light); font-size: var(--font-size-sm); margin-bottom: var(--space-4);">
+            No hostels match the selected filter. Try clearing filters to view all campus residences.
+        </p>
+        <a href="{% url 'hostels:list' %}" class="btn btn-secondary">View All Hostels</a>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,16 +1,109 @@
 {% extends "base.html" %}
 
-{% block title %}Student Registration - Hostel Portal{% endblock %}
+{% block title %}Claim Student Account - University Hostel Portal{% endblock %}
 
 {% block content %}
-<h2>Student ID Verification & Registration</h2>
-<p>Enter your official university Student ID and institutional email to claim your hostel account.</p>
+<div class="form-container" style="max-width: 580px;">
+    <div class="card">
+        <div class="card-header" style="justify-content: center; text-align: center; flex-direction: column;">
+            <h2 class="card-title">Claim Student Account</h2>
+            <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: var(--space-1);">
+                Verify your Student ID and official institutional email to register.
+            </p>
+        </div>
 
-<form method="post" novalidate>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Verify & Register</button>
-</form>
+        <form method="post" novalidate>
+            {% csrf_token %}
 
-<p>Already claimed your account? <a href="{% url 'accounts:login' %}">Sign in here</a>.</p>
+            {% if form.non_field_errors %}
+                <div class="alert error" style="margin-bottom: var(--space-4);">
+                    {% for error in form.non_field_errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-2" style="gap: var(--space-3); margin-bottom: var(--space-3);">
+                <div class="form-group">
+                    <label for="{{ form.student_id.id_for_label }}" class="form-label">
+                        Student ID / Reg No.
+                    </label>
+                    <input type="text" name="{{ form.student_id.name }}" id="{{ form.student_id.id_for_label }}"
+                           class="form-control" placeholder="e.g. 12400001"
+                           value="{{ form.student_id.value|default:'' }}" required autocomplete="username">
+                    {% if form.student_id.errors %}
+                        <div class="form-error">{{ form.student_id.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.institutional_email.id_for_label }}" class="form-label">
+                        Institutional Email
+                    </label>
+                    <input type="email" name="{{ form.institutional_email.name }}" id="{{ form.institutional_email.id_for_label }}"
+                           class="form-control" placeholder="e.g. student@lpu.in"
+                           value="{{ form.institutional_email.value|default:'' }}" required autocomplete="email">
+                    {% if form.institutional_email.errors %}
+                        <div class="form-error">{{ form.institutional_email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2" style="gap: var(--space-3); margin-bottom: var(--space-3);">
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">
+                        Password
+                    </label>
+                    <input type="password" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}"
+                           class="form-control" placeholder="••••••••" required autocomplete="new-password">
+                    {% if form.password.errors %}
+                        <div class="form-error">{{ form.password.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.confirm_password.id_for_label }}" class="form-label">
+                        Confirm Password
+                    </label>
+                    <input type="password" name="{{ form.confirm_password.name }}" id="{{ form.confirm_password.id_for_label }}"
+                           class="form-control" placeholder="••••••••" required autocomplete="new-password">
+                    {% if form.confirm_password.errors %}
+                        <div class="form-error">{{ form.confirm_password.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: var(--space-3);">
+                <label for="{{ form.emergency_contact_name.id_for_label }}" class="form-label">
+                    Guardian / Emergency Contact Name
+                </label>
+                <input type="text" name="{{ form.emergency_contact_name.name }}" id="{{ form.emergency_contact_name.id_for_label }}"
+                       class="form-control" placeholder="Parent or Guardian Legal Name"
+                       value="{{ form.emergency_contact_name.value|default:'' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.emergency_contact_phone.id_for_label }}" class="form-label">
+                    Emergency Contact Phone Number
+                </label>
+                <input type="text" name="{{ form.emergency_contact_phone.name }}" id="{{ form.emergency_contact_phone.id_for_label }}"
+                       class="form-control" placeholder="+91 9876543210"
+                       value="{{ form.emergency_contact_phone.value|default:'' }}">
+            </div>
+
+            <div style="margin-top: var(--space-6);">
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px;">
+                    Verify & Create Account
+                </button>
+            </div>
+        </form>
+
+        <div style="text-align: center; margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--color-border); font-size: var(--font-size-sm);">
+            <p style="color: var(--color-text-muted);">
+                Already verified and created your account?  
+                <a href="{% url 'accounts:login' %}" style="font-weight: 600;">Sign in here &rarr;</a>
+            </p>
+        </div>
+    </div>
+</div>
 {% endblock %}

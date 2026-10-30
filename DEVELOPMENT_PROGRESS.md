@@ -13,15 +13,15 @@ Overall Status: **Phase 1 In Progress** (5 of 77 tasks planned / active)
 | **02** | Environment Setup | **Completed** | 6 / 6 |
 | **03** | Database Development | **Completed** | 7 / 7 |
 | **04** | Authentication and Authorization | **Completed** | 6 / 6 |
-| **05** | Frontend UI & Design System | Pending (Requires Prior UX Approval) | 0 / 7 |
-| **06** | Hostel Management | Pending | 0 / 6 |
+| **05** | Frontend UI & Design System | **Completed** | 7 / 7 |
+| **06** | Hostel Management | Pending (Next) | 0 / 6 |
 | **07** | Student Applications | Pending | 0 / 6 |
 | **08** | Roommate Management & Algorithm | Pending | 0 / 6 |
 | **09** | Allocation Engine | Pending | 0 / 7 |
 | **10** | Notifications and Reporting | Pending | 0 / 6 |
 | **11** | Testing and Security | Pending | 0 / 7 |
 | **12** | Deployment and Handover | Pending | 0 / 7 |
-| **Total** | | | **25 / 77** |
+| **Total** | | | **32 / 77** |
 
 ---
 
@@ -65,6 +65,17 @@ Overall Status: **Phase 1 In Progress** (5 of 77 tasks planned / active)
 - [x] **Task 4.4:** Implement role-based access decorators and backend permission checks (Admin, Warden, Student).
 - [x] **Task 4.5:** Enforce warden hostel assignment scoping on backend queries.
 - [x] **Task 4.6:** Execute and verify test suite for authentication, authorization, and rate limiting.
+
+---
+
+### Phase 5: Frontend UI & Design System
+- [x] **Task 5.1:** Consult user and obtain approval for design tokens, typography, palette, and component mockups.
+- [x] **Task 5.2:** Build base layout templates (`base.html`), navigation bars, footers, and message banners.
+- [x] **Task 5.3:** Build authentication and registration UI templates (`login.html`, `register.html`).
+- [x] **Task 5.4:** Build student dashboard and profile pages.
+- [x] **Task 5.5:** Build hostel and room discovery pages (`hostel_list.html`, `hostel_detail.html`).
+- [x] **Task 5.6:** Build admin and warden dashboard views.
+- [x] **Task 5.7:** Verify responsive vanilla CSS, accessibility (WCAG 2.1 AA), and client-side interactions (`main.js`).
 
 ---
 
