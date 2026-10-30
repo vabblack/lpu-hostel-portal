@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.11.0] - Phase 11: Testing and Security
+
+### Added
+- Implemented comprehensive Role-Based Access Control (RBAC) test suite (`tests/test_permissions.py`):
+  - Verified role isolation across Anonymous, Student, Warden, and Admin actors.
+  - Proved unauthenticated access to protected endpoints is strictly redirected to login.
+  - Proved student cannot access warden/administrative endpoints or execute application reviews.
+  - Enforced object-level student privacy: verified cross-student application detail access is rejected with HTTP 403 Forbidden.
+  - Verified warden scoping to assigned buildings and admin campus-wide authority.
+- Implemented core security defenses test suite (`tests/test_security_defenses.py`):
+  - CSRF Defense: verified state-altering POST requests without valid CSRF tokens are rejected with HTTP 403 Forbidden.
+  - XSS Defense: verified raw HTML and `<script>` payloads in notifications, profile fields, and search queries are automatically escaped into safe HTML entities.
+  - SQL Injection Immunity: tested SQL injection vectors (`' OR '1'='1'`, UNION SELECT, semicolon chaining) across query parameters and login forms, verifying ORM parameterized query safety.
+  - Session Fixation Prevention: verified session key regeneration on authentication and complete session destruction on logout.
+- Implemented synthetic load and database performance test suite (`tests/test_performance_load.py`):
+  - Verified candidate recommendation ranking across 50 synthetic student profiles completes in $< 250$ ms.
+  - Verified occupancy census reporting on 75 beds executes in bounded query count ($\le 8$ queries) with zero $N+1$ query regressions.
+  - Verified intake and branch analytics aggregate across applications in single database aggregation queries.
+- Implemented audit logging and privacy compliance test suite (`tests/test_audit_and_privacy.py`):
+  - Verified complete exclusion of smoking attributes from models, forms, and candidate feeds.
+  - Verified candidate discovery feeds never leak sensitive student PII (guardian contacts, phone numbers, dates of birth).
+  - Verified transactional immutable audit history logging on all application lifecycle transitions and allocation cancellations.
+- Total test coverage expanded to **136 / 136 tests passing (100% success rate)**.
+
 ## [0.10.0] - Phase 10: Notifications and Reporting
 
 ### Added
