@@ -9,9 +9,9 @@ Overall Status: **Phase 1 In Progress** (5 of 77 tasks planned / active)
 
 | Phase | Description | Status | Completed / Total Tasks |
 |---|---|---|---|
-| **01** | Planning and Architecture | **In Progress** | 5 / 6 |
-| **02** | Environment Setup | Pending | 0 / 6 |
-| **03** | Database Development | Pending | 0 / 7 |
+| **01** | Planning and Architecture | **Completed** | 6 / 6 |
+| **02** | Environment Setup | **Completed** | 6 / 6 |
+| **03** | Database Development | Pending (Next) | 0 / 7 |
 | **04** | Authentication and Authorization | Pending | 0 / 6 |
 | **05** | Frontend UI & Design System | Pending (Requires Prior UX Approval) | 0 / 7 |
 | **06** | Hostel Management | Pending | 0 / 6 |
@@ -21,7 +21,7 @@ Overall Status: **Phase 1 In Progress** (5 of 77 tasks planned / active)
 | **10** | Notifications and Reporting | Pending | 0 / 6 |
 | **11** | Testing and Security | Pending | 0 / 7 |
 | **12** | Deployment and Handover | Pending | 0 / 7 |
-| **Total** | | | **5 / 77** |
+| **Total** | | | **12 / 77** |
 
 ---
 
@@ -33,17 +33,17 @@ Overall Status: **Phase 1 In Progress** (5 of 77 tasks planned / active)
 - [x] **Task 1.3:** Create Software Requirements Specification (`documentation/SRS.md`).
 - [x] **Task 1.4:** Create System Architecture documentation (`documentation/ARCHITECTURE.md`).
 - [x] **Task 1.5:** Create Database Schema & ER Design document (`documentation/DATABASE_DESIGN.md`).
-- [ ] **Task 1.6:** Review documentation deliverables with user and obtain formal Phase 1 sign-off.
+- [x] **Task 1.6:** Review documentation deliverables with user and obtain formal Phase 1 sign-off.
 
 ---
 
 ### Phase 2: Environment Setup
-- [ ] **Task 2.1:** Configure Python virtual environment and pin production dependencies (`requirements.txt`, PostgreSQL driver `psycopg`, `django-environ`, `pytest-django`).
-- [ ] **Task 2.2:** Set up environment configuration templates (`.env.example` and `.env`).
-- [ ] **Task 2.3:** Reorganize Django configuration into modular settings (`config/settings/base.py`, `development.py`, `production.py`).
-- [ ] **Task 2.4:** Initialize the 10 Django modular app packages inside `apps/` directory.
-- [ ] **Task 2.5:** Configure development logging, static/media directories, and update `.gitignore`.
-- [ ] **Task 2.6:** Verify Django setup, database connectivity, and baseline test suite runner.
+- [x] **Task 2.1:** Configure Python virtual environment and pin production dependencies (`requirements.txt`, PostgreSQL driver `psycopg`, `python-dotenv`, `pytest-django`).
+- [x] **Task 2.2:** Set up environment configuration templates (`.env.example` and `.env`).
+- [x] **Task 2.3:** Reorganize Django configuration into modular settings (`config/settings/base.py`, `development.py`, `production.py`).
+- [x] **Task 2.4:** Initialize the 10 Django modular app packages inside `apps/` directory.
+- [x] **Task 2.5:** Configure development logging, static/media directories, and update `.gitignore`.
+- [x] **Task 2.6:** Verify Django setup, database connectivity, and baseline test suite runner.
 
 ---
 
