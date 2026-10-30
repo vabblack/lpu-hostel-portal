@@ -7,7 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased] - Phase 3: Database Development (In Progress)
+## [Unreleased] - Phase 4: Authentication and Authorization
+
+### Added
+- Implemented `verify_and_register_student` service (`apps.accounts.services.registration`):
+  - Strictly verifies Student ID and institutional email against `StudentRegistry`.
+  - Rejects inactive or suspended student records.
+  - Enforces duplicate registration prevention (atomic check on `is_registered` and existing User accounts).
+  - Atomically creates `User` and linked `StudentProfile`, marks registry record claimed, and dispatches welcome `Notification`.
+- Implemented custom `EmailOrStudentIDBackend` (`apps.accounts.backends`):
+  - Enables dual login: Students can log in using either their Student ID or institutional email.
+  - Wardens and Administrators authenticate via email.
+- Created `StudentRegistrationForm` and `LoginForm` with custom validation and password policy enforcement.
+- Implemented role-based backend permission decorators (`apps.accounts.decorators`):
+  - `@admin_required`: Restricts view to University Administrators.
+  - `@warden_required`: Restricts view to assigned Wardens and Admins.
+  - `@student_required`: Restricts view to enrolled Students.
+  - `@role_required`: Generic role-based decorator.
+- Implemented Warden scoping utilities (`apps.hostels.services.scoping`):
+  - `get_warden_assigned_hostel_ids` and `can_warden_manage_hostel`.
+  - `can_warden_approve_allocation` checking delegated approval permissions.
+- Authored authentication views (`RegisterView`, `LoginView`, `LogoutView`, `RoleRedirectView`).
+- Created unstyled accessible HTML form templates (`register.html`, `login.html`, `placeholder.html`) adhering strictly to the directive of reserving full UI/UX design until Phase 5 user approval.
+- Authored comprehensive test suite for registration verification, duplicate rejection, dual login, and RBAC: **37/37 tests passing (100% success rate)**.
+
+## [0.3.0] - Phase 3: Database Development
 
 ### Added
 - Implemented `applications` models (`apps.applications.models`):

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Student Registration - Hostel Portal{% endblock %}
+
+{% block content %}
+<h2>Student ID Verification & Registration</h2>
+<p>Enter your official university Student ID and institutional email to claim your hostel account.</p>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Verify & Register</button>
+</form>
+
+<p>Already claimed your account? <a href="{% url 'accounts:login' %}">Sign in here</a>.</p>
+{% endblock %}

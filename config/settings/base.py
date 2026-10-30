@@ -98,6 +98,12 @@ else:
 # Custom User Model (Rule 8)
 AUTH_USER_MODEL = 'accounts.User'
 
+# Authentication Backends (supports email and Student ID login)
+AUTHENTICATION_BACKENDS = [
+    'apps.accounts.backends.EmailOrStudentIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {

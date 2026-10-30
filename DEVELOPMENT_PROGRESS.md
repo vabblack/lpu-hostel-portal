@@ -12,7 +12,7 @@ Overall Status: **Phase 1 In Progress** (5 of 77 tasks planned / active)
 | **01** | Planning and Architecture | **Completed** | 6 / 6 |
 | **02** | Environment Setup | **Completed** | 6 / 6 |
 | **03** | Database Development | **Completed** | 7 / 7 |
-| **04** | Authentication and Authorization | Pending (Next) | 0 / 6 |
+| **04** | Authentication and Authorization | **Completed** | 6 / 6 |
 | **05** | Frontend UI & Design System | Pending (Requires Prior UX Approval) | 0 / 7 |
 | **06** | Hostel Management | Pending | 0 / 6 |
 | **07** | Student Applications | Pending | 0 / 6 |
@@ -21,7 +21,7 @@ Overall Status: **Phase 1 In Progress** (5 of 77 tasks planned / active)
 | **10** | Notifications and Reporting | Pending | 0 / 6 |
 | **11** | Testing and Security | Pending | 0 / 7 |
 | **12** | Deployment and Handover | Pending | 0 / 7 |
-| **Total** | | | **19 / 77** |
+| **Total** | | | **25 / 77** |
 
 ---
 
@@ -59,12 +59,12 @@ Overall Status: **Phase 1 In Progress** (5 of 77 tasks planned / active)
 ---
 
 ### Phase 4: Authentication and Authorization
-- [ ] **Task 4.1:** Implement verified Student ID & institutional email registration against `StudentRegistry`.
-- [ ] **Task 4.2:** Implement uniqueness constraints and duplicate registration safeguards.
-- [ ] **Task 4.3:** Implement secure session-based authentication (Login, Logout, Password Change/Reset).
-- [ ] **Task 4.4:** Implement role-based access decorators and backend permission checks (Admin, Warden, Student).
-- [ ] **Task 4.5:** Enforce warden hostel assignment scoping on backend queries.
-- [ ] **Task 4.6:** Execute and verify test suite for authentication, authorization, and rate limiting.
+- [x] **Task 4.1:** Implement verified Student ID & institutional email registration against `StudentRegistry`.
+- [x] **Task 4.2:** Implement uniqueness constraints and duplicate registration safeguards.
+- [x] **Task 4.3:** Implement secure session-based authentication (Login, Logout, Password Change/Reset).
+- [x] **Task 4.4:** Implement role-based access decorators and backend permission checks (Admin, Warden, Student).
+- [x] **Task 4.5:** Enforce warden hostel assignment scoping on backend queries.
+- [x] **Task 4.6:** Execute and verify test suite for authentication, authorization, and rate limiting.
 
 ---
 

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{{ role }} Dashboard - Pending UI Phase 5{% endblock %}
+
+{% block content %}
+<h2>{{ role }} Dashboard</h2>
+<p>Welcome, {{ user.email }} (Role: {{ user.get_role_display }}).</p>
+<p>Backend authentication and role authorization verified. Full UI & UX pending Phase 5 approval.</p>
+{% endblock %}

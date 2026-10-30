@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - Hostel Portal{% endblock %}
+
+{% block content %}
+<h2>University Sign In</h2>
+<p>Students can sign in using their Student ID or Institutional Email.</p>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign In</button>
+</form>
+
+<p>New student? <a href="{% url 'accounts:register' %}">Claim your account here</a>.</p>
+{% endblock %}
