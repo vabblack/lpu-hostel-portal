@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.9.0] - Phase 9: Allocation Engine
+
+### Added
+- Implemented pre-allocation eligibility and cycle validation service (`apps.allocations.services.eligibility`):
+  - `validate_student_for_allocation`: Enforces active student registry enrollment status (`ACTIVE`), active user account, open cycle window, approved application status, and rejects students with pre-existing active allocations.
+  - `validate_roommate_group_for_allocation`: Enforces group bounds (2–4 members $\le$ room capacity), individual member eligibility, and verifies sufficient vacant beds (`BedStatus.VACANT`) in the agreed target room.
+  - `get_allocatable_applications_for_cycle`: High-speed batch query filtering allocatable applications.
+- Implemented transactional bed allocation engine (`apps.allocations.services.engine`):
+  - `allocate_individual_student`: Implements Decision 2 (Automatic Bed Assignment) using pessimistic database row locking (`select_for_update()`) on vacant beds; executes priority fallback across student's 1st, 2nd, and 3rd choices; cleanly transitions to `WAITLISTED` if all choices are exhausted.
+  - `allocate_roommate_group`: Executes atomic collective placement for confirmed roommate groups in their agreed room with simultaneous bed locking.
+  - `cancel_or_release_allocation`: Deactivates allocation, frees occupied bed back to `VACANT`, restores room status to `AVAILABLE`, marks application `CANCELLED`, and logs audit trail.
+- Enforced database-level concurrency safeguards:
+  - `unique_active_bed_allocation`: Prevents overlapping active allocations for the same physical bed.
+  - `unique_active_student_allocation`: Prevents a single student from holding multiple active bed allocations.
+- Authored 17 comprehensive unit, integration, and multi-threaded concurrency stress tests (`test_eligibility.py`, `test_engine.py`, `test_concurrency.py`):
+  - Parallel workers race condition test proves zero possibility of double bookings under concurrent execution: **95/95 tests passing (100% success rate)**.
+
 ## [0.8.0] - Phase 8: Roommate Management & Compatibility Algorithm
 
 ### Added
