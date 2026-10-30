@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}Occupancy Report & Census | Hostel Portal{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1140px; margin: 0 auto; padding: var(--space-6) var(--space-4);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-6); flex-wrap: wrap; gap: var(--space-3);">
+        <div>
+            <h1 style="font-size: var(--font-size-2xl); font-weight: 800; color: var(--color-primary-dark); margin-bottom: var(--space-1);">
+                Hostel Occupancy & Resident Census
+            </h1>
+            <p style="color: var(--color-text-muted); font-size: var(--font-size-sm);">
+                Real-time bed availability, resident census records, and administrative occupancy analytics.
+            </p>
+        </div>
+        <div style="display: flex; gap: var(--space-2);">
+            <a href="{% url 'hostels:export_occupancy_csv' %}{% if selected_hostel_id %}?hostel={{ selected_hostel_id }}{% endif %}" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export CSV Report
+            </a>
+            <a href="{% url 'hostels:analytics_dashboard' %}" class="btn btn-secondary">
+                View Analytics &rarr;
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="card" style="margin-bottom: var(--space-6); padding: var(--space-4);">
+        <form method="get" style="display: flex; gap: var(--space-4); align-items: flex-end; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+                <label style="display: block; font-size: var(--font-size-xs); font-weight: 700; text-transform: uppercase; margin-bottom: var(--space-1); color: var(--color-text-muted);">
+                    Filter by Hostel
+                </label>
+                <select name="hostel" class="form-control" style="width: 100%; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+                    <option value="">All Accessible Hostels</option>
+                    {% for h in hostels %}
+                        <option value="{{ h.id }}" {% if selected_hostel_id == h.id %}selected{% endif %}>
+                            {{ h.name }} ({{ h.code }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="width: 200px;">
+                <label style="display: block; font-size: var(--font-size-xs); font-weight: 700; text-transform: uppercase; margin-bottom: var(--space-1); color: var(--color-text-muted);">
+                    Bed Status
+                </label>
+                <select name="status" class="form-control" style="width: 100%; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+                    <option value="">All Bed Statuses</option>
+                    {% for code, label in bed_status_choices %}
+                        <option value="{{ code }}" {% if selected_status == code %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: flex; gap: var(--space-2);">
+                <button type="submit" class="btn btn-primary" style="padding: 8px 16px;">
+                    Apply Filters
+                </button>
+                <a href="{% url 'hostels:occupancy_report' %}" class="btn btn-secondary" style="padding: 8px 12px;">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Summary KPI Stat Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6);">
+        <div class="card" style="padding: var(--space-4); border-left: 4px solid var(--color-brand);">
+            <div style="font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); font-weight: 700;">
+                Total Capacity
+            </div>
+            <div style="font-size: var(--font-size-3xl); font-weight: 800; color: var(--color-primary-dark); margin-top: 4px;">
+                {{ summary.total_beds }}
+            </div>
+            <div style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-top: 2px;">
+                Configured bed units
+            </div>
+        </div>
+
+        <div class="card" style="padding: var(--space-4); border-left: 4px solid var(--color-success);">
+            <div style="font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); font-weight: 700;">
+                Occupied Beds
+            </div>
+            <div style="font-size: var(--font-size-3xl); font-weight: 800; color: var(--color-success); margin-top: 4px;">
+                {{ summary.occupied_beds }}
+                <span style="font-size: var(--font-size-base); font-weight: 600; color: var(--color-text-muted);">
+                    ({{ summary.occupancy_rate }}%)
+                </span>
+            </div>
+            <div style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-top: 2px;">
+                Current campus residents
+            </div>
+        </div>
+
+        <div class="card" style="padding: var(--space-4); border-left: 4px solid var(--color-info);">
+            <div style="font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); font-weight: 700;">
+                Vacant Beds
+            </div>
+            <div style="font-size: var(--font-size-3xl); font-weight: 800; color: var(--color-info); margin-top: 4px;">
+                {{ summary.vacant_beds }}
+            </div>
+            <div style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-top: 2px;">
+                Available for assignment
+            </div>
+        </div>
+
+        <div class="card" style="padding: var(--space-4); border-left: 4px solid var(--color-warning);">
+            <div style="font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); font-weight: 700;">
+                Under Maintenance
+            </div>
+            <div style="font-size: var(--font-size-3xl); font-weight: 800; color: var(--color-warning); margin-top: 4px;">
+                {{ summary.maintenance_beds }}
+            </div>
+            <div style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-top: 2px;">
+                Temporarily unavailable
+            </div>
+        </div>
+    </div>
+
+    <!-- Census Table -->
+    <div class="card" style="padding: 0; overflow: hidden;">
+        <div style="padding: var(--space-4); border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-size: var(--font-size-md); font-weight: 700; color: var(--color-primary-dark);">
+                Bed Roster & Resident Details
+            </h2>
+            <span style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ page_obj.paginator.count }} beds
+            </span>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: var(--font-size-sm);">
+                <thead>
+                    <tr style="background-color: var(--color-surface-muted); border-bottom: 1px solid var(--color-border);">
+                        <th style="padding: 10px 16px; font-weight: 700; color: var(--color-primary);">Hostel & Block</th>
+                        <th style="padding: 10px 16px; font-weight: 700; color: var(--color-primary);">Room & Bed</th>
+                        <th style="padding: 10px 16px; font-weight: 700; color: var(--color-primary);">Status</th>
+                        <th style="padding: 10px 16px; font-weight: 700; color: var(--color-primary);">Resident Name</th>
+                        <th style="padding: 10px 16px; font-weight: 700; color: var(--color-primary);">Student ID</th>
+                        <th style="padding: 10px 16px; font-weight: 700; color: var(--color-primary);">Branch</th>
+                        <th style="padding: 10px 16px; font-weight: 700; color: var(--color-primary);">Occupancy Term</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bed in page_obj %}
+                        <tr style="border-bottom: 1px solid var(--color-border);">
+                            <td style="padding: 12px 16px;">
+                                <strong>{{ bed.room.floor.block.hostel.name }}</strong>
+                                <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                                    {{ bed.room.floor.block.name }} &bull; Floor {{ bed.room.floor.floor_number }}
+                                </div>
+                            </td>
+                            <td style="padding: 12px 16px;">
+                                <span style="font-weight: 600;">Room {{ bed.room.room_number }}</span>
+                                <div style="font-size: var(--font-size-xs); color: var(--color-brand); font-weight: 700;">
+                                    Bed {{ bed.bed_identifier }}
+                                </div>
+                            </td>
+                            <td style="padding: 12px 16px;">
+                                <span class="badge {% if bed.status == 'OCCUPIED' %}badge-success{% elif bed.status == 'VACANT' %}badge-info{% elif bed.status == 'MAINTENANCE' %}badge-danger{% else %}badge-warning{% endif %}">
+                                    {{ bed.get_status_display }}
+                                </span>
+                            </td>
+                            {% if bed.active_allocation_list %}
+                                {% with alloc=bed.active_allocation_list.0 %}
+                                    <td style="padding: 12px 16px;">
+                                        <strong>{{ alloc.student.registry.full_name }}</strong>
+                                    </td>
+                                    <td style="padding: 12px 16px;">
+                                        <span class="badge badge-secondary">{{ alloc.student.student_id }}</span>
+                                    </td>
+                                    <td style="padding: 12px 16px; color: var(--color-text-muted);">
+                                        {{ alloc.student.registry.branch.name }}
+                                    </td>
+                                    <td style="padding: 12px 16px; font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                                        {{ alloc.start_date|date:"M d, Y" }} &ndash; {{ alloc.end_date|date:"M d, Y" }}
+                                    </td>
+                                {% endwith %}
+                            {% else %}
+                                <td colspan="4" style="padding: 12px 16px; color: var(--color-text-light); font-style: italic;">
+                                    Vacant / No resident assigned
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" style="padding: var(--space-8); text-align: center; color: var(--color-text-muted);">
+                                No beds match the specified filters.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        {% if page_obj.has_other_pages %}
+            <div style="padding: var(--space-4); border-top: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% if selected_hostel_id %}&hostel={{ selected_hostel_id }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">
+                            &larr; Previous
+                        </a>
+                    {% endif %}
+                </div>
+                <span style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                <div>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if selected_hostel_id %}&hostel={{ selected_hostel_id }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">
+                            Next &rarr;
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

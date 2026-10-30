@@ -33,10 +33,21 @@
                         {% elif user.is_warden %}
                             <li><a href="{% url 'accounts:warden_placeholder' %}">Warden Dashboard</a></li>
                             <li><a href="{% url 'hostels:list' %}">Assigned Hostels</a></li>
+                            <li><a href="{% url 'hostels:occupancy_report' %}">Occupancy Census</a></li>
+                            <li><a href="{% url 'hostels:analytics_dashboard' %}">Analytics</a></li>
                         {% elif user.is_admin %}
                             <li><a href="/admin/">Admin Console</a></li>
                             <li><a href="{% url 'hostels:list' %}">Hostels</a></li>
+                            <li><a href="{% url 'applications:queue' %}">Review Queue</a></li>
+                            <li><a href="{% url 'hostels:occupancy_report' %}">Occupancy Census</a></li>
+                            <li><a href="{% url 'hostels:analytics_dashboard' %}">Analytics</a></li>
                         {% endif %}
+
+                        <li>
+                            <a href="{% url 'notifications:list' %}" title="Notifications">
+                                Notifications
+                            </a>
+                        </li>
 
                         <li>
                             <span class="user-badge">

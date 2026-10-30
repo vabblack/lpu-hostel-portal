@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.10.0] - Phase 10: Notifications and Reporting
+
+### Added
+- Implemented multi-channel transactional notification dispatcher (`apps.notifications.services.dispatcher`):
+  - `send_notification`: Records persistent in-app `Notification` database entries and dispatches transactional emails via Django `send_mail`.
+  - Notification triggers integrated across core application events:
+    - Application submitted, approved, waitlisted, and rejected alerts.
+    - Roommate request sent, received, accepted, and rejected notifications.
+    - Bed allocation confirmations with hostel, block, room, and bed identifier details.
+  - Read tracking and bulk actions: `mark_notification_as_read`, `mark_all_notifications_as_read`.
+- Implemented notification center views and UI:
+  - `templates/notifications/notification_list.html`: In-app notification center with read/unread styling, date formatting, and bulk "Mark all as read" capability.
+  - Added global notifications navigation indicator in `templates/base.html`.
+- Implemented occupancy reporting & executive analytics service (`apps.hostels.services.reports`):
+  - `get_detailed_occupancy_report`: Real-time bed occupancy census, capacity calculations, vacancy ratios, and filtered bed roster; properly role-scoped (Administrators see campus-wide; Wardens see assigned buildings only).
+  - `generate_occupancy_csv`: High-performance streaming CSV export with timestamped filenames for institutional audit records.
+  - `get_intake_and_branch_analytics`: Aggregations of hostel application statuses, branch/department distribution, and per-building fill rates.
+- Implemented administrative reporting views and templates:
+  - `templates/hostels/occupancy_report.html`: Census overview with KPI stat cards (Total Beds, Occupied, Vacant, Maintenance, Occupancy Rate), hostel and status filters, paginated bed roster, and CSV export link.
+  - `templates/hostels/analytics.html`: Executive visual dashboard showing application funnel breakdown, branch demand distribution bars, and building capacity progress meters.
+  - Created custom `templates/403.html` branded access-denied page for role-restricted reporting endpoints.
+- Authored 14 tests across reports, CSV exports, intake analytics, notification dispatcher, and notification views:
+  - Full project test suite running **109/109 tests passing (100% success rate)**.
+
 ## [0.9.0] - Phase 9: Allocation Engine
 
 ### Added
