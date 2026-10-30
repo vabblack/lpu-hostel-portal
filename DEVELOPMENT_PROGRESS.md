@@ -11,8 +11,8 @@ Overall Status: **Phase 1 In Progress** (5 of 77 tasks planned / active)
 |---|---|---|---|
 | **01** | Planning and Architecture | **Completed** | 6 / 6 |
 | **02** | Environment Setup | **Completed** | 6 / 6 |
-| **03** | Database Development | Pending (Next) | 0 / 7 |
-| **04** | Authentication and Authorization | Pending | 0 / 6 |
+| **03** | Database Development | **Completed** | 7 / 7 |
+| **04** | Authentication and Authorization | Pending (Next) | 0 / 6 |
 | **05** | Frontend UI & Design System | Pending (Requires Prior UX Approval) | 0 / 7 |
 | **06** | Hostel Management | Pending | 0 / 6 |
 | **07** | Student Applications | Pending | 0 / 6 |
@@ -21,7 +21,7 @@ Overall Status: **Phase 1 In Progress** (5 of 77 tasks planned / active)
 | **10** | Notifications and Reporting | Pending | 0 / 6 |
 | **11** | Testing and Security | Pending | 0 / 7 |
 | **12** | Deployment and Handover | Pending | 0 / 7 |
-| **Total** | | | **12 / 77** |
+| **Total** | | | **19 / 77** |
 
 ---
 
@@ -48,13 +48,13 @@ Overall Status: **Phase 1 In Progress** (5 of 77 tasks planned / active)
 ---
 
 ### Phase 3: Database Development
-- [ ] **Task 3.1:** Implement custom `User` model in `apps.accounts` before initial migration.
-- [ ] **Task 3.2:** Implement academic structure models (`apps.academics`) and `StudentRegistry`.
-- [ ] **Task 3.3:** Implement `StudentProfile` and enrollment history models (`apps.students`).
-- [ ] **Task 3.4:** Implement accommodation models (`Hostel`, `Block`, `Floor`, `Room`, `Bed`, `Facility`, `WardenAssignment` in `apps.hostels`).
-- [ ] **Task 3.5:** Implement application, preference, request, and matching models (`apps.applications` & `apps.roommates`).
-- [ ] **Task 3.6:** Implement allocation, history, notification, and audit models (`apps.allocations`, `apps.notifications`, `apps.audit`).
-- [ ] **Task 3.7:** Implement model constraints, composite indexes, generate migrations, and run model unit tests.
+- [x] **Task 3.1:** Implement custom `User` model in `apps.accounts` before initial migration.
+- [x] **Task 3.2:** Implement academic structure models (`apps.academics`) and `StudentRegistry`.
+- [x] **Task 3.3:** Implement `StudentProfile` and enrollment history models (`apps.students`).
+- [x] **Task 3.4:** Implement accommodation models (`Hostel`, `Block`, `Floor`, `Room`, `Bed`, `Facility`, `WardenAssignment` in `apps.hostels`).
+- [x] **Task 3.5:** Implement application, preference, request, and matching models (`apps.applications` & `apps.roommates`).
+- [x] **Task 3.6:** Implement allocation, history, notification, and audit models (`apps.allocations`, `apps.notifications`, `apps.audit`).
+- [x] **Task 3.7:** Implement constraints, indexes, migrations, and model tests.
 
 ---
 

@@ -95,6 +95,9 @@ else:
         }
     }
 
+# Custom User Model (Rule 8)
+AUTH_USER_MODEL = 'accounts.User'
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {

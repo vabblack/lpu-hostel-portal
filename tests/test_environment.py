@@ -28,3 +28,4 @@ def test_modular_apps_registered():
     installed_app_names = [app.name for app in apps.get_app_configs()]
     for app_name in expected_apps:
         assert app_name in installed_app_names, f"App {app_name} is missing from INSTALLED_APPS"
+
