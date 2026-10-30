@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}Roommate Discovery & Recommendations | Hostel Portal{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 960px; margin: 0 auto; padding: var(--space-6) var(--space-4);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-6); flex-wrap: wrap; gap: var(--space-3);">
+        <div>
+            <h1 style="font-size: var(--font-size-2xl); font-weight: 800; color: var(--color-primary-dark); margin-bottom: var(--space-1);">
+                Roommate Discovery & Matching
+            </h1>
+            <p style="color: var(--color-text-muted); font-size: var(--font-size-sm);">
+                Find compatible roommates using our deterministic weighted 7-factor algorithm.
+            </p>
+        </div>
+        <div style="display: flex; gap: var(--space-2);">
+            <a href="{% url 'roommates:requests' %}" class="btn btn-secondary">
+                Request Center & Groups
+            </a>
+            <a href="{% url 'roommates:preferences' %}" class="btn btn-outline">
+                {% if has_preferences %}Edit Preferences{% else %}Set Preferences{% endif %}
+            </a>
+        </div>
+    </div>
+
+    {% if not has_preferences %}
+        <div class="card" style="background-color: var(--color-brand-light); border-color: var(--color-brand-border); margin-bottom: var(--space-6);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-3);">
+                <div>
+                    <h3 style="color: var(--color-brand); font-size: var(--font-size-lg); font-weight: 700;">
+                        Lifestyle Questionnaire Incomplete
+                    </h3>
+                    <p style="color: var(--color-primary); font-size: var(--font-size-sm); margin-top: 2px;">
+                        Complete your 7-factor lifestyle questionnaire to activate deterministic roommate compatibility matching.
+                    </p>
+                </div>
+                <a href="{% url 'roommates:preferences' %}" class="btn btn-primary">
+                    Complete Questionnaire &rarr;
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Direct Student ID Search -->
+    <div class="card" style="margin-bottom: var(--space-6);">
+        <h3 style="font-size: var(--font-size-md); font-weight: 700; margin-bottom: var(--space-3); color: var(--color-primary-dark);">
+            Direct Search by Student ID
+        </h3>
+        <form method="get" action="{% url 'roommates:discover' %}" style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+            <input 
+                type="text" 
+                name="q" 
+                value="{{ search_query }}" 
+                placeholder="Enter Student ID (e.g. 2024CS102)..." 
+                class="form-control" 
+                style="flex: 1; min-width: 240px; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md);"
+                required
+            >
+            <button type="submit" class="btn btn-primary">
+                Search Student
+            </button>
+            {% if search_query %}
+                <a href="{% url 'roommates:discover' %}" class="btn btn-secondary">Clear</a>
+            {% endif %}
+        </form>
+
+        {% if direct_result %}
+            <div style="margin-top: var(--space-4); padding: var(--space-4); border: 1px solid var(--color-brand-border); border-radius: var(--radius-md); background-color: var(--color-surface-muted);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-3);">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: 4px;">
+                            <strong style="font-size: var(--font-size-lg); color: var(--color-primary-dark);">
+                                {{ direct_result.student.registry.full_name }}
+                            </strong>
+                            <span class="badge badge-info">{{ direct_result.student.student_id }}</span>
+                        </div>
+                        <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-2);">
+                            {{ direct_result.student.registry.branch.name }} | Gender: {{ direct_result.student.registry.get_gender_display }}
+                        </p>
+
+                        <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center;">
+                            {% if direct_result.score %}
+                                <span class="badge {% if direct_result.score >= 80 %}badge-success{% elif direct_result.score >= 65 %}badge-primary{% else %}badge-warning{% endif %}">
+                                    {{ direct_result.score }}% Compatibility
+                                </span>
+                            {% else %}
+                                <span class="badge badge-secondary">Pending Preferences</span>
+                            {% endif %}
+
+                            {% if direct_result.is_room_aligned %}
+                                <span class="badge badge-success">✓ Mutual Room Aligned</span>
+                            {% elif direct_result.target_room %}
+                                <span class="badge badge-warning">Selected Room: {{ direct_result.target_room.room_number }}</span>
+                            {% else %}
+                                <span class="badge badge-secondary">No Room Preference</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div>
+                        {% if direct_result.has_pending %}
+                            <span class="badge badge-warning">Request Pending</span>
+                        {% else %}
+                            <form method="post" action="{% url 'roommates:send_request' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="target_student_id" value="{{ direct_result.student.student_id }}">
+                                <button type="submit" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.85rem;">
+                                    + Send Roommate Request
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Recommendations Grid -->
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+            <h2 style="font-size: var(--font-size-xl); font-weight: 700; color: var(--color-primary-dark);">
+                Recommended Roommates
+            </h2>
+            {% if recommendations %}
+                <span style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                    Ranked by mathematical compatibility
+                </span>
+            {% endif %}
+        </div>
+
+        {% if recommendations %}
+            <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+                {% for item in recommendations %}
+                    <div class="card" style="padding: var(--space-5); transition: box-shadow 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-4);">
+                            <div style="display: flex; gap: var(--space-4); align-items: flex-start;">
+                                <!-- Score metric badge -->
+                                <div style="text-align: center; min-width: 80px; padding: var(--space-3); border-radius: var(--radius-md); background-color: var(--color-surface-muted); border: 1px solid var(--color-border);">
+                                    <div style="font-size: var(--font-size-xl); font-weight: 800; color: {% if item.score >= 80 %}var(--color-success){% elif item.score >= 65 %}var(--color-brand){% else %}var(--color-warning){% endif %};">
+                                        {{ item.score }}%
+                                    </div>
+                                    <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); font-weight: 700;">
+                                        Match
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: 2px;">
+                                        <h3 style="font-size: var(--font-size-lg); font-weight: 700; color: var(--color-primary-dark);">
+                                            {{ item.student.registry.full_name }}
+                                        </h3>
+                                        <span class="badge badge-info">{{ item.student.student_id }}</span>
+                                    </div>
+                                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-3);">
+                                        {{ item.student.registry.branch.name }} &bull; Batch {{ item.student.registry.batch.year }}
+                                    </p>
+
+                                    <!-- Room alignment tag -->
+                                    <div style="margin-bottom: var(--space-3);">
+                                        {% if item.is_room_aligned %}
+                                            <span class="badge badge-success" style="font-weight: 600;">
+                                                ✓ Mutual Room Aligned (Room {{ item.target_room.room_number }})
+                                            </span>
+                                        {% elif item.target_room %}
+                                            <span class="badge badge-secondary" style="font-size: var(--font-size-xs);">
+                                                Target Room: {{ item.target_room.room_number }} ({{ item.target_room.floor.block.hostel.name }})
+                                            </span>
+                                        {% else %}
+                                            <span class="badge badge-secondary" style="font-size: var(--font-size-xs);">
+                                                No Room Choice Selected
+                                            </span>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Alignment Highlight chips -->
+                                    <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
+                                        {% for hl in item.highlights %}
+                                            <span style="font-size: var(--font-size-xs); background-color: var(--color-surface-muted); color: var(--color-primary); padding: 3px 8px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+                                                {{ hl }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <form method="post" action="{% url 'roommates:send_request' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="target_student_id" value="{{ item.student.student_id }}">
+                                    <button type="submit" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem;">
+                                        + Send Request
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card" style="text-align: center; padding: var(--space-10) var(--space-4);">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto var(--space-3); color: var(--color-text-light);">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <h3 style="font-size: var(--font-size-lg); font-weight: 700; color: var(--color-primary-dark); margin-bottom: var(--space-2);">
+                    No Recommendations Available Yet
+                </h3>
+                <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); max-width: 440px; margin: 0 auto var(--space-4);">
+                    {% if not has_preferences %}
+                        Please fill out your lifestyle questionnaire above to generate compatibility scores.
+                    {% else %}
+                        No prospective candidates with filled questionnaires match your gender pool at this time.
+                    {% endif %}
+                </p>
+                {% if not has_preferences %}
+                    <a href="{% url 'roommates:preferences' %}" class="btn btn-primary">
+                        Set Lifestyle Preferences
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

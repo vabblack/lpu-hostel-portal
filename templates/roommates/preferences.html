@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}Roommate Lifestyle Preferences | Hostel Portal{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 840px; margin: 0 auto; padding: var(--space-6) var(--space-4);">
+    <div style="margin-bottom: var(--space-6);">
+        <a href="{% url 'roommates:discover' %}" class="btn btn-secondary" style="margin-bottom: var(--space-3); padding: 4px 10px; font-size: 0.8rem;">
+            &larr; Back to Discovery
+        </a>
+        <h1 style="font-size: var(--font-size-2xl); font-weight: 800; color: var(--color-primary-dark); margin-bottom: var(--space-2);">
+            Roommate Lifestyle Compatibility Profile
+        </h1>
+        <p style="color: var(--color-text-muted); font-size: var(--font-size-base);">
+            Define your living habits. Our pure mathematical algorithm computes compatibility scores with prospective roommates using these 7 dimensions.
+        </p>
+    </div>
+
+    <!-- Zero-smoking policy alert -->
+    <div class="alert info" style="margin-bottom: var(--space-6);">
+        <div>
+            <strong>Campus Health & Safety Policy:</strong> Smoking preferences are completely excluded from student matching and university housing.
+        </div>
+    </div>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert error" style="margin-bottom: var(--space-4);">
+                {% for err in form.non_field_errors %}
+                    <div>{{ err }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- 1. Sleeping Schedule -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card-header" style="border-bottom: none; margin-bottom: var(--space-2);">
+                <div>
+                    <h2 class="card-title" style="font-size: var(--font-size-lg);">
+                        [1/7] Sleeping Schedule
+                    </h2>
+                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: 2px;">
+                        What time do you normally go to sleep on weekdays and weekends?
+                    </p>
+                </div>
+                <span class="badge badge-primary">22% Weight</span>
+            </div>
+            {% if form.sleeping_schedule.errors %}
+                <div style="color: var(--color-danger); font-size: var(--font-size-xs); margin-bottom: var(--space-2);">
+                    {{ form.sleeping_schedule.errors.0 }}
+                </div>
+            {% endif %}
+            <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                {% for choice in form.sleeping_schedule %}
+                    <label style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; transition: background 0.15s ease;">
+                        {{ choice.tag }}
+                        <span style="font-size: var(--font-size-sm); font-weight: 500;">{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 2. Cleanliness -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card-header" style="border-bottom: none; margin-bottom: var(--space-2);">
+                <div>
+                    <h2 class="card-title" style="font-size: var(--font-size-lg);">
+                        [2/7] Cleanliness & Room Tidiness
+                    </h2>
+                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: 2px;">
+                        How do you prefer keeping the shared living space and study desk?
+                    </p>
+                </div>
+                <span class="badge badge-primary">17% Weight</span>
+            </div>
+            {% if form.cleanliness.errors %}
+                <div style="color: var(--color-danger); font-size: var(--font-size-xs); margin-bottom: var(--space-2);">
+                    {{ form.cleanliness.errors.0 }}
+                </div>
+            {% endif %}
+            <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                {% for choice in form.cleanliness %}
+                    <label style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer;">
+                        {{ choice.tag }}
+                        <span style="font-size: var(--font-size-sm); font-weight: 500;">{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 3. Study Habits -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card-header" style="border-bottom: none; margin-bottom: var(--space-2);">
+                <div>
+                    <h2 class="card-title" style="font-size: var(--font-size-lg);">
+                        [3/7] Study Habits & Environment
+                    </h2>
+                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: 2px;">
+                        What is your preferred sound level and environment while studying inside the room?
+                    </p>
+                </div>
+                <span class="badge badge-primary">17% Weight</span>
+            </div>
+            {% if form.study_habits.errors %}
+                <div style="color: var(--color-danger); font-size: var(--font-size-xs); margin-bottom: var(--space-2);">
+                    {{ form.study_habits.errors.0 }}
+                </div>
+            {% endif %}
+            <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                {% for choice in form.study_habits %}
+                    <label style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer;">
+                        {{ choice.tag }}
+                        <span style="font-size: var(--font-size-sm); font-weight: 500;">{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 4. Noise Tolerance -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card-header" style="border-bottom: none; margin-bottom: var(--space-2);">
+                <div>
+                    <h2 class="card-title" style="font-size: var(--font-size-lg);">
+                        [4/7] Noise Sensitivity
+                    </h2>
+                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: 2px;">
+                        How sensitive are you to sounds while relaxing, sleeping, or resting?
+                    </p>
+                </div>
+                <span class="badge badge-primary">11% Weight</span>
+            </div>
+            {% if form.noise_tolerance.errors %}
+                <div style="color: var(--color-danger); font-size: var(--font-size-xs); margin-bottom: var(--space-2);">
+                    {{ form.noise_tolerance.errors.0 }}
+                </div>
+            {% endif %}
+            <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                {% for choice in form.noise_tolerance %}
+                    <label style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer;">
+                        {{ choice.tag }}
+                        <span style="font-size: var(--font-size-sm); font-weight: 500;">{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 5. Food Preference -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card-header" style="border-bottom: none; margin-bottom: var(--space-2);">
+                <div>
+                    <h2 class="card-title" style="font-size: var(--font-size-lg);">
+                        [5/7] Food & Dietary Habit
+                    </h2>
+                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: 2px;">
+                        Your dietary preference for meals and dining in the shared space.
+                    </p>
+                </div>
+                <span class="badge badge-primary">11% Weight</span>
+            </div>
+            {% if form.food_preference.errors %}
+                <div style="color: var(--color-danger); font-size: var(--font-size-xs); margin-bottom: var(--space-2);">
+                    {{ form.food_preference.errors.0 }}
+                </div>
+            {% endif %}
+            <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                {% for choice in form.food_preference %}
+                    <label style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer;">
+                        {{ choice.tag }}
+                        <span style="font-size: var(--font-size-sm); font-weight: 500;">{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 6. Social Preferences -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card-header" style="border-bottom: none; margin-bottom: var(--space-2);">
+                <div>
+                    <h2 class="card-title" style="font-size: var(--font-size-lg);">
+                        [6/7] Social Preferences & In-Room Guests
+                    </h2>
+                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: 2px;">
+                        How comfortable are you having batchmates or visitors in the room?
+                    </p>
+                </div>
+                <span class="badge badge-primary">11% Weight</span>
+            </div>
+            {% if form.social_preference.errors %}
+                <div style="color: var(--color-danger); font-size: var(--font-size-xs); margin-bottom: var(--space-2);">
+                    {{ form.social_preference.errors.0 }}
+                </div>
+            {% endif %}
+            <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                {% for choice in form.social_preference %}
+                    <label style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer;">
+                        {{ choice.tag }}
+                        <span style="font-size: var(--font-size-sm); font-weight: 500;">{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 7. Temperature / AC -->
+        <div class="card" style="margin-bottom: var(--space-6);">
+            <div class="card-header" style="border-bottom: none; margin-bottom: var(--space-2);">
+                <div>
+                    <h2 class="card-title" style="font-size: var(--font-size-lg);">
+                        [7/7] Room Temperature & AC Usage
+                    </h2>
+                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: 2px;">
+                        What is your ideal room temperature and climate preference?
+                    </p>
+                </div>
+                <span class="badge badge-primary">11% Weight</span>
+            </div>
+            {% if form.temperature_pref.errors %}
+                <div style="color: var(--color-danger); font-size: var(--font-size-xs); margin-bottom: var(--space-2);">
+                    {{ form.temperature_pref.errors.0 }}
+                </div>
+            {% endif %}
+            <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                {% for choice in form.temperature_pref %}
+                    <label style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer;">
+                        {{ choice.tag }}
+                        <span style="font-size: var(--font-size-sm); font-weight: 500;">{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-6);">
+            <a href="{% url 'roommates:discover' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary" style="padding: 10px 24px;">
+                {% if has_preferences %}Save Changes{% else %}Save Lifestyle Preferences{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

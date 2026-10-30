@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.0] - Phase 8: Roommate Management & Compatibility Algorithm
+
+### Added
+- Implemented 7-factor roommate lifestyle questionnaire form (`apps.roommates.forms.RoommatePreferenceForm`):
+  - Validates 7 lifestyle dimensions: sleeping schedule (22%), cleanliness (17%), study habits (17%), noise tolerance (11%), food preference (11%), social preference (11%), and room temperature (11%).
+  - Enforces strict zero-smoking policy with instant validation rejection on any submitted smoking parameters.
+  - Enforces 100% questionnaire completeness.
+- Implemented roommate request & mutual alignment service (`apps.roommates.services.requests`):
+  - `send_roommate_request`: Supports direct lookup by Student ID, enforces single-gender validation, active cycle checks, duplicate prevention, and group capacity limits.
+  - `respond_to_roommate_request`: Implements Decision 4 (Mutual Room Alignment Rule) verifying identical room selections before confirmation; manages automatic `RoommateGroup` creation, bed capacity limits (2–4 beds), and auto-cancellation of conflicting pending requests.
+  - `cancel_roommate_request` & `leave_roommate_group`: Allows voluntary withdrawal and group auto-disbanding when below 2 members.
+- Implemented pure Python deterministic compatibility scoring engine (`apps.roommates.services.algorithm`):
+  - Zero external AI APIs and zero machine learning models.
+  - Normalized ordinal distance metric $s_i = 1 - (|x_A - x_B| / 4)$ and categorical dietary compatibility logic.
+  - Strictly proves and enforces mathematical symmetry: $\text{Score}(A, B) \equiv \text{Score}(B, A)$.
+  - Cached match score lookups using canonical student primary key ordering (`student_a_id < student_b_id`).
+- Implemented candidate recommendation service (`apps.roommates.services.recommendations`):
+  - Ranks prospective same-gender candidates descending by compatibility score and generates lifestyle alignment highlight chips.
+- Implemented responsive Django templates and views:
+  - `templates/roommates/preferences.html`: Semantic questionnaire card layout with weight indicators.
+  - `templates/roommates/discover.html`: Candidate recommendation feed with match percentages and direct Student ID search bar.
+  - `templates/roommates/requests.html`: Request center with group capacity visualizer, bed slot cards, and mutual room alignment badges.
+- Authored 26 comprehensive unit and integration tests across forms, requests, algorithm symmetry, boundary conditions, and views: **78/78 tests passing (100% success rate)**.
+
 ## [0.7.0] - Phase 7: Student Applications
 
 ### Added
