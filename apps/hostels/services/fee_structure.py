@@ -160,3 +160,4 @@ def calculate_electricity_overage(
         'resident_count': Decimal(resident_count),
         'per_resident_share': per_resident_share,
     }
+

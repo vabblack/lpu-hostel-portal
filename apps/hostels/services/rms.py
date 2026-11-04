@@ -64,3 +64,4 @@ def check_ticket_escalation(
     if status in [RMSTicketStatus.OPEN, RMSTicketStatus.ASSIGNED, RMSTicketStatus.IN_PROGRESS]:
         return now > sla_deadline
     return False
+

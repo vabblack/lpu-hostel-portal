@@ -60,3 +60,4 @@ def find_consolidation_targets(source_room: Room) -> List[Room]:
             valid_targets.append(r)
 
     return valid_targets
+

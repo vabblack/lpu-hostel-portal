@@ -106,3 +106,4 @@ def test_rms_ticket_sla_deadlines():
     past_deadline = now - datetime.timedelta(hours=1)
     is_escalated = check_ticket_escalation(RMSTicketStatus.OPEN, sla_deadline=past_deadline, current_time=now)
     assert is_escalated is True
+

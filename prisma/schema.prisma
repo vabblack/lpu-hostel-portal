@@ -527,3 +527,4 @@ model RoomConsolidationLog {
 
   @@index([status, flaggedDate])
 }
+
