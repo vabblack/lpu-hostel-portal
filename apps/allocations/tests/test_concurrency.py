@@ -259,6 +259,9 @@ class TestAllocationConcurrencyAndIntegrity:
 
         def worker_task(app_id):
             try:
+                if connection.vendor == 'sqlite':
+                    with connection.cursor() as cursor:
+                        cursor.execute("PRAGMA busy_timeout = 20000;")
                 app = HostelApplication.objects.get(pk=app_id)
                 admin_user = User.objects.get(pk=admin_id)
                 res = allocate_individual_student(app, admin_user, start_date, end_date)
