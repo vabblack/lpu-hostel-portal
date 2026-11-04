@@ -1,0 +1,529 @@
+// Prisma Schema: Production-grade University ERP Hostel Management System
+// Tailored precisely to Lovely Professional University (LPU) operational standards
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -----------------------------------------------------------------------------
+// ENUMS & DOMAIN CLASSIFICATIONS
+// -----------------------------------------------------------------------------
+
+enum Role {
+  STUDENT
+  PARENT
+  WARDEN
+  CARETAKER
+  GATE_GUARD
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum HostelType {
+  BOYS
+  GIRLS
+}
+
+enum RoomCategory {
+  STANDARD
+  STUDIO_APARTMENT
+  DORMITORY
+}
+
+enum CoolingType {
+  AIR_COOLED
+  AIR_CONDITIONED
+}
+
+enum BedStatus {
+  VACANT
+  OCCUPIED
+  RESERVED
+  MAINTENANCE
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  PARTIAL
+  PAID
+  REFUNDED
+}
+
+enum CuisineType {
+  NORTH_INDIAN
+  SOUTH_INDIAN
+  RAJASTHANI
+  HARYANVI
+  GUJARATI
+  EASTERN
+}
+
+enum MealPlanType {
+  FOUR_MEALS       // Breakfast, Lunch, Evening Snacks, Dinner (~₹50,000)
+  THREE_MEALS      // Breakfast, Lunch, Dinner (~₹46,000)
+  TWO_MEALS        // Flexible 2-Meal combos (~₹42,000)
+  A_LA_CARTE       // Cross-cuisine selection (~₹58,000)
+  NON_VEG_ADDON    // Non-Veg supplemental plan (~₹55,000 - ₹75,000)
+}
+
+enum AuxiliaryServiceType {
+  LAUNDRY          // ~₹5,400/session, 60-70 garments/month
+  GYM_FITNESS      // ~₹6,000/session
+  SWIMMING_POOL    // ~₹6,000/session (all-weather pool)
+}
+
+enum PassType {
+  DAY_PASS
+  OUTSTATION_PASS
+  EMERGENCY_LEAVE
+}
+
+enum GatePassStatus {
+  SUBMITTED
+  PENDING_PARENT
+  PENDING_WARDEN
+  APPROVED
+  REJECTED
+  ACTIVE_OUTSIDE
+  CLOSED_RETURNED
+  OVERDUE
+}
+
+enum RMSCategory {
+  PLUMBING
+  ELECTRICAL
+  WIFI_LAN
+  CARPENTRY
+  APPLIANCE
+  PEST_CONTROL
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  EMERGENCY
+}
+
+enum TicketStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  ESCALATED
+}
+
+enum ConsolidationStatus {
+  FLAGGED
+  PENDING_REALLOCATION
+  RESOLVED
+  OVERRIDE_APPROVED
+}
+
+// -----------------------------------------------------------------------------
+// IDENTITY, USER ROLES & PROFILES
+// -----------------------------------------------------------------------------
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  role         Role
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  studentProfile StudentProfile?
+  parentProfile  ParentProfile?
+  staffProfile   StaffProfile?
+
+  createdTickets  RMSTicket[]   @relation("StudentTickets")
+  assignedTickets RMSTicket[]   @relation("CaretakerTickets")
+  ticketUpdates   RMSUpdate[]   @relation("UserTicketUpdates")
+  approvedPasses  GatePass[]    @relation("WardenGatePassApprovals")
+
+  @@index([email, role])
+}
+
+model ParentProfile {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName     String
+  phone        String   @unique
+  relationship String   // e.g. Father, Mother, Legal Guardian
+  createdAt    DateTime @default(now())
+
+  students     StudentProfile[]
+}
+
+model StudentProfile {
+  id           String         @id @default(uuid())
+  userId       String         @unique
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentUid   String         @unique // LPU Registration ID (e.g. 12400001)
+  fullName     String
+  gender       Gender
+  dob          DateTime
+  phone        String         @unique
+  programName  String         // e.g. B.Tech Computer Science & Engineering
+  parentId     String?
+  parent       ParentProfile? @relation(fields: [parentId], references: [id], onDelete: SetNull)
+  createdAt    DateTime       @default(now())
+
+  bookings           BookingAllocation[]
+  messSubscriptions  MessSubscription[]
+  auxSubscriptions   AuxiliarySubscription[]
+  gatePasses         GatePass[]
+
+  @@index([studentUid, gender])
+}
+
+model StaffProfile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  staffCode        String   @unique
+  fullName         String
+  phone            String   @unique
+  department       String   // Residential Services, Security, Maintenance
+  assignedHostelId String?
+  assignedHostel   Hostel?  @relation(fields: [assignedHostelId], references: [id], onDelete: SetNull)
+  createdAt        DateTime @default(now())
+}
+
+// -----------------------------------------------------------------------------
+// PHYSICAL HOSTEL HIERARCHY & INVENTORY
+// -----------------------------------------------------------------------------
+
+model Hostel {
+  id           String     @id @default(uuid())
+  name         String     @unique // e.g., "BH-1", "BH-2", "GH-1", "GH-2"
+  code         String     @unique
+  type         HostelType
+  totalFloors  Int
+  description  String?
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+
+  blocks       Block[]
+  staffMembers StaffProfile[]
+}
+
+model Block {
+  id        String   @id @default(uuid())
+  hostelId  String
+  hostel    Hostel   @relation(fields: [hostelId], references: [id], onDelete: Cascade)
+  name      String   // e.g., "Block A", "Wing 1"
+  createdAt DateTime @default(now())
+
+  floors    Floor[]
+
+  @@unique([hostelId, name])
+}
+
+model Floor {
+  id          String   @id @default(uuid())
+  blockId     String
+  block       Block    @relation(fields: [blockId], references: [id], onDelete: Cascade)
+  floorNumber Int
+  createdAt   DateTime @default(now())
+
+  rooms       Room[]
+
+  @@unique([blockId, floorNumber])
+}
+
+model Room {
+  id                String       @id @default(uuid())
+  floorId           String
+  floor             Floor        @relation(fields: [floorId], references: [id], onDelete: Cascade)
+  roomNumber        String       // e.g., "101", "205"
+  category          RoomCategory @default(STANDARD)
+  seaterCount       Int          // 1, 2, 3, 4, 5, 6, 7, 8 (or 4x2 variant)
+  coolingType       CoolingType  @default(AIR_COOLED)
+  baseMeterQuotaKWh Decimal      @db.Decimal(8, 2) // Quota derived from fee master
+  hasAttachedBath   Boolean      @default(false)
+  hasPantry         Boolean      @default(false) // For studio apartments
+  isConsolidation   Boolean      @default(false) // Triggered if occupancy drops < 50%
+  createdAt         DateTime     @default(now())
+
+  beds              Bed[]
+  meter             ElectricityMeter?
+  tickets           RMSTicket[]
+  consolidationLogs RoomConsolidationLog[]
+
+  @@unique([floorId, roomNumber])
+  @@index([category, seaterCount, coolingType])
+}
+
+model Bed {
+  id            String    @id @default(uuid())
+  roomId        String
+  room          Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  bedIdentifier String    // 'A', 'B', 'C', 'D'...
+  status        BedStatus @default(VACANT)
+  createdAt     DateTime  @default(now())
+
+  allocations   BookingAllocation[]
+
+  @@unique([roomId, bedIdentifier])
+  @@index([status])
+}
+
+// -----------------------------------------------------------------------------
+// ACADEMIC SESSION, FEE TIERS & BOOKING LEDGER
+// -----------------------------------------------------------------------------
+
+model AcademicSession {
+  id          String   @id @default(uuid())
+  name        String   @unique // e.g., "2026-2027 (10-Month Session)"
+  startDate   DateTime
+  endDate     DateTime
+  edbDeadline DateTime // Early Decision Benefit cut-off date
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  feeTiers    FeeTier[]
+  bookings    BookingAllocation[]
+}
+
+model FeeTier {
+  id          String          @id @default(uuid())
+  sessionId   String
+  session     AcademicSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  category    RoomCategory
+  seaterCount Int
+  coolingType CoolingType
+  standardFee Decimal         @db.Decimal(10, 2) // Standard session fee
+  edbFee      Decimal         @db.Decimal(10, 2) // Early Decision Benefit fee (₹10,000 discount)
+  quotaKWh    Decimal         @db.Decimal(8, 2)  // Electricity allowance in kWh
+  createdAt   DateTime        @default(now())
+
+  @@unique([sessionId, category, seaterCount, coolingType])
+}
+
+model BookingAllocation {
+  id            String          @id @default(uuid())
+  studentId     String
+  student       StudentProfile  @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  bedId         String
+  bed           Bed             @relation(fields: [bedId], references: [id], onDelete: Restrict)
+  sessionId     String
+  session       AcademicSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+  appliedEdb    Boolean         @default(false)
+  baseFeeAmount Decimal         @db.Decimal(10, 2)
+  amountPaid    Decimal         @default(0.00) @db.Decimal(10, 2)
+  paymentStatus PaymentStatus   @default(PENDING)
+  status        BookingStatus   @default(CONFIRMED)
+  startDate     DateTime
+  endDate       DateTime
+  createdAt     DateTime        @default(now())
+
+  @@unique([studentId, sessionId])
+  @@unique([bedId, sessionId])
+  @@index([status, paymentStatus])
+}
+
+// -----------------------------------------------------------------------------
+// ELECTRICITY METERING & OVERAGE BILLING ENGINE
+// -----------------------------------------------------------------------------
+
+model ElectricityMeter {
+  id              String   @id @default(uuid())
+  roomId          String   @unique
+  room            Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  meterNumber     String   @unique
+  allocatedQuota  Decimal  @db.Decimal(8, 2) // Total room quota for the session
+  cumulativeUnits Decimal  @default(0.00) @db.Decimal(10, 2)
+  createdAt       DateTime @default(now())
+
+  readings        MonthlyElectricityReading[]
+}
+
+model MonthlyElectricityReading {
+  id                 String           @id @default(uuid())
+  meterId            String
+  meter              ElectricityMeter @relation(fields: [meterId], references: [id], onDelete: Cascade)
+  billingMonth       DateTime         // 1st of each month
+  previousReading    Decimal          @db.Decimal(10, 2)
+  currentReading     Decimal          @db.Decimal(10, 2)
+  consumedUnits      Decimal          @db.Decimal(10, 2)
+  quotaAllowance     Decimal          @db.Decimal(8, 2)
+  overageUnits       Decimal          @default(0.00) @db.Decimal(10, 2)
+  ratePerUnit        Decimal          @default(8.50) @db.Decimal(6, 2) // Commercial overage rate in INR
+  totalOverageAmount Decimal          @default(0.00) @db.Decimal(10, 2)
+  activeOccupantCount Int             @default(1)
+  perResidentShare   Decimal          @default(0.00) @db.Decimal(10, 2) // Equal resident division
+  isBilled           Boolean          @default(false)
+  createdAt          DateTime         @default(now())
+
+  @@unique([meterId, billingMonth])
+}
+
+// -----------------------------------------------------------------------------
+// MESS & FOOD SUBSCRIPTIONS (PRO BRICKS)
+// -----------------------------------------------------------------------------
+
+model MessSubscription {
+  id          String           @id @default(uuid())
+  studentId   String
+  student     StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  cuisine     CuisineType
+  planType    MealPlanType
+  sessionFee  Decimal          @db.Decimal(10, 2)
+  hasNonVeg   Boolean          @default(false)
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+
+  attendanceLogs MessAttendanceLog[]
+
+  @@index([studentId, isActive])
+}
+
+model MessAttendanceLog {
+  id             String           @id @default(uuid())
+  subscriptionId String
+  subscription   MessSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  mealSession    String           // BREAKFAST, LUNCH, SNACKS, DINNER
+  scannedAt      DateTime         @default(now())
+  scannerTerminal String          // e.g. "MESS-HALL-BH1-POS-02"
+}
+
+// -----------------------------------------------------------------------------
+// AUXILIARY SERVICES & SUBSCRIPTIONS
+// -----------------------------------------------------------------------------
+
+model AuxiliarySubscription {
+  id          String               @id @default(uuid())
+  studentId   String
+  student     StudentProfile       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  serviceType AuxiliaryServiceType
+  feeAmount   Decimal              @db.Decimal(10, 2)
+  validUntil  DateTime
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+
+  @@unique([studentId, serviceType])
+}
+
+// -----------------------------------------------------------------------------
+// GATE PASS VERIFICATION WORKFLOW & AUDIT
+// -----------------------------------------------------------------------------
+
+model GatePass {
+  id                 String         @id @default(uuid())
+  studentId          String
+  student            StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  passType           PassType
+  destination        String
+  reason             String
+  departureDate      DateTime
+  expectedReturnDate DateTime
+  actualExitTime     DateTime?
+  actualReturnTime   DateTime?
+  status             GatePassStatus @default(SUBMITTED)
+
+  // Parental OTP/Consent verification
+  parentOtpHash      String?
+  parentConsentAt    DateTime?
+  parentConsentIp    String?
+
+  // Warden Digital Approval
+  wardenId           String?
+  warden             User?          @relation("WardenGatePassApprovals", fields: [wardenId], references: [id], onDelete: SetNull)
+  wardenApprovedAt   DateTime?
+  wardenRemarks      String?
+
+  // Turnstile QR Validation
+  qrToken            String         @unique @default(uuid())
+  exitGuardStaffId   String?
+  returnGuardStaffId String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  @@index([studentId, status])
+  @@index([status, departureDate])
+}
+
+// -----------------------------------------------------------------------------
+// RMS (RELATIONSHIP MANAGEMENT SYSTEM) TICKETING
+// -----------------------------------------------------------------------------
+
+model RMSTicket {
+  id                  String         @id @default(uuid())
+  ticketNumber        String         @unique // e.g. "RMS-2026-00841"
+  studentId           String
+  student             User           @relation("StudentTickets", fields: [studentId], references: [id], onDelete: Restrict)
+  roomId              String
+  room                Room           @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  category            RMSCategory
+  priority            TicketPriority @default(MEDIUM)
+  status              TicketStatus   @default(OPEN)
+  title               String
+  description         String
+  assignedCaretakerId String?
+  assignedCaretaker   User?          @relation("CaretakerTickets", fields: [assignedCaretakerId], references: [id], onDelete: SetNull)
+  slaDeadline         DateTime       // SLA timeout timestamp
+  escalatedAt         DateTime?
+  resolvedAt          DateTime?
+  resolutionNotes     String?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  updates             RMSUpdate[]
+
+  @@index([category, status])
+  @@index([status, slaDeadline])
+}
+
+model RMSUpdate {
+  id         String       @id @default(uuid())
+  ticketId   String
+  ticket     RMSTicket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  authorId   String
+  author     User         @relation("UserTicketUpdates", fields: [authorId], references: [id], onDelete: Restrict)
+  note       String
+  fromStatus TicketStatus
+  toStatus   TicketStatus
+  createdAt  DateTime     @default(now())
+}
+
+// -----------------------------------------------------------------------------
+// ROOM CONSOLIDATION ENGINE
+// -----------------------------------------------------------------------------
+
+model RoomConsolidationLog {
+  id                  String              @id @default(uuid())
+  roomId              String
+  room                Room                @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  totalCapacity       Int
+  activeOccupancy     Int
+  occupancyPercentage Decimal             @db.Decimal(5, 2)
+  status              ConsolidationStatus @default(FLAGGED)
+  flaggedDate         DateTime            @default(now())
+  resolvedDate        DateTime?
+  actionTaken         String?             // e.g. "Reallocated residents to BH-1 Room 204"
+
+  @@index([status, flaggedDate])
+}

@@ -1,0 +1,248 @@
+{
+  "academicSession": {
+    "name": "Academic Session 2026-2027 (10-Month)",
+    "startDate": "2026-08-01T00:00:00Z",
+    "endDate": "2027-05-31T23:59:59Z",
+    "edbDeadline": "2026-06-30T23:59:59Z",
+    "isActive": true
+  },
+  "hostels": [
+    {
+      "code": "BH-1",
+      "name": "Boys Hostel 1 (Shivalik Tower)",
+      "type": "BOYS",
+      "totalFloors": 6,
+      "blocks": [
+        {
+          "name": "Block A",
+          "floors": [
+            {
+              "floorNumber": 1,
+              "rooms": [
+                { "roomNumber": "101", "category": "STANDARD", "seaterCount": 2, "coolingType": "AIR_CONDITIONED", "quotaKWh": 750, "hasAttachedBath": true },
+                { "roomNumber": "102", "category": "STUDIO_APARTMENT", "seaterCount": 1, "coolingType": "AIR_CONDITIONED", "quotaKWh": 1000, "hasAttachedBath": true, "hasPantry": true },
+                { "roomNumber": "103", "category": "STANDARD", "seaterCount": 3, "coolingType": "AIR_COOLED", "quotaKWh": 350, "hasAttachedBath": false }
+              ]
+            },
+            {
+              "floorNumber": 2,
+              "rooms": [
+                { "roomNumber": "201", "category": "STANDARD", "seaterCount": 4, "coolingType": "AIR_CONDITIONED", "quotaKWh": 500, "hasAttachedBath": true },
+                { "roomNumber": "202", "category": "STANDARD", "seaterCount": 4, "coolingType": "AIR_COOLED", "quotaKWh": 300, "hasAttachedBath": false }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "BH-2",
+      "name": "Boys Hostel 2 (Himalaya Complex)",
+      "type": "BOYS",
+      "totalFloors": 5,
+      "blocks": [
+        {
+          "name": "Main Wing",
+          "floors": [
+            {
+              "floorNumber": 1,
+              "rooms": [
+                { "roomNumber": "101", "category": "STANDARD", "seaterCount": 3, "coolingType": "AIR_CONDITIONED", "quotaKWh": 550, "hasAttachedBath": true },
+                { "roomNumber": "102", "category": "STANDARD", "seaterCount": 2, "coolingType": "AIR_COOLED", "quotaKWh": 400, "hasAttachedBath": false }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "GH-1",
+      "name": "Girls Hostel 1 (Nilgiri Tower)",
+      "type": "GIRLS",
+      "totalFloors": 7,
+      "blocks": [
+        {
+          "name": "Wing Alpha",
+          "floors": [
+            {
+              "floorNumber": 1,
+              "rooms": [
+                { "roomNumber": "101", "category": "STUDIO_APARTMENT", "seaterCount": 2, "coolingType": "AIR_CONDITIONED", "quotaKWh": 750, "hasAttachedBath": true, "hasPantry": true },
+                { "roomNumber": "102", "category": "STANDARD", "seaterCount": 3, "coolingType": "AIR_COOLED", "quotaKWh": 350, "hasAttachedBath": false }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "GH-2",
+      "name": "Girls Hostel 2 (Aravali Wing)",
+      "type": "GIRLS",
+      "totalFloors": 5,
+      "blocks": [
+        {
+          "name": "Block B",
+          "floors": [
+            {
+              "floorNumber": 1,
+              "rooms": [
+                { "roomNumber": "101", "category": "STANDARD", "seaterCount": 1, "coolingType": "AIR_CONDITIONED", "quotaKWh": 1000, "hasAttachedBath": true },
+                { "roomNumber": "102", "category": "STANDARD", "seaterCount": 4, "coolingType": "AIR_CONDITIONED", "quotaKWh": 500, "hasAttachedBath": true }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sampleStudents": [
+    {
+      "studentUid": "12400001",
+      "fullName": "Arjun Sharma",
+      "email": "arjun.sharma@lpu.in",
+      "gender": "MALE",
+      "program": "B.Tech Computer Science & Engineering",
+      "phone": "+91-9876543201",
+      "parent": {
+        "fullName": "Rajesh Sharma",
+        "phone": "+91-9876500001",
+        "email": "rajesh.sharma@gmail.com",
+        "relationship": "Father"
+      },
+      "allocation": {
+        "hostelCode": "BH-1",
+        "roomNumber": "101",
+        "bedIdentifier": "A",
+        "appliedEdb": true,
+        "feeAmount": 133000.00,
+        "paymentStatus": "PAID"
+      },
+      "messSubscription": {
+        "cuisine": "NORTH_INDIAN",
+        "planType": "FOUR_MEALS",
+        "sessionFee": 50000.00,
+        "hasNonVeg": true
+      },
+      "auxiliaryServices": [
+        { "type": "LAUNDRY", "amount": 5400.00 },
+        { "type": "GYM_FITNESS", "amount": 6000.00 }
+      ]
+    },
+    {
+      "studentUid": "12400005",
+      "fullName": "Priya Patel",
+      "email": "priya.patel@lpu.in",
+      "gender": "FEMALE",
+      "program": "B.Tech Biotechnology",
+      "phone": "+91-9876543205",
+      "parent": {
+        "fullName": "Mahesh Patel",
+        "phone": "+91-9876500005",
+        "email": "mahesh.patel@gmail.com",
+        "relationship": "Father"
+      },
+      "allocation": {
+        "hostelCode": "GH-1",
+        "roomNumber": "101",
+        "bedIdentifier": "A",
+        "appliedEdb": true,
+        "feeAmount": 140000.00,
+        "paymentStatus": "PAID"
+      },
+      "messSubscription": {
+        "cuisine": "GUJARATI",
+        "planType": "THREE_MEALS",
+        "sessionFee": 46000.00,
+        "hasNonVeg": false
+      },
+      "auxiliaryServices": [
+        { "type": "LAUNDRY", "amount": 5400.00 },
+        { "type": "SWIMMING_POOL", "amount": 6000.00 }
+      ]
+    }
+  ],
+  "gatePasses": [
+    {
+      "studentUid": "12400001",
+      "passType": "DAY_PASS",
+      "destination": "Jalandhar City Market",
+      "reason": "Academic textbook purchase",
+      "departureDate": "2026-11-04T10:00:00Z",
+      "expectedReturn": "2026-11-04T18:00:00Z",
+      "status": "APPROVED",
+      "parentConsentVerified": true,
+      "qrToken": "GP-QR-20261104-ARJUN-01"
+    },
+    {
+      "studentUid": "12400005",
+      "passType": "OUTSTATION_PASS",
+      "destination": "Delhi (Home)",
+      "reason": "Family engagement",
+      "departureDate": "2026-11-06T06:00:00Z",
+      "expectedReturn": "2026-11-09T20:00:00Z",
+      "status": "PENDING_PARENT",
+      "parentConsentVerified": false,
+      "qrToken": null
+    },
+    {
+      "studentUid": "12400002",
+      "passType": "DAY_PASS",
+      "destination": "Phagwara City Center",
+      "reason": "Personal errands",
+      "departureDate": "2026-11-03T14:00:00Z",
+      "expectedReturn": "2026-11-03T19:00:00Z",
+      "actualExit": "2026-11-03T14:15:00Z",
+      "actualReturn": null,
+      "status": "OVERDUE",
+      "parentConsentVerified": true,
+      "qrToken": "GP-QR-20261103-ROHIT-01"
+    }
+  ],
+  "rmsTickets": [
+    {
+      "ticketNumber": "RMS-2026-00101",
+      "studentUid": "12400001",
+      "hostelCode": "BH-1",
+      "roomNumber": "101",
+      "category": "ELECTRICAL",
+      "priority": "HIGH",
+      "title": "Geyser heating element not warming water",
+      "description": "Geyser switches on and LED illuminates but water remains cold after 30 minutes.",
+      "status": "ASSIGNED",
+      "slaHours": 12,
+      "assignedCaretaker": "Santosh Kumar (Electrical Maintenance)",
+      "createdAt": "2026-11-04T08:00:00Z"
+    },
+    {
+      "ticketNumber": "RMS-2026-00102",
+      "studentUid": "12400005",
+      "hostelCode": "GH-1",
+      "roomNumber": "101",
+      "category": "WIFI_LAN",
+      "priority": "MEDIUM",
+      "title": "Room Wi-Fi access point high latency and drops",
+      "description": "Continuous ping drops to university gateway and packet loss during lecture streams.",
+      "status": "OPEN",
+      "slaHours": 24,
+      "assignedCaretaker": null,
+      "createdAt": "2026-11-04T12:00:00Z"
+    },
+    {
+      "ticketNumber": "RMS-2026-00089",
+      "studentUid": "12400001",
+      "hostelCode": "BH-1",
+      "roomNumber": "101",
+      "category": "PLUMBING",
+      "priority": "EMERGENCY",
+      "title": "Washroom flush valve leak",
+      "description": "Continuous water overflow from flush valve unit.",
+      "status": "RESOLVED",
+      "slaHours": 4,
+      "assignedCaretaker": "Ramesh Lal (Plumbing)",
+      "resolutionNotes": "Replaced internal rubber washer and valve seal. Tested with zero leakage.",
+      "createdAt": "2026-11-03T09:00:00Z",
+      "resolvedAt": "2026-11-03T11:45:00Z"
+    }
+  ]
+}
