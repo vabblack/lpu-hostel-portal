@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Changed
+- Optimized roommate candidate recommendation ranking (`apps.roommates.services.recommendations`):
+  - In-memory compatibility computation via `calculate_pair_similarity` directly from prefetched preferences.
+  - Eliminated per-candidate $N+1$ query explosion and unnecessary database writes during candidate browsing.
+- Removed dead import `from django.utils import timezone` in `apps.roommates.services.algorithm`.
+- Pruned redundant empty skeleton app `apps.reports` (8 empty stub files) and consolidated app registry; all reporting resides in `apps.hostels.services.reports`.
+
 ## [0.11.0] - Phase 11: Testing and Security
 
 ### Added

@@ -12,7 +12,7 @@ def test_django_settings_loaded():
 
 
 def test_modular_apps_registered():
-    """Ensure all 10 modular apps are properly registered in Django app registry."""
+    """Ensure all modular domain apps are properly registered in Django app registry."""
     expected_apps = [
         'apps.accounts',
         'apps.academics',
@@ -22,7 +22,6 @@ def test_modular_apps_registered():
         'apps.roommates',
         'apps.allocations',
         'apps.notifications',
-        'apps.reports',
         'apps.audit',
     ]
     installed_app_names = [app.name for app in apps.get_app_configs()]

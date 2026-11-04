@@ -4,7 +4,6 @@ Strictly zero machine learning and zero external APIs.
 Enforces mathematical symmetry, 7 weighted dimensions, and cached scoring.
 """
 from decimal import Decimal, ROUND_HALF_UP
-from django.utils import timezone
 from apps.students.models import StudentProfile
 from apps.roommates.models import RoommatePreference, FoodPreference, MatchScore
 

@@ -36,7 +36,6 @@ LOCAL_APPS = [
     'apps.roommates.apps.RoommatesConfig',
     'apps.allocations.apps.AllocationsConfig',
     'apps.notifications.apps.NotificationsConfig',
-    'apps.reports.apps.ReportsConfig',
     'apps.audit.apps.AuditConfig',
 ]
 

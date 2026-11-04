@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.students.models import StudentProfile
 from apps.applications.models import AccommodationCycle
 from apps.roommates.models import RoommatePreference, RoommateGroupMember
-from apps.roommates.services.algorithm import get_or_compute_match_score
+from apps.roommates.services.algorithm import calculate_pair_similarity
 from apps.roommates.services.requests import get_student_selected_room
 
 
@@ -55,8 +55,10 @@ def get_roommate_recommendations(
 
     for candidate in candidates:
         candidate_pref = candidate.roommate_preference
-        score = get_or_compute_match_score(student, candidate)
-        if score is None or float(score) < min_score:
+        if not candidate_pref:
+            continue
+        score = calculate_pair_similarity(student_pref, candidate_pref)
+        if float(score) < min_score:
             continue
 
         candidate_room = get_student_selected_room(candidate, cycle)
