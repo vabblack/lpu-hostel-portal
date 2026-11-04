@@ -33,7 +33,7 @@ def get_student_selected_room(student: StudentProfile, cycle: AccommodationCycle
         return None
 
     # Check choices in order of priority (1, 2, 3) with a room specified
-    choice = active_app.choices.filter(room__isnull=False).order_by('priority').first()
+    choice = active_app.choices.filter(room__isnull=False).select_related('room').order_by('priority').first()
     return choice.room if choice else None
 
 

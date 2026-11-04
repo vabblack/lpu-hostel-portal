@@ -19,6 +19,9 @@ from apps.hostels.services.rms import (
     calculate_sla_deadline,
     check_ticket_escalation,
 )
+from apps.hostels.services.consolidation import evaluate_room_consolidation
+from apps.hostels.models import Hostel, Block, Floor, Room, Bed, BedStatus, GenderPolicy
+from apps.academics.models import University
 
 
 def test_lpu_fee_tier_lookup_and_edb_discount():
@@ -106,4 +109,47 @@ def test_rms_ticket_sla_deadlines():
     past_deadline = now - datetime.timedelta(hours=1)
     is_escalated = check_ticket_escalation(RMSTicketStatus.OPEN, sla_deadline=past_deadline, current_time=now)
     assert is_escalated is True
+
+
+@pytest.mark.django_db
+def test_room_consolidation_flags_under_fifty_percent():
+    """Verify 4-seater room with only 1 occupant (25%) gets flagged for consolidation."""
+    univ = University.objects.create(name='LPU Punjab', code='LPU-PUN')
+    hostel = Hostel.objects.create(university=univ, name='BH-1 Tower', code='BH-1', gender_policy=GenderPolicy.MALE)
+    block = Block.objects.create(hostel=hostel, name='Block A')
+    floor = Floor.objects.create(block=block, floor_number=1)
+    room = Room.objects.create(floor=floor, room_number='101', capacity=4)
+
+    # 1 Occupied, 3 Vacant = 25% occupancy (< 50%)
+    Bed.objects.create(room=room, bed_identifier='A', status=BedStatus.OCCUPIED)
+    Bed.objects.create(room=room, bed_identifier='B', status=BedStatus.VACANT)
+    Bed.objects.create(room=room, bed_identifier='C', status=BedStatus.VACANT)
+    Bed.objects.create(room=room, bed_identifier='D', status=BedStatus.VACANT)
+
+    report = evaluate_room_consolidation(room)
+    assert report['is_flagged'] is True
+    assert report['recommendation'] == 'CONSOLIDATE_RESIDENTS'
+    assert report['occupancy_percentage'] == Decimal('25.00')
+
+
+@pytest.mark.django_db
+def test_room_consolidation_ignores_at_or_above_fifty_percent():
+    """Verify 4-seater room with 2 occupants (50%) is not flagged for consolidation."""
+    univ = University.objects.create(name='LPU Punjab', code='LPU-PUN2')
+    hostel = Hostel.objects.create(university=univ, name='BH-2 Tower', code='BH-2', gender_policy=GenderPolicy.MALE)
+    block = Block.objects.create(hostel=hostel, name='Block B')
+    floor = Floor.objects.create(block=block, floor_number=2)
+    room = Room.objects.create(floor=floor, room_number='201', capacity=4)
+
+    # 2 Occupied, 2 Vacant = 50% occupancy (>= 50%)
+    Bed.objects.create(room=room, bed_identifier='A', status=BedStatus.OCCUPIED)
+    Bed.objects.create(room=room, bed_identifier='B', status=BedStatus.OCCUPIED)
+    Bed.objects.create(room=room, bed_identifier='C', status=BedStatus.VACANT)
+    Bed.objects.create(room=room, bed_identifier='D', status=BedStatus.VACANT)
+
+    report = evaluate_room_consolidation(room)
+    assert report['is_flagged'] is False
+    assert report['recommendation'] == 'NORMAL'
+    assert report['occupancy_percentage'] == Decimal('50.00')
+
 

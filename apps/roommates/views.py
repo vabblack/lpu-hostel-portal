@@ -131,13 +131,13 @@ def requests_view(request):
     incoming_raw = (
         RoommateRequest.objects.filter(
             receiver=student, cycle=cycle, status=RequestStatus.PENDING
-        ).select_related('sender', 'sender__registry', 'sender__registry__branch')
+        ).select_related('sender', 'sender__registry', 'sender__registry__branch', 'sender__roommate_preference')
         if cycle else []
     )
     outgoing = (
         RoommateRequest.objects.filter(
             sender=student, cycle=cycle
-        ).select_related('receiver', 'receiver__registry', 'receiver__registry__branch').order_by('-created_at')
+        ).select_related('receiver', 'receiver__registry', 'receiver__registry__branch', 'receiver__roommate_preference').order_by('-created_at')
         if cycle else []
     )
 
