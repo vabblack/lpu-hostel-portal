@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'danger' | 'destructive' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -60,6 +60,11 @@ export const Button: React.FC<ButtonProps> = ({
       borderColor: 'var(--border-strong)',
     },
     danger: {
+      backgroundColor: 'var(--surface)',
+      color: 'var(--status-danger)',
+      borderColor: 'rgba(164, 22, 26, 0.4)',
+    },
+    destructive: {
       backgroundColor: 'var(--surface)',
       color: 'var(--status-danger)',
       borderColor: 'rgba(164, 22, 26, 0.4)',

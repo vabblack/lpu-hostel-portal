@@ -91,7 +91,7 @@ export const ApplyPage: React.FC = () => {
     setIsSubmitting(true);
     try {
       const resp = await applicationsApi.submitApplication(payload);
-      setSuccessMsg(resp.message || 'Hostel application successfully submitted!');
+      setSuccessMsg(resp.message || 'Hostel application successfully submitted.');
       // Refresh applications list
       const appData = await applicationsApi.getApplications();
       setApplications(appData.applications);
@@ -107,21 +107,30 @@ export const ApplyPage: React.FC = () => {
     return rooms.filter((r) => r.hostel_id === Number(hostelId));
   };
 
-  if (isLoading) return <Spinner label="Loading application cycle..." />;
+  if (isLoading) return <Spinner label="Loading accommodation intake cycle..." />;
 
   const hasSubmittedApp = applications.some(
     (a) => a.cycle_name === activeCycle?.name && a.status !== 'CANCELLED' && a.status !== 'REJECTED'
   );
 
   return (
-    <div className="container" style={{ maxWidth: '800px' }}>
+    <div className="container" style={{ maxWidth: '820px' }}>
       {/* Title */}
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 700, margin: '0 0 0.5rem', letterSpacing: '-0.02em' }}>
+        <h1
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '2rem',
+            fontWeight: 600,
+            color: 'var(--ink)',
+            margin: '0 0 0.5rem',
+            letterSpacing: '-0.01em',
+          }}
+        >
           Hostel Room Application
         </h1>
-        <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '1rem' }}>
-          Select up to 3 prioritized residential choices for {activeCycle?.name || 'the upcoming academic session'}.
+        <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9375rem' }}>
+          Select up to 3 prioritized residential accommodation preferences for {activeCycle?.name || 'the 2026–27 academic session'}.
         </p>
       </div>
 
@@ -130,9 +139,10 @@ export const ApplyPage: React.FC = () => {
         <div
           style={{
             padding: '1rem 1.25rem',
-            backgroundColor: 'var(--color-surface-hover)',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--color-border)',
+            backgroundColor: 'var(--surface)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border)',
+            borderLeft: '3px solid var(--brand)',
             marginBottom: '2rem',
             display: 'flex',
             justifyContent: 'space-between',
@@ -142,9 +152,9 @@ export const ApplyPage: React.FC = () => {
           }}
         >
           <div>
-            <strong>Active Cycle: {activeCycle.name}</strong>
-            <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
-              Academic Year {activeCycle.academic_year} • Semester {activeCycle.semester}
+            <strong style={{ color: 'var(--ink)' }}>Active Intake Cycle: {activeCycle.name}</strong>
+            <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+              Academic Year <span className="tabular-nums">{activeCycle.academic_year}</span> • Semester <span className="tabular-nums">{activeCycle.semester}</span>
             </div>
           </div>
           <Badge variant="success" size="sm">
@@ -152,8 +162,19 @@ export const ApplyPage: React.FC = () => {
           </Badge>
         </div>
       ) : (
-        <div style={{ padding: '1.5rem', backgroundColor: 'var(--color-warning-light)', borderRadius: 'var(--radius-lg)', marginBottom: '2rem' }}>
-          No active accommodation intake cycle is currently accepting submissions.
+        <div
+          style={{
+            padding: '1.25rem 1.5rem',
+            backgroundColor: 'var(--surface)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border)',
+            borderLeft: '3px solid #8A5A00',
+            marginBottom: '2rem',
+            fontSize: '0.875rem',
+            color: 'var(--text)',
+          }}
+        >
+          No active accommodation intake cycle is currently accepting student submissions.
         </div>
       )}
 
@@ -162,39 +183,85 @@ export const ApplyPage: React.FC = () => {
         <div>
           <div
             style={{
-              padding: '1.25rem',
-              backgroundColor: 'var(--color-info-light)',
-              borderRadius: 'var(--radius-lg)',
+              padding: '1.25rem 1.5rem',
+              backgroundColor: 'var(--surface)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border)',
+              borderLeft: '3px solid var(--primary)',
               marginBottom: '2rem',
-              border: '1px solid rgba(7, 89, 133, 0.2)',
             }}
           >
-            <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.125rem', color: 'var(--color-info)' }}>
-              Application Already On Record
+            <h3
+              style={{
+                margin: '0 0 0.5rem',
+                fontFamily: 'var(--font-serif)',
+                fontSize: '1.125rem',
+                fontWeight: 600,
+                color: 'var(--ink)',
+              }}
+            >
+              Application Already On File
             </h3>
-            <p style={{ margin: '0 0 1rem', fontSize: '0.875rem' }}>
-              You have an active application submitted for this intake. University policy permits one active submission per academic intake cycle.
+            <p style={{ margin: '0 0 1.25rem', fontSize: '0.875rem', color: 'var(--text)', lineHeight: 1.5 }}>
+              You have an active residential application submitted for this intake. University policy permits one active submission per academic intake cycle.
             </p>
-            <Button variant="primary" size="sm" onClick={() => navigate('/dashboard')}>
+            <Button variant="secondary" size="sm" onClick={() => navigate('/dashboard')}>
               View Status on Dashboard &rarr;
             </Button>
           </div>
 
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>
+          <h3
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              color: 'var(--ink)',
+              marginBottom: '1rem',
+            }}
+          >
             Submitted Application Details
           </h3>
           {applications.map((app) => (
             <Card key={app.id} style={{ marginBottom: '1rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '1rem',
+                  borderBottom: '1px solid var(--border)',
+                  paddingBottom: '0.75rem',
+                }}
+              >
                 <div>
-                  <h4 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 700 }}>
-                    Application #{app.id}
+                  <h4
+                    style={{
+                      margin: 0,
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '1.0625rem',
+                      fontWeight: 600,
+                      color: 'var(--ink)',
+                    }}
+                  >
+                    Application #{app.id} — {app.cycle_name}
                   </h4>
-                  <span style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
-                    Submitted {app.submitted_at}
+                  <span
+                    className="tabular-nums"
+                    style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}
+                  >
+                    Filed {app.submitted_at}
                   </span>
                 </div>
-                <Badge variant={app.status === 'ALLOCATED' ? 'success' : 'info'} size="md">
+                <Badge
+                  variant={
+                    app.status === 'ALLOCATED'
+                      ? 'success'
+                      : app.status === 'SUBMITTED'
+                      ? 'neutral'
+                      : 'warning'
+                  }
+                  size="md"
+                >
                   {app.status_display}
                 </Badge>
               </div>
@@ -204,20 +271,23 @@ export const ApplyPage: React.FC = () => {
                   <div
                     key={c.id}
                     style={{
-                      padding: '0.625rem 0.75rem',
-                      backgroundColor: 'var(--color-surface-hover)',
-                      borderRadius: 'var(--radius-md)',
+                      padding: '0.625rem 0.875rem',
+                      backgroundColor: 'var(--bg)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius-sm)',
                       fontSize: '0.875rem',
                       display: 'flex',
                       justifyContent: 'space-between',
                     }}
                   >
                     <span>
-                      Priority #{c.priority}: <strong>{c.hostel_name} ({c.hostel_code})</strong>
+                      Priority <strong className="tabular-nums">#{c.priority}</strong>:{' '}
+                      <strong style={{ color: 'var(--ink)' }}>{c.hostel_name} ({c.hostel_code})</strong>
                     </span>
                     {c.room && (
-                      <span style={{ color: 'var(--color-primary)', fontWeight: 600 }}>
-                        Room {c.room.room_number} ({c.room.capacity}-Seater)
+                      <span style={{ color: 'var(--ink)', fontWeight: 600 }}>
+                        Room <span className="tabular-nums">{c.room.room_number}</span> (
+                        <span className="tabular-nums">{c.room.capacity}</span>-Seater)
                       </span>
                     )}
                   </div>
@@ -231,29 +301,83 @@ export const ApplyPage: React.FC = () => {
         <Card>
           <form onSubmit={handleSubmit}>
             {successMsg && (
-              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--color-success-light)', color: 'var(--color-success)', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', fontWeight: 500 }}>
-                ✓ {successMsg}
+              <div
+                style={{
+                  padding: '0.75rem 1rem',
+                  backgroundColor: 'var(--surface)',
+                  color: '#1E6B3A',
+                  border: '1px solid #1E6B3A',
+                  borderRadius: 'var(--radius-sm)',
+                  marginBottom: '1.5rem',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                }}
+              >
+                {successMsg}
               </div>
             )}
             {errorMsg && (
-              <div style={{ padding: '0.75rem 1rem', backgroundColor: 'var(--color-danger-light)', color: 'var(--color-danger)', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', fontWeight: 500 }}>
-                ⚠ {errorMsg}
+              <div
+                style={{
+                  padding: '0.75rem 1rem',
+                  backgroundColor: 'var(--surface)',
+                  color: 'var(--status-danger)',
+                  border: '1px solid var(--status-danger)',
+                  borderRadius: 'var(--radius-sm)',
+                  marginBottom: '1.5rem',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                }}
+              >
+                {errorMsg}
               </div>
             )}
 
             {/* CHOICE #1 */}
-            <div style={{ padding: '1.25rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', marginBottom: '1.25rem', backgroundColor: 'var(--color-surface-hover)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <strong style={{ fontSize: '1rem', color: 'var(--color-primary)' }}>
-                  Choice #1 (First Preference — Required)
+            <div
+              style={{
+                padding: '1.25rem',
+                border: '1px solid var(--border-strong)',
+                borderRadius: 'var(--radius-md)',
+                marginBottom: '1.25rem',
+                backgroundColor: 'var(--surface)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '0.875rem',
+                }}
+              >
+                <strong
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    color: 'var(--ink)',
+                  }}
+                >
+                  Choice #1 (First Preference — Mandatory)
                 </strong>
                 <Badge variant="primary" size="sm">Priority 1</Badge>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '0.25rem' }}>
-                    Select Hostel Complex *
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.6875rem',
+                      fontWeight: 600,
+                      color: 'var(--text-muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
+                    Hostel Complex *
                   </label>
                   <select
                     value={choice1Hostel}
@@ -262,9 +386,19 @@ export const ApplyPage: React.FC = () => {
                       setChoice1Room('');
                     }}
                     required
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}
+                    style={{
+                      width: '100%',
+                      height: '38px',
+                      padding: '0 0.75rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-strong)',
+                      backgroundColor: 'var(--surface)',
+                      color: 'var(--ink)',
+                      fontSize: '0.875rem',
+                      boxSizing: 'border-box',
+                    }}
                   >
-                    <option value="">-- Choose Hostel Complex --</option>
+                    <option value="">-- Select Hostel Complex --</option>
                     {hostels.map((h) => (
                       <option key={h.id} value={h.id}>
                         {h.name} ({h.code}) — {h.gender_policy_display}
@@ -274,14 +408,34 @@ export const ApplyPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.6875rem',
+                      fontWeight: 600,
+                      color: 'var(--text-muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Specific Room Preference (Optional)
                   </label>
                   <select
                     value={choice1Room}
                     onChange={(e) => setChoice1Room(e.target.value ? Number(e.target.value) : '')}
                     disabled={!choice1Hostel}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}
+                    style={{
+                      width: '100%',
+                      height: '38px',
+                      padding: '0 0.75rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-strong)',
+                      backgroundColor: 'var(--surface)',
+                      color: 'var(--ink)',
+                      fontSize: '0.875rem',
+                      boxSizing: 'border-box',
+                    }}
                   >
                     <option value="">Any Available Room in Selected Hostel</option>
                     {getFilteredRooms(choice1Hostel).map((r) => (
@@ -295,9 +449,31 @@ export const ApplyPage: React.FC = () => {
             </div>
 
             {/* CHOICE #2 */}
-            <div style={{ padding: '1.25rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', marginBottom: '1.25rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <strong style={{ fontSize: '1rem' }}>
+            <div
+              style={{
+                padding: '1.25rem',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-md)',
+                marginBottom: '1.25rem',
+                backgroundColor: 'var(--surface)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '0.875rem',
+                }}
+              >
+                <strong
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    color: 'var(--ink)',
+                  }}
+                >
                   Choice #2 (Second Preference — Optional)
                 </strong>
                 <Badge variant="neutral" size="sm">Priority 2</Badge>
@@ -305,8 +481,18 @@ export const ApplyPage: React.FC = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '0.25rem' }}>
-                    Select Hostel Complex
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.6875rem',
+                      fontWeight: 600,
+                      color: 'var(--text-muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
+                    Hostel Complex
                   </label>
                   <select
                     value={choice2Hostel}
@@ -314,7 +500,17 @@ export const ApplyPage: React.FC = () => {
                       setChoice2Hostel(e.target.value ? Number(e.target.value) : '');
                       setChoice2Room('');
                     }}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}
+                    style={{
+                      width: '100%',
+                      height: '38px',
+                      padding: '0 0.75rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-strong)',
+                      backgroundColor: 'var(--surface)',
+                      color: 'var(--ink)',
+                      fontSize: '0.875rem',
+                      boxSizing: 'border-box',
+                    }}
                   >
                     <option value="">-- No Second Preference --</option>
                     {hostels.map((h) => (
@@ -326,14 +522,34 @@ export const ApplyPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.6875rem',
+                      fontWeight: 600,
+                      color: 'var(--text-muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Specific Room Preference
                   </label>
                   <select
                     value={choice2Room}
                     onChange={(e) => setChoice2Room(e.target.value ? Number(e.target.value) : '')}
                     disabled={!choice2Hostel}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}
+                    style={{
+                      width: '100%',
+                      height: '38px',
+                      padding: '0 0.75rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-strong)',
+                      backgroundColor: 'var(--surface)',
+                      color: 'var(--ink)',
+                      fontSize: '0.875rem',
+                      boxSizing: 'border-box',
+                    }}
                   >
                     <option value="">Any Available Room</option>
                     {getFilteredRooms(choice2Hostel).map((r) => (
@@ -347,9 +563,31 @@ export const ApplyPage: React.FC = () => {
             </div>
 
             {/* CHOICE #3 */}
-            <div style={{ padding: '1.25rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', marginBottom: '1.75rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <strong style={{ fontSize: '1rem' }}>
+            <div
+              style={{
+                padding: '1.25rem',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-md)',
+                marginBottom: '1.75rem',
+                backgroundColor: 'var(--surface)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '0.875rem',
+                }}
+              >
+                <strong
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    color: 'var(--ink)',
+                  }}
+                >
                   Choice #3 (Third Preference — Optional)
                 </strong>
                 <Badge variant="neutral" size="sm">Priority 3</Badge>
@@ -357,8 +595,18 @@ export const ApplyPage: React.FC = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '0.25rem' }}>
-                    Select Hostel Complex
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.6875rem',
+                      fontWeight: 600,
+                      color: 'var(--text-muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
+                    Hostel Complex
                   </label>
                   <select
                     value={choice3Hostel}
@@ -366,7 +614,17 @@ export const ApplyPage: React.FC = () => {
                       setChoice3Hostel(e.target.value ? Number(e.target.value) : '');
                       setChoice3Room('');
                     }}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}
+                    style={{
+                      width: '100%',
+                      height: '38px',
+                      padding: '0 0.75rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-strong)',
+                      backgroundColor: 'var(--surface)',
+                      color: 'var(--ink)',
+                      fontSize: '0.875rem',
+                      boxSizing: 'border-box',
+                    }}
                   >
                     <option value="">-- No Third Preference --</option>
                     {hostels.map((h) => (
@@ -378,14 +636,34 @@ export const ApplyPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.6875rem',
+                      fontWeight: 600,
+                      color: 'var(--text-muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Specific Room Preference
                   </label>
                   <select
                     value={choice3Room}
                     onChange={(e) => setChoice3Room(e.target.value ? Number(e.target.value) : '')}
                     disabled={!choice3Hostel}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}
+                    style={{
+                      width: '100%',
+                      height: '38px',
+                      padding: '0 0.75rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-strong)',
+                      backgroundColor: 'var(--surface)',
+                      color: 'var(--ink)',
+                      fontSize: '0.875rem',
+                      boxSizing: 'border-box',
+                    }}
                   >
                     <option value="">Any Available Room</option>
                     {getFilteredRooms(choice3Hostel).map((r) => (

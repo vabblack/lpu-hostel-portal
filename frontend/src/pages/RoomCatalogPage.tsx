@@ -67,24 +67,32 @@ export const RoomCatalogPage: React.FC = () => {
   return (
     <div className="container">
       {/* Title */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 700, margin: '0 0 0.5rem', letterSpacing: '-0.02em' }}>
-          Room Inventory &amp; Rate Explorer
+      <div style={{ marginBottom: '1.75rem' }}>
+        <h1
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '2rem',
+            fontWeight: 600,
+            color: 'var(--ink)',
+            margin: '0 0 0.5rem',
+            letterSpacing: '-0.01em',
+          }}
+        >
+          Room Inventory &amp; Tariff Catalog
         </h1>
-        <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '1rem' }}>
-          Search every room across BH-1 through BH-8 and GH-1 through GH-6. Check exact 10-month fees, Early Decision Benefits (EDB), and electricity allowances.
+        <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9375rem' }}>
+          Explore residential rooms across BH-1 through BH-8 and GH-1 through GH-6. Review standard 10-month fees, Early Decision Benefits (EDB), and electricity allowances.
         </p>
       </div>
 
       {/* Filter Toolbar */}
       <div
         style={{
-          backgroundColor: 'var(--color-surface)',
+          backgroundColor: 'var(--surface)',
           padding: '1.25rem',
-          borderRadius: 'var(--radius-lg)',
-          border: '1px solid var(--color-border)',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--border)',
           marginBottom: '2rem',
-          boxShadow: 'var(--shadow-sm)',
         }}
       >
         <div
@@ -97,18 +105,38 @@ export const RoomCatalogPage: React.FC = () => {
         >
           {/* Hostel Filter */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, marginBottom: '0.25rem' }}>
-              Hostel Building
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.6875rem',
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '0.35rem',
+              }}
+            >
+              Hostel Complex
             </label>
             <select
               value={filters.hostel_id}
               onChange={(e) => handleFilterChange('hostel_id', e.target.value)}
-              style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}
+              style={{
+                width: '100%',
+                height: '38px',
+                padding: '0 0.75rem',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-strong)',
+                backgroundColor: 'var(--surface)',
+                color: 'var(--ink)',
+                fontSize: '0.875rem',
+                boxSizing: 'border-box',
+              }}
             >
               <option value="">All 14 Hostels</option>
               {hostels.map((h) => (
                 <option key={h.id} value={h.id}>
-                  {h.code} - {h.name}
+                  {h.code} — {h.name}
                 </option>
               ))}
             </select>
@@ -116,34 +144,74 @@ export const RoomCatalogPage: React.FC = () => {
 
           {/* Gender */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, marginBottom: '0.25rem' }}>
-              Gender Block
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.6875rem',
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '0.35rem',
+              }}
+            >
+              Gender Designation
             </label>
             <select
               value={filters.gender}
               onChange={(e) => handleFilterChange('gender', e.target.value)}
-              style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}
+              style={{
+                width: '100%',
+                height: '38px',
+                padding: '0 0.75rem',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-strong)',
+                backgroundColor: 'var(--surface)',
+                color: 'var(--ink)',
+                fontSize: '0.875rem',
+                boxSizing: 'border-box',
+              }}
             >
               <option value="">All Genders</option>
-              <option value="MALE">Boys Hostels (BH)</option>
-              <option value="FEMALE">Girls Hostels (GH)</option>
+              <option value="MALE">Boys Hostels (BH-1 to BH-8)</option>
+              <option value="FEMALE">Girls Hostels (GH-1 to GH-6)</option>
             </select>
           </div>
 
           {/* Seater */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, marginBottom: '0.25rem' }}>
-              Capacity / Seater
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.6875rem',
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '0.35rem',
+              }}
+            >
+              Occupancy Seater
             </label>
             <select
               value={filters.seater}
               onChange={(e) => handleFilterChange('seater', e.target.value)}
-              style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}
+              style={{
+                width: '100%',
+                height: '38px',
+                padding: '0 0.75rem',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-strong)',
+                backgroundColor: 'var(--surface)',
+                color: 'var(--ink)',
+                fontSize: '0.875rem',
+                boxSizing: 'border-box',
+              }}
             >
               <option value="">All Capacities</option>
               {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                 <option key={s} value={s}>
-                  {s}-Seater
+                  {s}-Seater Room
                 </option>
               ))}
             </select>
@@ -151,15 +219,35 @@ export const RoomCatalogPage: React.FC = () => {
 
           {/* Cooling */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, marginBottom: '0.25rem' }}>
-              Cooling Type
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.6875rem',
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '0.35rem',
+              }}
+            >
+              Cooling System
             </label>
             <select
               value={filters.cooling}
               onChange={(e) => handleFilterChange('cooling', e.target.value)}
-              style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}
+              style={{
+                width: '100%',
+                height: '38px',
+                padding: '0 0.75rem',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-strong)',
+                backgroundColor: 'var(--surface)',
+                color: 'var(--ink)',
+                fontSize: '0.875rem',
+                boxSizing: 'border-box',
+              }}
             >
-              <option value="">All Types</option>
+              <option value="">All Cooling Systems</option>
               <option value="AC">Air-Conditioned (AC)</option>
               <option value="COOLER">Air-Cooled</option>
             </select>
@@ -167,13 +255,33 @@ export const RoomCatalogPage: React.FC = () => {
 
           {/* Category */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.6875rem',
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '0.35rem',
+              }}
+            >
               Room Category
             </label>
             <select
               value={filters.category}
               onChange={(e) => handleFilterChange('category', e.target.value)}
-              style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}
+              style={{
+                width: '100%',
+                height: '38px',
+                padding: '0 0.75rem',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-strong)',
+                backgroundColor: 'var(--surface)',
+                color: 'var(--ink)',
+                fontSize: '0.875rem',
+                boxSizing: 'border-box',
+              }}
             >
               <option value="">All Categories</option>
               <option value="STANDARD">Standard Room</option>
@@ -184,31 +292,62 @@ export const RoomCatalogPage: React.FC = () => {
         </div>
 
         {/* Search, Vacant Toggle & Reset */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '1rem',
+            paddingTop: '0.875rem',
+            borderTop: '1px solid var(--border)',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flex: 1, minWidth: '260px' }}>
             <input
               type="text"
               placeholder="Search room number (e.g. 101, 204)..."
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
-              style={{ width: '100%', maxWidth: '320px', padding: '0.45rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.875rem' }}
+              style={{
+                width: '100%',
+                maxWidth: '300px',
+                height: '36px',
+                padding: '0 0.75rem',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-strong)',
+                backgroundColor: 'var(--surface)',
+                color: 'var(--ink)',
+                fontSize: '0.875rem',
+                boxSizing: 'border-box',
+              }}
             />
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', cursor: 'pointer', userSelect: 'none' }}>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                fontSize: '0.875rem',
+                color: 'var(--text)',
+                cursor: 'pointer',
+                userSelect: 'none',
+              }}
+            >
               <input
                 type="checkbox"
                 checked={filters.vacant_only}
                 onChange={(e) => handleFilterChange('vacant_only', e.target.checked)}
-                style={{ accentColor: 'var(--color-primary)' }}
+                style={{ accentColor: 'var(--primary)' }}
               />
-              Show Vacant Only
+              Show Vacant Beds Only
             </label>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-              Found <strong>{rooms.length}</strong> matching rooms
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+              Showing <strong className="tabular-nums" style={{ color: 'var(--ink)' }}>{rooms.length}</strong> room records
             </span>
-            <Button variant="ghost" size="sm" onClick={handleResetFilters}>
+            <Button variant="secondary" size="sm" onClick={handleResetFilters}>
               Reset Filters
             </Button>
           </div>
@@ -217,25 +356,45 @@ export const RoomCatalogPage: React.FC = () => {
 
       {/* Rooms Grid */}
       {isLoading ? (
-        <Spinner label="Filtering rooms..." />
+        <Spinner label="Filtering room inventory..." />
       ) : error ? (
-        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-danger)' }}>{error}</div>
+        <div
+          style={{
+            padding: '2rem',
+            textAlign: 'center',
+            color: 'var(--status-danger)',
+            backgroundColor: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-md)',
+          }}
+        >
+          {error}
+        </div>
       ) : rooms.length === 0 ? (
         <div
           style={{
-            padding: '3rem',
+            padding: '3rem 2rem',
             textAlign: 'center',
-            backgroundColor: 'var(--color-surface)',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--color-border)',
+            backgroundColor: 'var(--surface)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border)',
           }}
         >
-          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🔍</div>
-          <h3 style={{ margin: '0 0 0.5rem' }}>No Rooms Match Your Criteria</h3>
-          <p style={{ margin: '0 0 1rem', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-            Try widening your filters or clearing search terms.
+          <h3
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              color: 'var(--ink)',
+              margin: '0 0 0.5rem',
+            }}
+          >
+            No Room Records Found
+          </h3>
+          <p style={{ margin: '0 0 1.25rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+            No room accommodations match the current filter selection.
           </p>
-          <Button variant="outline" size="sm" onClick={handleResetFilters}>
+          <Button variant="secondary" size="sm" onClick={handleResetFilters}>
             Clear All Filters
           </Button>
         </div>

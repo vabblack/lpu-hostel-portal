@@ -33,11 +33,20 @@ export const HostelsPage: React.FC = () => {
     <div className="container">
       {/* Header */}
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 700, margin: '0 0 0.5rem', letterSpacing: '-0.02em' }}>
-          Campus Hostels &amp; Accommodation Directory
+        <h1
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '2rem',
+            fontWeight: 600,
+            color: 'var(--ink)',
+            margin: '0 0 0.5rem',
+            letterSpacing: '-0.01em',
+          }}
+        >
+          Campus Hostels Directory
         </h1>
-        <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '1rem' }}>
-          Browse university accommodation inventory, facility configurations, and live bed availability across all 14 residential towers.
+        <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9375rem' }}>
+          Authoritative residential tower registry, facility matrices, and live room occupancy across all campus complexes.
         </p>
       </div>
 
@@ -51,52 +60,61 @@ export const HostelsPage: React.FC = () => {
           flexWrap: 'wrap',
           marginBottom: '2rem',
           padding: '1rem 1.25rem',
-          backgroundColor: 'var(--color-surface)',
-          borderRadius: 'var(--radius-lg)',
-          border: '1px solid var(--color-border)',
+          backgroundColor: 'var(--surface)',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--border)',
         }}
       >
         {/* Gender Filter Buttons */}
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           {[
-            { key: 'ALL', label: 'All Hostels' },
+            { key: 'ALL', label: 'All Residential Complexes' },
             { key: 'MALE', label: 'Boys Hostels (BH-1 to BH-8)' },
             { key: 'FEMALE', label: 'Girls Hostels (GH-1 to GH-6)' },
-          ].map((btn) => (
-            <button
-              key={btn.key}
-              onClick={() => setGenderFilter(btn.key as 'ALL' | 'MALE' | 'FEMALE')}
-              style={{
-                padding: '0.5rem 1rem',
-                borderRadius: 'var(--radius-md)',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                border: '1px solid',
-                borderColor: genderFilter === btn.key ? 'var(--color-primary)' : 'var(--color-border)',
-                backgroundColor: genderFilter === btn.key ? 'var(--color-primary)' : 'transparent',
-                color: genderFilter === btn.key ? '#ffffff' : 'var(--color-text-secondary)',
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-              }}
-            >
-              {btn.label}
-            </button>
-          ))}
+          ].map((btn) => {
+            const isActive = genderFilter === btn.key;
+            return (
+              <button
+                key={btn.key}
+                type="button"
+                onClick={() => setGenderFilter(btn.key as 'ALL' | 'MALE' | 'FEMALE')}
+                style={{
+                  padding: '0.5rem 0.875rem',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  border: '1px solid',
+                  borderColor: isActive ? 'var(--primary)' : 'var(--border-strong)',
+                  backgroundColor: isActive ? 'var(--primary)' : 'var(--surface)',
+                  color: isActive ? '#ffffff' : 'var(--text)',
+                  cursor: 'pointer',
+                  transition: 'background var(--transition-fast)',
+                }}
+              >
+                {btn.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Quick Search Input */}
         <div style={{ minWidth: '240px', flex: '0 1 300px' }}>
           <input
             type="text"
-            placeholder="Search by name or code (e.g. BH-1)..."
+            placeholder="Search by block name or code (e.g. BH-1)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{
               width: '100%',
-              padding: '0.5rem 0.875rem',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border)',
+              height: '38px',
+              padding: '0 0.875rem',
+              borderRadius: 'var(--radius-sm)',
+              border: '1px solid var(--border-strong)',
+              backgroundColor: 'var(--surface)',
+              color: 'var(--ink)',
               fontSize: '0.875rem',
+              outline: 'none',
+              boxSizing: 'border-box',
             }}
           />
         </div>
@@ -104,25 +122,43 @@ export const HostelsPage: React.FC = () => {
 
       {/* Content */}
       {isLoading ? (
-        <Spinner label="Loading campus hostel inventory..." />
+        <Spinner label="Loading campus hostel directory..." />
       ) : error ? (
-        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-danger)' }}>
+        <div
+          style={{
+            padding: '2rem',
+            textAlign: 'center',
+            color: 'var(--status-danger)',
+            backgroundColor: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-md)',
+          }}
+        >
           {error}
         </div>
       ) : filteredHostels.length === 0 ? (
         <div
           style={{
-            padding: '3rem',
+            padding: '3rem 2rem',
             textAlign: 'center',
-            backgroundColor: 'var(--color-surface)',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--color-border)',
+            backgroundColor: 'var(--surface)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border)',
           }}
         >
-          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🏢</div>
-          <h3 style={{ margin: '0 0 0.5rem' }}>No Hostels Found</h3>
-          <p style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-            No residential complexes match your search filter criteria.
+          <h3
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              color: 'var(--ink)',
+              margin: '0 0 0.5rem',
+            }}
+          >
+            No Residential Complexes Found
+          </h3>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+            No hostel records match your current gender filter or search keyword.
           </p>
         </div>
       ) : (

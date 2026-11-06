@@ -101,15 +101,27 @@ export const RoommatesPage: React.FC = () => {
     await loadData();
   };
 
+  const totalRequestsCount =
+    (requestsData?.received_requests.length || 0) + (requestsData?.sent_requests.length || 0);
+
   return (
     <div className="container">
       {/* Header */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 700, margin: '0 0 0.5rem', letterSpacing: '-0.02em' }}>
+      <div style={{ marginBottom: '1.75rem' }}>
+        <h1
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '2rem',
+            fontWeight: 600,
+            color: 'var(--ink)',
+            margin: '0 0 0.5rem',
+            letterSpacing: '-0.01em',
+          }}
+        >
           Roommate Compatibility &amp; Request Center
         </h1>
-        <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '1rem' }}>
-          Find compatible peers using LPU&apos;s 7-factor lifestyle matching algorithm. Form mutual roommate pairs or 2-4 bed groups.
+        <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9375rem' }}>
+          Evaluate compatibility via Lovely Professional University&apos;s 7-factor residential algorithm and establish verified roommate pairs or groups.
         </p>
       </div>
 
@@ -117,47 +129,63 @@ export const RoommatesPage: React.FC = () => {
       <div
         style={{
           display: 'flex',
-          gap: '0.5rem',
-          borderBottom: '1px solid var(--color-border)',
+          gap: '1rem',
+          borderBottom: '1px solid var(--border)',
           marginBottom: '2rem',
           overflowX: 'auto',
         }}
       >
         {[
-          { key: 'DISCOVER', label: '🤝 Discover Matches' },
+          { key: 'DISCOVER', label: 'Discover Matches' },
           {
             key: 'REQUESTS',
-            label: `📬 Requests (${(requestsData?.received_requests.length || 0) + (requestsData?.sent_requests.length || 0)})`,
+            label: `Requests (${totalRequestsCount})`,
           },
-          { key: 'GROUP', label: `👥 My Group ${group ? '(Active)' : ''}` },
-          { key: 'PREFERENCES', label: '⚙️ Lifestyle Preferences' },
-        ].map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key as ActiveTab)}
-            style={{
-              padding: '0.75rem 1.25rem',
-              fontWeight: 600,
-              fontSize: '0.9375rem',
-              border: 'none',
-              background: 'transparent',
-              cursor: 'pointer',
-              color: activeTab === tab.key ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-              borderBottom: activeTab === tab.key ? '2px solid var(--color-primary)' : '2px solid transparent',
-              marginBottom: '-1px',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {tab.label}
-          </button>
-        ))}
+          { key: 'GROUP', label: `Roommate Group ${group ? '(Active)' : ''}` },
+          { key: 'PREFERENCES', label: 'Lifestyle Preferences' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveTab(tab.key as ActiveTab)}
+              style={{
+                padding: '0.625rem 0.5rem',
+                fontWeight: isActive ? 600 : 500,
+                fontSize: '0.9375rem',
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                color: isActive ? 'var(--ink)' : 'var(--text-muted)',
+                borderBottom: isActive ? '3px solid var(--primary)' : '3px solid transparent',
+                marginBottom: '-1px',
+                whiteSpace: 'nowrap',
+                transition: 'color var(--transition-fast)',
+              }}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Content */}
       {isLoading ? (
         <Spinner label="Loading roommate portal..." />
       ) : error ? (
-        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-danger)' }}>{error}</div>
+        <div
+          style={{
+            padding: '2rem',
+            textAlign: 'center',
+            color: 'var(--status-danger)',
+            backgroundColor: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-md)',
+          }}
+        >
+          {error}
+        </div>
       ) : (
         <div>
           {/* TAB 1: DISCOVER */}
@@ -167,26 +195,29 @@ export const RoommatesPage: React.FC = () => {
               {!discoverData?.has_preferences && (
                 <div
                   style={{
-                    padding: '1.25rem',
-                    backgroundColor: 'var(--color-warning-light)',
-                    borderRadius: 'var(--radius-lg)',
+                    padding: '1.25rem 1.5rem',
+                    backgroundColor: 'var(--surface)',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--border)',
+                    borderLeft: '3px solid #8A5A00',
                     marginBottom: '1.5rem',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
+                    flexWrap: 'wrap',
                     gap: '1rem',
                   }}
                 >
                   <div>
-                    <strong style={{ color: 'var(--color-warning)' }}>
+                    <strong style={{ color: 'var(--ink)', fontSize: '0.9375rem', display: 'block', marginBottom: '0.25rem' }}>
                       Complete your 7-factor lifestyle questionnaire
                     </strong>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
-                      Submit your preferences to enable algorithmic compatibility percentages with peers.
+                    <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                      Submit your lifestyle habits to compute deterministic compatibility percentages against peer residents.
                     </div>
                   </div>
                   <Button variant="primary" size="sm" onClick={() => setActiveTab('PREFERENCES')}>
-                    Fill Preferences &rarr;
+                    Complete Preferences &rarr;
                   </Button>
                 </div>
               )}
@@ -196,16 +227,20 @@ export const RoommatesPage: React.FC = () => {
                 <form onSubmit={handleSearch} style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                   <input
                     type="text"
-                    placeholder="Enter Student ID (e.g. 12400002)..."
+                    placeholder="Search by Student Registration ID (e.g. 12400002)..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     style={{
                       flex: 1,
-                      minWidth: '220px',
-                      padding: '0.625rem 0.875rem',
-                      borderRadius: 'var(--radius-md)',
-                      border: '1px solid var(--color-border)',
+                      minWidth: '240px',
+                      height: '38px',
+                      padding: '0 0.875rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-strong)',
+                      backgroundColor: 'var(--surface)',
+                      color: 'var(--ink)',
                       fontSize: '0.875rem',
+                      boxSizing: 'border-box',
                     }}
                   />
                   <Button type="submit" variant="primary">
@@ -215,11 +250,20 @@ export const RoommatesPage: React.FC = () => {
 
                 {/* Direct Search Result */}
                 {discoverData?.search_result && (
-                  <div style={{ marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid var(--color-border)' }}>
-                    <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
+                  <div style={{ marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border)' }}>
+                    <div
+                      style={{
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        color: 'var(--text-muted)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        marginBottom: '0.75rem',
+                      }}
+                    >
                       Search Result:
                     </div>
-                    <div style={{ maxWidth: '400px' }}>
+                    <div style={{ maxWidth: '420px' }}>
                       <CandidateCard
                         candidate={discoverData.search_result}
                         onSendRequest={handleSendRequest}
@@ -232,36 +276,60 @@ export const RoommatesPage: React.FC = () => {
 
               {/* Recommendations Feed */}
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 600, margin: 0 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'baseline',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '1.25rem',
+                      fontWeight: 600,
+                      color: 'var(--ink)',
+                      margin: 0,
+                    }}
+                  >
                     Recommended Roommate Peers
                   </h3>
-                  <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-                    {discoverData?.recommendations.length || 0} candidates found
+                  <span className="tabular-nums" style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                    {discoverData?.recommendations.length || 0} candidates evaluated
                   </span>
                 </div>
 
                 {discoverData?.recommendations.length === 0 ? (
                   <div
                     style={{
-                      padding: '3rem',
+                      padding: '3rem 2rem',
                       textAlign: 'center',
-                      backgroundColor: 'var(--color-surface)',
-                      borderRadius: 'var(--radius-lg)',
-                      border: '1px solid var(--color-border)',
+                      backgroundColor: 'var(--surface)',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border)',
                     }}
                   >
-                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🔍</div>
-                    <h3 style={{ margin: '0 0 0.5rem' }}>No Recommendations Yet</h3>
-                    <p style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-                      Make sure your preferences are saved, or use direct student search above.
+                    <h3
+                      style={{
+                        fontFamily: 'var(--font-serif)',
+                        fontSize: '1.25rem',
+                        fontWeight: 600,
+                        color: 'var(--ink)',
+                        margin: '0 0 0.5rem',
+                      }}
+                    >
+                      No Recommendations Available
+                    </h3>
+                    <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                      Ensure your questionnaire is saved, or use direct student ID lookup above.
                     </p>
                   </div>
                 ) : (
                   <div
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
                       gap: '1.25rem',
                     }}
                   >
@@ -284,36 +352,84 @@ export const RoommatesPage: React.FC = () => {
             <div>
               {/* Received Requests */}
               <div style={{ marginBottom: '2.5rem' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>
+                <h3
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '1.25rem',
+                    fontWeight: 600,
+                    color: 'var(--ink)',
+                    marginBottom: '1rem',
+                  }}
+                >
                   Incoming Roommate Requests ({requestsData?.received_requests.length || 0})
                 </h3>
                 {requestsData?.received_requests.length === 0 ? (
-                  <div style={{ padding: '1.5rem', backgroundColor: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-                    No incoming roommate requests at this time.
+                  <div
+                    style={{
+                      padding: '1.5rem',
+                      backgroundColor: 'var(--surface)',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--text-muted)',
+                      fontSize: '0.875rem',
+                    }}
+                  >
+                    No incoming roommate requests currently pending.
                   </div>
                 ) : (
                   <div style={{ display: 'grid', gap: '0.75rem' }}>
                     {requestsData?.received_requests.map((r) => (
                       <Card key={r.id}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                          }}
+                        >
                           <div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                              <strong style={{ fontSize: '1.0625rem' }}>{r.other_full_name}</strong>
-                              <Badge variant="neutral" size="sm">#{r.other_student_id}</Badge>
-                              <Badge variant={r.status === 'PENDING' ? 'warning' : 'neutral'} size="sm">
+                              <strong
+                                style={{
+                                  fontFamily: 'var(--font-serif)',
+                                  fontSize: '1.0625rem',
+                                  fontWeight: 600,
+                                  color: 'var(--ink)',
+                                }}
+                              >
+                                {r.other_full_name}
+                              </strong>
+                              <Badge variant="neutral" size="sm">
+                                <span className="tabular-nums">#{r.other_student_id}</span>
+                              </Badge>
+                              <Badge
+                                variant={r.status === 'PENDING' ? 'warning' : 'neutral'}
+                                size="sm"
+                              >
                                 {r.status_display}
                               </Badge>
                             </div>
-                            <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>
-                              {r.other_branch} • Sent {r.created_at}
+                            <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                              {r.other_branch} • Received{' '}
+                              <span className="tabular-nums">{r.created_at}</span>
                             </div>
                           </div>
                           {r.status === 'PENDING' && (
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                              <Button variant="primary" size="sm" onClick={() => handleRespondRequest(r.id, 'ACCEPT')}>
-                                Accept
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                onClick={() => handleRespondRequest(r.id, 'ACCEPT')}
+                              >
+                                Accept Request
                               </Button>
-                              <Button variant="danger" size="sm" onClick={() => handleRespondRequest(r.id, 'REJECT')}>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleRespondRequest(r.id, 'REJECT')}
+                              >
                                 Reject
                               </Button>
                             </div>
@@ -327,32 +443,81 @@ export const RoommatesPage: React.FC = () => {
 
               {/* Sent Requests */}
               <div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>
+                <h3
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '1.25rem',
+                    fontWeight: 600,
+                    color: 'var(--ink)',
+                    marginBottom: '1rem',
+                  }}
+                >
                   Sent Requests ({requestsData?.sent_requests.length || 0})
                 </h3>
                 {requestsData?.sent_requests.length === 0 ? (
-                  <div style={{ padding: '1.5rem', backgroundColor: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-                    You have not sent any pending roommate requests.
+                  <div
+                    style={{
+                      padding: '1.5rem',
+                      backgroundColor: 'var(--surface)',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--text-muted)',
+                      fontSize: '0.875rem',
+                    }}
+                  >
+                    You have not submitted any pending roommate requests.
                   </div>
                 ) : (
                   <div style={{ display: 'grid', gap: '0.75rem' }}>
                     {requestsData?.sent_requests.map((r) => (
                       <Card key={r.id}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                          }}
+                        >
                           <div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                              <strong style={{ fontSize: '1.0625rem' }}>{r.other_full_name}</strong>
-                              <Badge variant="neutral" size="sm">#{r.other_student_id}</Badge>
-                              <Badge variant={r.status === 'PENDING' ? 'warning' : r.status === 'ACCEPTED' ? 'success' : 'neutral'} size="sm">
+                              <strong
+                                style={{
+                                  fontFamily: 'var(--font-serif)',
+                                  fontSize: '1.0625rem',
+                                  fontWeight: 600,
+                                  color: 'var(--ink)',
+                                }}
+                              >
+                                {r.other_full_name}
+                              </strong>
+                              <Badge variant="neutral" size="sm">
+                                <span className="tabular-nums">#{r.other_student_id}</span>
+                              </Badge>
+                              <Badge
+                                variant={
+                                  r.status === 'PENDING'
+                                    ? 'warning'
+                                    : r.status === 'ACCEPTED'
+                                    ? 'success'
+                                    : 'neutral'
+                                }
+                                size="sm"
+                              >
                                 {r.status_display}
                               </Badge>
                             </div>
-                            <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>
-                              {r.other_branch} • Sent {r.created_at}
+                            <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                              {r.other_branch} • Sent <span className="tabular-nums">{r.created_at}</span>
                             </div>
                           </div>
                           {r.status === 'PENDING' && (
-                            <Button variant="outline" size="sm" onClick={() => handleCancelRequest(r.id)}>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => handleCancelRequest(r.id)}
+                            >
                               Cancel Request
                             </Button>
                           )}
@@ -370,46 +535,87 @@ export const RoommatesPage: React.FC = () => {
             <div>
               {group ? (
                 <Card style={{ maxWidth: '650px', margin: '0 auto' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '1rem',
+                      borderBottom: '1px solid var(--border)',
+                      paddingBottom: '0.75rem',
+                    }}
+                  >
                     <div>
-                      <h3 style={{ margin: '0 0 0.25rem', fontSize: '1.25rem', fontWeight: 700 }}>
+                      <h3
+                        style={{
+                          margin: '0 0 0.25rem',
+                          fontFamily: 'var(--font-serif)',
+                          fontSize: '1.25rem',
+                          fontWeight: 600,
+                          color: 'var(--ink)',
+                        }}
+                      >
                         Roommate Group #{group.id}
                       </h3>
-                      <div style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+                      <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
                         Target Room: <strong>{group.target_room.hostel_name} — Room {group.target_room.room_number}</strong>
                       </div>
                     </div>
-                    <Badge variant={group.is_confirmed ? 'success' : 'info'} size="md">
-                      {group.is_confirmed ? '✓ Confirmed Group' : 'Forming Group'}
+                    <Badge variant={group.is_confirmed ? 'success' : 'neutral'} size="md">
+                      {group.is_confirmed ? 'Confirmed Roster' : 'Forming Group'}
                     </Badge>
                   </div>
 
-                  <div style={{ marginBottom: '1.5rem', padding: '0.75rem', backgroundColor: 'var(--color-surface-hover)', borderRadius: 'var(--radius-md)' }}>
+                  <div
+                    style={{
+                      marginBottom: '1.25rem',
+                      padding: '0.75rem 1rem',
+                      backgroundColor: 'var(--bg)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius-sm)',
+                    }}
+                  >
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-                      <span>Capacity:</span>
-                      <strong>{group.member_count} of {group.capacity} Members</strong>
+                      <span style={{ color: 'var(--text-muted)' }}>Enrolled Capacity:</span>
+                      <strong className="tabular-nums" style={{ color: 'var(--ink)' }}>
+                        {group.member_count} of {group.capacity} Members
+                      </strong>
                     </div>
                   </div>
 
-                  <h4 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Group Members:</h4>
+                  <h4
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      color: 'var(--ink)',
+                      marginBottom: '0.75rem',
+                    }}
+                  >
+                    Group Scholars:
+                  </h4>
                   <div style={{ display: 'grid', gap: '0.5rem' }}>
                     {group.members.map((m) => (
                       <div
                         key={m.student_id}
                         style={{
                           padding: '0.75rem 1rem',
-                          borderRadius: 'var(--radius-md)',
-                          border: '1px solid var(--color-border)',
+                          borderRadius: 'var(--radius-sm)',
+                          border: '1px solid var(--border)',
+                          backgroundColor: 'var(--surface)',
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
                         }}
                       >
                         <div>
-                          <strong>{m.full_name}</strong> (#{m.student_id})
-                          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{m.branch}</div>
+                          <strong style={{ color: 'var(--ink)' }}>{m.full_name}</strong> (
+                          <span className="tabular-nums">#{m.student_id}</span>)
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{m.branch}</div>
                         </div>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Joined {m.joined_at}</span>
+                        <span className="tabular-nums" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          Joined {m.joined_at}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -417,17 +623,26 @@ export const RoommatesPage: React.FC = () => {
               ) : (
                 <div
                   style={{
-                    padding: '3rem',
+                    padding: '3rem 2rem',
                     textAlign: 'center',
-                    backgroundColor: 'var(--color-surface)',
-                    borderRadius: 'var(--radius-lg)',
-                    border: '1px solid var(--color-border)',
+                    backgroundColor: 'var(--surface)',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--border)',
                   }}
                 >
-                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👥</div>
-                  <h3 style={{ margin: '0 0 0.5rem' }}>No Active Roommate Group</h3>
-                  <p style={{ margin: '0 0 1.5rem', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-                    Once you send or accept a roommate request with a peer aligned on the same room, your group will be formed here automatically.
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '1.25rem',
+                      fontWeight: 600,
+                      color: 'var(--ink)',
+                      margin: '0 0 0.5rem',
+                    }}
+                  >
+                    No Active Roommate Group
+                  </h3>
+                  <p style={{ margin: '0 0 1.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                    Once mutual roommate requests are accepted for the same room target, your group configuration will appear here.
                   </p>
                   <Button variant="primary" onClick={() => setActiveTab('DISCOVER')}>
                     Discover Compatible Peers &rarr;
@@ -439,14 +654,22 @@ export const RoommatesPage: React.FC = () => {
 
           {/* TAB 4: PREFERENCES */}
           {activeTab === 'PREFERENCES' && (
-            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+            <div style={{ maxWidth: '640px', margin: '0 auto' }}>
               <Card>
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <h3 style={{ margin: '0 0 0.25rem', fontSize: '1.25rem', fontWeight: 700 }}>
+                <div style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem' }}>
+                  <h3
+                    style={{
+                      margin: '0 0 0.25rem',
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '1.25rem',
+                      fontWeight: 600,
+                      color: 'var(--ink)',
+                    }}
+                  >
                     7-Factor Lifestyle Questionnaire
                   </h3>
-                  <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>
-                    These responses power the university matching engine to pair you with like-minded scholars.
+                  <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                    Responses configure the university matching engine to evaluate compatibility across sleeping schedules, study habits, and cleanliness.
                   </p>
                 </div>
                 <PreferenceForm initialValues={preferences} onSave={handleSavePreferences} />
