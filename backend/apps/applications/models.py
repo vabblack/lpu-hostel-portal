@@ -1,6 +1,7 @@
 """
 Applications Models: Accommodation cycles, multi-choice applications, and status history.
 """
+import uuid
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -161,3 +162,79 @@ class ApplicationStatusHistory(models.Model):
 
     def __str__(self):
         return f"App #{self.application_id}: {self.from_status} -> {self.to_status} at {self.changed_at}"
+
+
+class PassType(models.TextChoices):
+    DAY_PASS = 'DAY_PASS', _('Day Pass (Local Outing)')
+    OUTSTATION_PASS = 'OUTSTATION_PASS', _('Outstation / Home Leave')
+    EMERGENCY_LEAVE = 'EMERGENCY_LEAVE', _('Emergency Leave')
+
+
+class GatePassStatusChoices(models.TextChoices):
+    SUBMITTED = 'SUBMITTED', _('Submitted')
+    PENDING_PARENT = 'PENDING_PARENT', _('Pending Parent Consent')
+    PENDING_WARDEN = 'PENDING_WARDEN', _('Pending Warden Approval')
+    APPROVED = 'APPROVED', _('Approved (Turnstile Ready)')
+    REJECTED = 'REJECTED', _('Rejected')
+    ACTIVE_OUTSIDE = 'ACTIVE_OUTSIDE', _('Checked Out (Outside)')
+    CLOSED_RETURNED = 'CLOSED_RETURNED', _('Closed (Returned)')
+    OVERDUE = 'OVERDUE', _('Overdue Return')
+
+
+class GatePass(models.Model):
+    """
+    Digital Outing & Gate Pass entity.
+    Supports turnstile QR tokens, parent consent, warden review, and departure/return logs.
+    """
+    student = models.ForeignKey(
+        'students.StudentProfile',
+        on_delete=models.CASCADE,
+        related_name='gate_passes',
+        verbose_name=_('Student')
+    )
+    pass_type = models.CharField(
+        _('Pass Type'),
+        max_length=20,
+        choices=PassType.choices,
+        default=PassType.DAY_PASS
+    )
+    destination = models.CharField(_('Destination'), max_length=200)
+    reason = models.TextField(_('Purpose / Reason'))
+    departure_date = models.DateTimeField(_('Departure Date & Time'))
+    expected_return_date = models.DateTimeField(_('Expected Return Date & Time'))
+    actual_exit_time = models.DateTimeField(_('Actual Exit Time'), null=True, blank=True)
+    actual_return_time = models.DateTimeField(_('Actual Return Time'), null=True, blank=True)
+    status = models.CharField(
+        _('Status'),
+        max_length=20,
+        choices=GatePassStatusChoices.choices,
+        default=GatePassStatusChoices.SUBMITTED,
+        db_index=True
+    )
+    parent_consent_at = models.DateTimeField(_('Parent Consent Timestamp'), null=True, blank=True)
+    warden = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='approved_gate_passes',
+        verbose_name=_('Approving Warden')
+    )
+    warden_approved_at = models.DateTimeField(_('Warden Approval Timestamp'), null=True, blank=True)
+    warden_remarks = models.TextField(_('Warden Remarks'), blank=True, default='')
+    qr_token = models.CharField(_('Turnstile QR Token'), max_length=64, unique=True, default=uuid.uuid4)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _('Gate Pass')
+        verbose_name_plural = _('Gate Passes')
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['student', 'status']),
+            models.Index(fields=['status', 'departure_date']),
+        ]
+
+    def __str__(self):
+        return f"Pass #{self.id} ({self.get_pass_type_display()}) - {self.student.student_id} [{self.status}]"
+

@@ -45,3 +45,34 @@ class ApiEndpointsTestCase(TestCase):
         data = resp.json()
         self.assertIn('csrfToken', data)
         self.assertTrue(bool(data['csrfToken']))
+
+    def test_api_economics_calculator_get(self):
+        resp = self.client.get(reverse('api:economics_calculator'), {
+            'category': 'STANDARD',
+            'seater_count': 2,
+            'cooling_type': 'AIR_CONDITIONED',
+            'is_edb_eligible': 'true',
+            'mess_cuisine': 'NORTH_INDIAN',
+            'meal_plan': 'FOUR_MEAL',
+            'estimated_kwh': '800.00',
+        })
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertIn('pricing', data)
+        self.assertIn('electricity', data)
+        self.assertIn('mess', data)
+        # Check EDB savings is 10,000
+        self.assertEqual(data['pricing']['edb_savings'], 10000.0)
+        self.assertEqual(data['pricing']['applicable_hostel_fee'], 133000.0)
+        # 800 kWh exceeds 750 kWh quota by 50 units
+        self.assertEqual(data['electricity']['overage_kwh'], 50.0)
+        self.assertEqual(data['electricity']['per_resident_share'], 212.5) # 50 * 8.5 / 2
+
+    def test_api_gatepass_unauthenticated(self):
+        resp = self.client.get(reverse('api:gatepass_list'))
+        self.assertEqual(resp.status_code, 401)
+
+    def test_api_rms_tickets_unauthenticated(self):
+        resp = self.client.get(reverse('api:rms_tickets'))
+        self.assertEqual(resp.status_code, 401)
+

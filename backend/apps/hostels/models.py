@@ -351,3 +351,96 @@ class Bed(models.Model):
 
     def __str__(self):
         return f"{self.room.room_number}-{self.bed_identifier} ({self.get_status_display()})"
+
+
+class RMSTradeCategoryChoices(models.TextChoices):
+    PLUMBING = 'PLUMBING', _('Plumbing & Water Supply')
+    ELECTRICAL = 'ELECTRICAL', _('Electrical & Lighting')
+    WIFI_LAN = 'WIFI_LAN', _('Wi-Fi / LAN Internet')
+    CARPENTRY = 'CARPENTRY', _('Carpentry & Furniture')
+    APPLIANCE = 'APPLIANCE', _('Appliance / Air Conditioning')
+    PEST_CONTROL = 'PEST_CONTROL', _('Pest Control & Sanitation')
+
+
+class RMSTicketPriorityChoices(models.TextChoices):
+    LOW = 'LOW', _('Low (48h SLA)')
+    MEDIUM = 'MEDIUM', _('Medium (24h SLA)')
+    HIGH = 'HIGH', _('High (12h SLA)')
+    EMERGENCY = 'EMERGENCY', _('Emergency (4h SLA)')
+
+
+class RMSTicketStatusChoices(models.TextChoices):
+    OPEN = 'OPEN', _('Open')
+    ASSIGNED = 'ASSIGNED', _('Assigned')
+    IN_PROGRESS = 'IN_PROGRESS', _('In Progress')
+    RESOLVED = 'RESOLVED', _('Resolved')
+    CLOSED = 'CLOSED', _('Closed')
+    ESCALATED = 'ESCALATED', _('Escalated')
+
+
+class RMSTicket(models.Model):
+    """
+    Relationship Management System (RMS) Room Maintenance Ticket.
+    Includes SLA tracking, trade categorization, caretaker assignments, and resolution notes.
+    """
+    ticket_number = models.CharField(_('Ticket Number'), max_length=32, unique=True, db_index=True)
+    student = models.ForeignKey(
+        'students.StudentProfile',
+        on_delete=models.CASCADE,
+        related_name='rms_tickets',
+        verbose_name=_('Reporting Student')
+    )
+    room = models.ForeignKey(
+        Room,
+        on_delete=models.CASCADE,
+        related_name='rms_tickets',
+        verbose_name=_('Room')
+    )
+    category = models.CharField(
+        _('Trade Category'),
+        max_length=20,
+        choices=RMSTradeCategoryChoices.choices,
+        default=RMSTradeCategoryChoices.ELECTRICAL
+    )
+    priority = models.CharField(
+        _('Priority'),
+        max_length=20,
+        choices=RMSTicketPriorityChoices.choices,
+        default=RMSTicketPriorityChoices.MEDIUM
+    )
+    status = models.CharField(
+        _('Status'),
+        max_length=20,
+        choices=RMSTicketStatusChoices.choices,
+        default=RMSTicketStatusChoices.OPEN,
+        db_index=True
+    )
+    title = models.CharField(_('Issue Title'), max_length=200)
+    description = models.TextField(_('Detailed Description'))
+    assigned_caretaker = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='assigned_rms_tickets',
+        verbose_name=_('Assigned Caretaker')
+    )
+    sla_deadline = models.DateTimeField(_('SLA Deadline'), db_index=True)
+    escalated_at = models.DateTimeField(_('Escalation Timestamp'), null=True, blank=True)
+    resolved_at = models.DateTimeField(_('Resolution Timestamp'), null=True, blank=True)
+    resolution_notes = models.TextField(_('Resolution Notes'), blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _('RMS Maintenance Ticket')
+        verbose_name_plural = _('RMS Maintenance Tickets')
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['category', 'status']),
+            models.Index(fields=['status', 'sla_deadline']),
+        ]
+
+    def __str__(self):
+        return f"{self.ticket_number} - {self.title} [{self.status}]"
+

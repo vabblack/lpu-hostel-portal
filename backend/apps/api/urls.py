@@ -14,6 +14,13 @@ from .views_roommates import (
     roommate_group_api_view,
 )
 from .views_applications import applications_api_view, dashboard_summary_view
+from .views_living import (
+    gate_pass_api_view,
+    gate_pass_action_view,
+    rms_tickets_api_view,
+    rms_ticket_update_view,
+    economics_calculator_api_view,
+)
 
 app_name = 'api'
 
@@ -43,4 +50,11 @@ urlpatterns = [
     # Applications & Summary
     path('applications/', applications_api_view, name='applications'),
     path('dashboard/summary/', dashboard_summary_view, name='dashboard_summary'),
+
+    # Student Living Experience (Outing Gate Passes, RMS Tickets, Residential Economics)
+    path('gatepass/', gate_pass_api_view, name='gatepass_list'),
+    path('gatepass/<int:pk>/action/', gate_pass_action_view, name='gatepass_action'),
+    path('rms/tickets/', rms_tickets_api_view, name='rms_tickets'),
+    path('rms/tickets/<int:pk>/update/', rms_ticket_update_view, name='rms_ticket_update'),
+    path('economics/calculator/', economics_calculator_api_view, name='economics_calculator'),
 ]
