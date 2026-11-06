@@ -38,7 +38,7 @@ export const PreferenceForm: React.FC<PreferenceFormProps> = ({ initialValues, o
         social_preference: socialPreference,
         temperature_pref: temperaturePref,
       });
-      setSuccessMsg('Preferences saved! Roommate compatibility scores are live.');
+      setSuccessMsg('7-Factor lifestyle preferences saved. Compatibility matching is active.');
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Failed to save preferences.');
     } finally {
@@ -56,10 +56,10 @@ export const PreferenceForm: React.FC<PreferenceFormProps> = ({ initialValues, o
   ) => (
     <div style={{ marginBottom: '1.25rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-        <label style={{ fontWeight: 600, fontSize: '0.875rem' }}>
-          {label} <span style={{ color: 'var(--color-primary)', fontSize: '0.75rem' }}>({weight})</span>
+        <label style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--ink)' }}>
+          {label} <span style={{ color: 'var(--primary)', fontSize: '0.75rem', fontWeight: 500 }}>({weight})</span>
         </label>
-        <span style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--color-primary)' }}>
+        <span style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--primary)' }} className="tabular-nums">
           {value} / 5
         </span>
       </div>
@@ -70,14 +70,14 @@ export const PreferenceForm: React.FC<PreferenceFormProps> = ({ initialValues, o
         step={1}
         value={value}
         onChange={(e) => setValue(Number(e.target.value))}
-        style={{ width: '100%', accentColor: 'var(--color-primary)', cursor: 'pointer' }}
+        style={{ width: '100%', accentColor: 'var(--primary)', cursor: 'pointer' }}
       />
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           fontSize: '0.6875rem',
-          color: 'var(--color-text-muted)',
+          color: 'var(--text-muted)',
           marginTop: '0.2rem',
         }}
       >
@@ -93,8 +93,9 @@ export const PreferenceForm: React.FC<PreferenceFormProps> = ({ initialValues, o
         <div
           style={{
             padding: '0.75rem 1rem',
-            backgroundColor: 'var(--color-success-light)',
-            color: 'var(--color-success)',
+            backgroundColor: 'var(--status-success-bg)',
+            color: 'var(--status-success)',
+            border: '1px solid rgba(30, 107, 58, 0.25)',
             borderRadius: 'var(--radius-md)',
             marginBottom: '1rem',
             fontSize: '0.875rem',
@@ -109,8 +110,9 @@ export const PreferenceForm: React.FC<PreferenceFormProps> = ({ initialValues, o
         <div
           style={{
             padding: '0.75rem 1rem',
-            backgroundColor: 'var(--color-danger-light)',
-            color: 'var(--color-danger)',
+            backgroundColor: 'var(--status-danger-bg)',
+            color: 'var(--status-danger)',
+            border: '1px solid rgba(164, 22, 26, 0.25)',
             borderRadius: 'var(--radius-md)',
             marginBottom: '1rem',
             fontSize: '0.875rem',
@@ -158,14 +160,14 @@ export const PreferenceForm: React.FC<PreferenceFormProps> = ({ initialValues, o
 
       {/* Food Preference */}
       <div style={{ marginBottom: '1.25rem' }}>
-        <label style={{ display: 'block', fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-          5. Dietary Preference <span style={{ color: 'var(--color-primary)', fontSize: '0.75rem' }}>(11% weight)</span>
+        <label style={{ display: 'block', fontWeight: 600, fontSize: '0.875rem', color: 'var(--ink)', marginBottom: '0.5rem' }}>
+          5. Dietary Preference <span style={{ color: 'var(--primary)', fontSize: '0.75rem', fontWeight: 500 }}>(11% weight)</span>
         </label>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
           {[
-            { val: 'VEGETARIAN', label: '🥗 Pure Vegetarian' },
-            { val: 'NON_VEGETARIAN', label: '🍗 Non-Vegetarian' },
-            { val: 'FLEXIBLE', label: '🤝 Flexible / Either' },
+            { val: 'VEGETARIAN', label: 'Vegetarian' },
+            { val: 'NON_VEGETARIAN', label: 'Non-Vegetarian' },
+            { val: 'FLEXIBLE', label: 'Flexible / Either' },
           ].map((item) => (
             <label
               key={item.val}
@@ -173,12 +175,14 @@ export const PreferenceForm: React.FC<PreferenceFormProps> = ({ initialValues, o
                 flex: 1,
                 padding: '0.625rem 0.5rem',
                 borderRadius: 'var(--radius-md)',
-                border: `1px solid ${foodPreference === item.val ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                backgroundColor: foodPreference === item.val ? 'var(--color-primary-light)' : 'transparent',
+                border: `1px solid ${foodPreference === item.val ? 'var(--primary)' : 'var(--border)'}`,
+                backgroundColor: foodPreference === item.val ? '#FAF8F3' : 'var(--surface)',
                 textAlign: 'center',
                 fontSize: '0.8125rem',
                 cursor: 'pointer',
                 fontWeight: foodPreference === item.val ? 600 : 400,
+                color: foodPreference === item.val ? 'var(--primary)' : 'var(--text)',
+                transition: 'border-color var(--transition-fast), background-color var(--transition-fast)',
               }}
             >
               <input

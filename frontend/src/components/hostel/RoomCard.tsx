@@ -22,18 +22,18 @@ export const RoomCard: React.FC<RoomCardProps> = ({ room, onSelect, isSelected =
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        borderColor: isSelected ? 'var(--color-primary)' : undefined,
-        backgroundColor: isSelected ? 'var(--color-primary-light)' : undefined,
+        borderColor: isSelected ? 'var(--primary)' : 'var(--border)',
+        backgroundColor: isSelected ? '#FAF8F3' : 'var(--surface)',
       }}
     >
       {/* Top Tag Bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
         <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
-          <Badge variant="primary" size="sm">
+          <Badge variant="info" size="sm">
             {room.capacity}-Seater
           </Badge>
-          <Badge variant={isAc ? 'info' : 'neutral'} size="sm">
-            {isAc ? '❄️ AC' : '💨 Air-Cooled'}
+          <Badge variant={isAc ? 'warning' : 'neutral'} size="sm">
+            {isAc ? 'Air-Conditioned' : 'Air-Cooled'}
           </Badge>
           <Badge variant="neutral" size="sm">
             {room.category_display}
@@ -47,14 +47,14 @@ export const RoomCard: React.FC<RoomCardProps> = ({ room, onSelect, isSelected =
       {/* Room Header */}
       <div style={{ marginBottom: '0.75rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-          <h4 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 700 }}>
-            Room {room.room_number}
+          <h4 style={{ margin: 0, fontSize: '1.125rem', fontFamily: 'var(--font-serif)', fontWeight: 600, color: 'var(--ink)' }}>
+            Room <span className="tabular-nums">{room.room_number}</span>
           </h4>
-          <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--color-text-secondary)' }}>
+          <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-muted)' }}>
             {room.hostel_name}
           </span>
         </div>
-        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
           {room.block_name} • Floor {room.floor_number} • {room.washroom_type_display}
         </div>
       </div>
@@ -65,22 +65,26 @@ export const RoomCard: React.FC<RoomCardProps> = ({ room, onSelect, isSelected =
           style={{
             fontSize: '0.75rem',
             padding: '0.35rem 0.6rem',
-            backgroundColor: 'var(--color-surface-hover)',
+            backgroundColor: '#FAF8F3',
+            border: '1px solid var(--border)',
             borderRadius: 'var(--radius-sm)',
             marginBottom: '0.75rem',
             display: 'flex',
             justifyContent: 'space-between',
+            fontFamily: 'var(--font-sans)',
           }}
         >
-          <span style={{ color: 'var(--color-text-secondary)' }}>⚡ Electricity Quota:</span>
-          <span style={{ fontWeight: 600 }}>{room.quota_kwh} kWh / session</span>
+          <span style={{ color: 'var(--text-muted)' }}>Electricity Quota:</span>
+          <span style={{ fontWeight: 600, color: 'var(--ink)' }} className="tabular-nums">
+            {room.quota_kwh} kWh / session
+          </span>
         </div>
       )}
 
       {/* Bed Roster Status */}
       <div style={{ marginBottom: '1rem' }}>
-        <div style={{ fontSize: '0.6875rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>
-          Bed Vacancy Roster:
+        <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+          Bed Roster:
         </div>
         <BedIndicator beds={room.beds} />
       </div>
@@ -90,7 +94,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({ room, onSelect, isSelected =
         style={{
           marginTop: 'auto',
           paddingTop: '0.75rem',
-          borderTop: '1px solid var(--color-border)',
+          borderTop: '1px solid var(--border)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -99,17 +103,17 @@ export const RoomCard: React.FC<RoomCardProps> = ({ room, onSelect, isSelected =
         <div>
           {room.standard_fee ? (
             <div>
-              <div style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--color-primary)' }}>
-                ₹{room.standard_fee.toLocaleString('en-IN')}
+              <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.0625rem', fontWeight: 600, color: 'var(--ink)' }} className="tabular-nums">
+                ₹{Number(room.standard_fee).toLocaleString('en-IN')}
               </div>
               {room.edb_fee && (
-                <div style={{ fontSize: '0.6875rem', color: 'var(--color-success)', fontWeight: 600 }}>
-                  EDB: ₹{room.edb_fee.toLocaleString('en-IN')} (Save ₹{(room.standard_fee - room.edb_fee).toLocaleString('en-IN')})
+                <div style={{ fontSize: '0.6875rem', color: 'var(--status-success)', fontWeight: 600 }} className="tabular-nums">
+                  EDB: ₹{Number(room.edb_fee).toLocaleString('en-IN')} (Save ₹{Number(room.standard_fee - room.edb_fee).toLocaleString('en-IN')})
                 </div>
               )}
             </div>
           ) : (
-            <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Fee on request</span>
+            <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Fee on request</span>
           )}
         </div>
 
@@ -120,7 +124,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({ room, onSelect, isSelected =
             onClick={() => onSelect(room)}
             disabled={!hasVacant}
           >
-            {isSelected ? '✓ Selected' : hasVacant ? 'Select Bed' : 'Full'}
+            {isSelected ? '✓ Selected' : hasVacant ? 'Select Bed' : 'Occupied'}
           </Button>
         )}
       </div>
