@@ -38,3 +38,10 @@ class ApiEndpointsTestCase(TestCase):
         data = resp.json()
         self.assertIn('campus', data)
         self.assertIn('total_hostels', data['campus'])
+
+    def test_api_csrf_token(self):
+        resp = self.client.get(reverse('api:auth_csrf'))
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertIn('csrfToken', data)
+        self.assertTrue(bool(data['csrfToken']))

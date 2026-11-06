@@ -60,10 +60,14 @@ def _serialize_user(user, request=None):
             'gender': registry.gender if registry else '',
             'gender_display': registry.get_gender_display() if registry else '',
             'enrollment_status': registry.enrollment_status if registry else '',
-            'cgpa': float(registry.cgpa) if registry and registry.cgpa is not None else None,
+            'cgpa': float(getattr(registry, 'cgpa', 0)) if registry and getattr(registry, 'cgpa', None) is not None else None,
             'phone_number': registry.phone_number if registry else '',
             'branch': registry.branch.name if registry and registry.branch else '',
-            'department': registry.branch.department.name if registry and registry.branch and registry.branch.department else '',
+            'department': (
+                registry.branch.program.department.name
+                if registry and registry.branch and hasattr(registry.branch, 'program') and registry.branch.program and hasattr(registry.branch.program, 'department') and registry.branch.program.department
+                else ''
+            ),
             'emergency_contact_name': profile.emergency_contact_name or '',
             'emergency_contact_phone': profile.emergency_contact_phone or '',
             'profile_completed': profile.profile_completed,

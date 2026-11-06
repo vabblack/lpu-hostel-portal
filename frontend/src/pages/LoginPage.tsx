@@ -176,7 +176,7 @@ export const LoginPage: React.FC = () => {
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button
               type="button"
-              onClick={() => handleQuickFill('12400001', 'Pass1234!')}
+              onClick={() => handleQuickFill('12400001', 'Password123!')}
               style={{
                 background: 'var(--surface)',
                 border: '1px solid var(--border-strong)',
@@ -191,7 +191,7 @@ export const LoginPage: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => handleQuickFill('admin@lpu.in', 'Admin@1234')}
+              onClick={() => handleQuickFill('admin@lpu.in', 'Password123!')}
               style={{
                 background: 'var(--surface)',
                 border: '1px solid var(--border-strong)',

@@ -17,6 +17,16 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-dev-fallback-key-20
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 ALLOWED_HOSTS = [h.strip() for h in os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if h.strip()]
 
+# CSRF Trusted Origins (enables Vite development server and local API clients)
+CSRF_TRUSTED_ORIGINS = [
+    orig.strip()
+    for orig in os.getenv(
+        'CSRF_TRUSTED_ORIGINS',
+        'http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:8000,http://localhost:8000'
+    ).split(',')
+    if orig.strip()
+]
+
 # Application definition
 DJANGO_APPS = [
     'django.contrib.admin',
