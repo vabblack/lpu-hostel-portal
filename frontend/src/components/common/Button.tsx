@@ -25,47 +25,48 @@ export const Button: React.FC<ButtonProps> = ({
     alignItems: 'center',
     justifyContent: 'center',
     gap: '0.5rem',
-    fontWeight: 'var(--font-weight-medium)',
+    fontFamily: 'var(--font-sans)',
+    fontWeight: 600,
     borderRadius: 'var(--radius-md)',
     cursor: disabled || isLoading ? 'not-allowed' : 'pointer',
-    opacity: disabled || isLoading ? 0.65 : 1,
-    transition: 'all var(--transition-fast)',
+    opacity: disabled || isLoading ? 0.6 : 1,
+    transition: 'background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast)',
     textDecoration: 'none',
     border: '1px solid transparent',
-    fontFamily: 'inherit',
+    letterSpacing: '0.01em',
     ...style,
   };
 
   const sizeStyles: Record<ButtonSize, React.CSSProperties> = {
-    sm: { padding: '0.375rem 0.75rem', fontSize: '0.8125rem' },
-    md: { padding: '0.5rem 1rem', fontSize: '0.875rem' },
-    lg: { padding: '0.75rem 1.5rem', fontSize: '1rem' },
+    sm: { padding: '6px 12px', fontSize: '0.8125rem', height: '32px' },
+    md: { padding: '10px 18px', fontSize: '0.875rem', height: '40px' },
+    lg: { padding: '12px 24px', fontSize: '1rem', height: '48px' },
   };
 
   const variantStyles: Record<ButtonVariant, React.CSSProperties> = {
     primary: {
-      backgroundColor: 'var(--color-primary)',
-      color: '#ffffff',
-      borderColor: 'var(--color-primary)',
+      backgroundColor: 'var(--primary)',
+      color: '#FFFFFF',
+      borderColor: 'var(--primary)',
     },
     secondary: {
-      backgroundColor: 'var(--color-royal-blue)',
-      color: '#ffffff',
-      borderColor: 'var(--color-royal-blue)',
+      backgroundColor: 'var(--surface)',
+      color: 'var(--text)',
+      borderColor: 'var(--border-strong)',
     },
     outline: {
       backgroundColor: 'transparent',
-      color: 'var(--color-primary)',
-      borderColor: 'var(--color-border)',
+      color: 'var(--text)',
+      borderColor: 'var(--border-strong)',
     },
     danger: {
-      backgroundColor: 'var(--color-danger)',
-      color: '#ffffff',
-      borderColor: 'var(--color-danger)',
+      backgroundColor: 'var(--surface)',
+      color: 'var(--status-danger)',
+      borderColor: 'rgba(164, 22, 26, 0.4)',
     },
     ghost: {
       backgroundColor: 'transparent',
-      color: 'var(--color-text-secondary)',
+      color: 'var(--text-muted)',
       borderColor: 'transparent',
     },
   };

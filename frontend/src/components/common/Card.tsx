@@ -16,12 +16,12 @@ export const Card: React.FC<CardProps> = ({
   hoverable = false,
 }) => {
   const cardStyle: React.CSSProperties = {
-    backgroundColor: 'var(--color-surface)',
-    borderRadius: 'var(--radius-lg)',
-    border: '1px solid var(--color-border)',
-    boxShadow: 'var(--shadow-sm)',
-    padding: 'var(--space-6)',
-    transition: 'all var(--transition-normal)',
+    backgroundColor: 'var(--surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--border)',
+    boxShadow: 'none',
+    padding: 'var(--space-md)',
+    transition: 'border-color var(--transition-fast), background-color var(--transition-fast)',
     cursor: onClick ? 'pointer' : 'default',
     ...style,
   };

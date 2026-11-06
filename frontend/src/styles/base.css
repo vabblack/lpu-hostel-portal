@@ -6,15 +6,22 @@
   padding: 0;
 }
 
+::selection {
+  background-color: #FBF1DC;
+  color: #1A1A1A;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans);
   font-size: 1rem;
-  color: var(--color-text-primary);
-  background-color: var(--color-bg);
-  line-height: 1.6;
+  color: var(--text);
+  background-color: var(--bg);
+  line-height: 1.5;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  caret-color: var(--primary);
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {
@@ -27,23 +34,47 @@ body {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 var(--space-md);
 }
 
 a {
-  color: var(--color-royal-blue);
-  text-decoration: none;
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
   transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--color-primary);
+  color: var(--primary-hover);
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: var(--color-primary-dark);
-  font-weight: 700;
+  font-family: var(--font-serif);
+  color: var(--ink);
+  font-weight: 600;
   line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+h4 {
+  font-size: 1.125rem;
+}
+
+p {
+  color: var(--text);
+  max-width: 75ch;
 }
 
 input, select, textarea, button {
@@ -51,16 +82,22 @@ input, select, textarea, button {
   color: inherit;
 }
 
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible {
+  outline: 2px solid var(--focus) !important;
+  outline-offset: 2px !important;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.card-hoverable {
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
 }
 
 .card-hoverable:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-border-dark);
+  border-color: var(--border-strong) !important;
+  background-color: var(--surface) !important;
 }
 
 @keyframes spin {
@@ -75,10 +112,10 @@ input:focus, select:focus, textarea:focus {
 @keyframes modalSlideIn {
   from {
     opacity: 0;
-    transform: scale(0.96) translateY(-10px);
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
   }
 }

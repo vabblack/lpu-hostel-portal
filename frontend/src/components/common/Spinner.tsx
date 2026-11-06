@@ -6,7 +6,7 @@ interface SpinnerProps {
 }
 
 export const Spinner: React.FC<SpinnerProps> = ({ size = 'md', label }) => {
-  const sizePx = size === 'sm' ? '1.25rem' : size === 'lg' ? '2.5rem' : '1.75rem';
+  const sizePx = size === 'sm' ? '1.25rem' : size === 'lg' ? '2.25rem' : '1.75rem';
 
   return (
     <div
@@ -23,14 +23,14 @@ export const Spinner: React.FC<SpinnerProps> = ({ size = 'md', label }) => {
         style={{
           width: sizePx,
           height: sizePx,
-          border: '3px solid var(--color-surface-hover)',
-          borderTopColor: 'var(--color-primary)',
+          border: '2px solid var(--border)',
+          borderTopColor: 'var(--primary)',
           borderRadius: '50%',
-          animation: 'spin 0.75s linear infinite',
+          animation: 'spin 0.6s linear infinite',
         }}
       />
       {label && (
-        <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+        <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sans)' }}>
           {label}
         </span>
       )}
