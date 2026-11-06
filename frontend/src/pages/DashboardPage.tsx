@@ -9,6 +9,7 @@ import { Button } from '../components/common/Button';
 import { Spinner } from '../components/common/Spinner';
 import { GatePassWidget } from '../components/living/GatePassWidget';
 import { RMSDeskWidget } from '../components/living/RMSDeskWidget';
+import { WardenCommandCenter } from '../components/warden/WardenCommandCenter';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -30,7 +31,16 @@ export const DashboardPage: React.FC = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  if (isLoading) return <Spinner label="Loading student dashboard..." />;
+  if (isLoading) return <Spinner label="Loading dashboard..." />;
+
+  // Render Warden & Administrator Command Center if logged in with staff credentials
+  if (user && (user.role === 'WARDEN' || user.role === 'ADMIN')) {
+    return (
+      <div className="container">
+        <WardenCommandCenter userEmail={user.email} role={user.role} />
+      </div>
+    );
+  }
 
   const student = user?.student;
   const activeAllocation = student?.active_allocation;

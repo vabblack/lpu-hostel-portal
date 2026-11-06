@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FloorRoomDetail } from '../../types/hostel';
 import { X, Bed, Zap, Snowflake, Wind, Check, ShieldCheck, Tag } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
 
@@ -39,33 +40,42 @@ export const RoomInspectionModal: React.FC<RoomInspectionModalProps> = ({
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(26, 26, 26, 0.65)',
-        backdropFilter: 'blur(3px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        padding: '1rem',
-      }}
-      onClick={onClose}
-    >
-      <div
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15 }}
         style={{
-          backgroundColor: '#FFFFFF',
-          borderRadius: '4px',
-          border: '1px solid var(--border)',
-          width: '100%',
-          maxWidth: '580px',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(26, 26, 26, 0.65)',
+          backdropFilter: 'blur(3px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '1rem',
         }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={onClose}
       >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96, y: 8 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '4px',
+            border: '1px solid var(--border)',
+            width: '100%',
+            maxWidth: '580px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
         {/* Header with Blueprint Architectural Stamp */}
         <div
           style={{
@@ -376,7 +386,8 @@ export const RoomInspectionModal: React.FC<RoomInspectionModalProps> = ({
             </Button>
           </div>
         </div>
-      </div>
-    </div>
-  );
+      </motion.div>
+    </motion.div>
+  </AnimatePresence>
+);
 };
