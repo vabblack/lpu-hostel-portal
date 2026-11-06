@@ -112,3 +112,4 @@ export interface EconomicsCalculationResult {
     total_annual_cost: number;
   };
 }
+

@@ -534,3 +534,4 @@ export const EconomicsCalculatorModal: React.FC<EconomicsCalculatorModalProps> =
     </div>
   );
 };
+

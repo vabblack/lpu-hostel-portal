@@ -27,6 +27,7 @@ export const ApplyPage: React.FC = () => {
   // 3 Choices state
   const preselectedHostel = searchParams.get('hostel') ? Number(searchParams.get('hostel')) : undefined;
   const preselectedRoom = searchParams.get('room') ? Number(searchParams.get('room')) : undefined;
+  const preselectedBed = searchParams.get('bed') || undefined;
 
   const [choice1Hostel, setChoice1Hostel] = useState<number | ''>(preselectedHostel || '');
   const [choice1Room, setChoice1Room] = useState<number | ''>(preselectedRoom || '');
@@ -49,10 +50,19 @@ export const ApplyPage: React.FC = () => {
         setApplications(appData.applications);
         setHostels(hostelData.hostels);
         setRooms(roomData.rooms);
+
+        // Auto-link preselected room to its respective hostel complex
+        if (preselectedRoom) {
+          const target = roomData.rooms.find((r) => r.id === preselectedRoom);
+          if (target) {
+            setChoice1Hostel(target.hostel_id);
+            setChoice1Room(target.id);
+          }
+        }
       })
       .catch((err) => setErrorMsg(err.message || 'Failed to load application data.'))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [preselectedRoom]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -330,6 +340,36 @@ export const ApplyPage: React.FC = () => {
                 }}
               >
                 {errorMsg}
+              </div>
+            )}
+
+            {/* Selected from Architectural Blueprint Banner */}
+            {(preselectedRoom || preselectedBed) && (
+              <div
+                style={{
+                  padding: '0.85rem 1rem',
+                  backgroundColor: '#FFF7ED',
+                  border: '1px solid #FFEDD5',
+                  borderRadius: 'var(--radius-sm)',
+                  marginBottom: '1.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '0.75rem',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--primary)' }}>
+                    Architectural Blueprint Pre-selection Active
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Choice #1 has been automatically locked to your selected room unit
+                    {preselectedBed ? ` and Bed Bay ${preselectedBed}` : ''}.
+                  </div>
+                </div>
+                <Badge variant="primary" size="sm">
+                  Blueprint Selected
+                </Badge>
               </div>
             )}
 

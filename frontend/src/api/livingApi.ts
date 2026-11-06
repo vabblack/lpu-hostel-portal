@@ -71,3 +71,4 @@ export const livingApi = {
       body: JSON.stringify(params),
     }),
 };
+

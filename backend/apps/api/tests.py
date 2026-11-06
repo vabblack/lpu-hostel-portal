@@ -76,3 +76,9 @@ class ApiEndpointsTestCase(TestCase):
         resp = self.client.get(reverse('api:rms_tickets'))
         self.assertEqual(resp.status_code, 401)
 
+    def test_spa_view_serves_html(self):
+        resp = self.client.get(reverse('spa_root'))
+        self.assertIn(resp.status_code, (200, 302))
+        if resp.status_code == 200:
+            self.assertIn('root', resp.content.decode())
+

@@ -460,3 +460,4 @@ export const GatePassWidget: React.FC = () => {
     </div>
   );
 };
+

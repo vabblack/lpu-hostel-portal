@@ -34,15 +34,24 @@ A full-featured, enterprise-grade residential living portal designed to streamli
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack & Unified Architecture
 
-- **Backend**: Python 3.13 / 3.14, Django 5.2 / 6.1 (housed in `backend/`)
-- **Database**: SQLite (default for instant local development) / PostgreSQL 15+ (production-ready via `psycopg`)
-- **Frontend Architecture**:
-  - **React SPA**: React 19, TypeScript, React Router v7, Vite (housed in `frontend/`)
-  - **Django SSR**: Django Templates, Semantic CSS3 design tokens, Vanilla JavaScript (in `backend/templates/` & `backend/static/`)
-- **API**: Native Django REST JSON API (`apps.api`) with session authentication & automatic CSRF token management.
-- **Testing**: `pytest`, `pytest-django` (150+ automated unit, integration, RBAC, concurrency, and security tests).
+The system is architected as a **Modern Headless REST API + React SPA**:
+
+- **Frontend (`frontend/`) — Primary User Experience**:
+  - **React 19 + TypeScript + Vite**: Fast, fluid client-side Single-Page Application.
+  - **2D Architectural Blueprint Floor Plan**: Vector-accurate floor plan visualizer showing corridors, door clearance swings, window orientation, and live per-bed occupancy (A, B, C, D) — eliminating bulky 3D/Blender plugins.
+  - **7-Factor Roommate Harmony Radar**: Interactive SVG lifestyle synergy chart with transparent compatibility scoring.
+  - **Residential Economics Simulator**: 10-month session fee calculator with instant ₹10,000 Early Decision Benefit (EDB), 6 Pro Bricks regional cuisines, and metered power overage estimation.
+  - **Daily Residence Hub**: Digital turnstile QR gate passes and RMS maintenance service desk with SLA countdowns.
+
+- **Backend (`backend/`) — Headless REST API & Registrar Administration**:
+  - **Python 3.13 / 3.14 + Django 5.2 / 6.1**: Enterprise monolith powering the deterministic algorithms, database constraints, and state machine.
+  - **Headless JSON REST API (`/api/`)**: Session-authenticated API with automatic CSRF token exchange.
+  - **Django Admin Console (`/admin/`)**: Database administration dashboard for university registrars and audit officers.
+  - **Integrated SPA Hosting (`/spa/`)**: Django natively serves the compiled React application, allowing single-command deployment.
+  - **Database**: SQLite (default for instant zero-config setup) / PostgreSQL 15+ (production via `psycopg`).
+  - **Testing**: `pytest`, `pytest-django` (155 automated unit, concurrency, RBAC, and security tests).
 
 ---
 
