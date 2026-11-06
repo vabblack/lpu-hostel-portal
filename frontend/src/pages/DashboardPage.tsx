@@ -7,6 +7,8 @@ import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { Spinner } from '../components/common/Spinner';
+import { GatePassWidget } from '../components/living/GatePassWidget';
+import { RMSDeskWidget } from '../components/living/RMSDeskWidget';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -335,6 +337,31 @@ export const DashboardPage: React.FC = () => {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Student Living Experience Hub: Turnstile Gate Pass & RMS Maintenance */}
+      <section style={{ marginBottom: '2.5rem' }}>
+        <h2
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '1.375rem',
+            fontWeight: 600,
+            color: 'var(--ink)',
+            marginBottom: '1rem',
+          }}
+        >
+          Daily Residence &amp; Campus Operations
+        </h2>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+            gap: '1.25rem',
+          }}
+        >
+          <GatePassWidget />
+          <RMSDeskWidget />
+        </div>
       </section>
 
       {/* Quick Services */}
