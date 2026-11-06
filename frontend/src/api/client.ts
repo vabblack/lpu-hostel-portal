@@ -9,14 +9,14 @@ function getCookie(name: string): string | null {
   return match ? decodeURIComponent(match[3]) : null;
 }
 
-export async function getCsrfToken(): Promise<string> {
-  let token = getCookie('csrftoken');
+export async function getCsrfToken(forceRefresh = false): Promise<string> {
+  let token = forceRefresh ? null : getCookie('csrftoken');
   if (!token) {
     try {
       const resp = await fetch('/api/auth/csrf/', { credentials: 'include' });
       if (resp.ok) {
         const data = await resp.json();
-        token = data.csrfToken || null;
+        token = data.csrfToken || getCookie('csrftoken') || null;
       }
     } catch {
       // ignore
@@ -27,6 +27,7 @@ export async function getCsrfToken(): Promise<string> {
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
+  _isRetry?: boolean;
 }
 
 export async function apiClient<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
@@ -52,7 +53,7 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
   const method = (options.method || 'GET').toUpperCase();
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
     headers['Content-Type'] = 'application/json';
-    const csrfToken = await getCsrfToken();
+    const csrfToken = await getCsrfToken(options._isRetry);
     if (csrfToken) {
       headers['X-CSRFToken'] = csrfToken;
     }
@@ -70,6 +71,21 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
   const data = isJson ? await response.json() : await response.text();
 
   if (!response.ok) {
+    // If CSRF token mismatch / 403 on state-modifying requests, retry once with a freshly requested token
+    if (response.status === 403 && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method) && !options._isRetry) {
+      const freshToken = await getCsrfToken(true);
+      if (freshToken) {
+        return apiClient<T>(endpoint, {
+          ...options,
+          _isRetry: true,
+          headers: {
+            ...headers,
+            'X-CSRFToken': freshToken,
+          },
+        });
+      }
+    }
+
     const errorMsg = data && typeof data === 'object' && 'error' in data 
       ? (data as { error: string }).error 
       : `Request failed with status ${response.status}`;
