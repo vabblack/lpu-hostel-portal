@@ -56,19 +56,28 @@ def _get_student_or_error(request):
 @require_http_methods(["GET", "POST"])
 def gate_pass_api_view(request):
     """
-    GET: List student's gate passes.
+    GET: List gate passes (student's own passes, or all building passes for wardens).
     POST: Submit a new gate pass request.
     """
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Authentication required.'}, status=401)
+
     student, error_resp = _get_student_or_error(request)
-    if error_resp:
+    if error_resp and getattr(request.user, 'role', None) not in (Role.WARDEN, Role.ADMIN):
         return error_resp
 
     if request.method == 'GET':
-        passes = GatePass.objects.filter(student=student).order_by('-created_at')
+        if student:
+            passes = GatePass.objects.filter(student=student).order_by('-created_at')
+        else:
+            passes = GatePass.objects.all().select_related('student', 'student__user').order_by('-created_at')[:60]
+
         data = []
         for p in passes:
             data.append({
                 'id': p.id,
+                'student_name': getattr(p.student, 'full_name', 'Student'),
+                'student_id': getattr(p.student, 'student_id', 'N/A'),
                 'pass_type': p.pass_type,
                 'pass_type_display': p.get_pass_type_display(),
                 'destination': p.destination,
