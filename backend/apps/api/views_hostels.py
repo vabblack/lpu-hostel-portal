@@ -18,29 +18,59 @@ def hostel_list_view(request):
     gender_filter = request.GET.get('gender')
     status_filter = request.GET.get('status')
 
-    qs = Hostel.objects.all().order_by('name')
+    qs = Hostel.objects.all().order_by('name').annotate(
+        annotated_total_rooms=Count('blocks__floors__rooms', distinct=True),
+        annotated_ac_rooms=Count(
+            'blocks__floors__rooms',
+            filter=Q(blocks__floors__rooms__is_air_conditioned=True),
+            distinct=True
+        ),
+        annotated_total_beds=Count('blocks__floors__rooms__beds', distinct=True),
+        annotated_vacant_beds=Count(
+            'blocks__floors__rooms__beds',
+            filter=Q(blocks__floors__rooms__beds__status=BedStatus.VACANT),
+            distinct=True
+        ),
+        annotated_occupied_beds=Count(
+            'blocks__floors__rooms__beds',
+            filter=Q(blocks__floors__rooms__beds__status=BedStatus.OCCUPIED),
+            distinct=True
+        ),
+    )
 
     if gender_filter:
         qs = qs.filter(gender_policy=gender_filter)
     if status_filter:
         qs = qs.filter(status=status_filter)
 
+    # Batch query distinct room types per hostel for fee calculation without N+1 queries
+    from collections import defaultdict
+    from apps.hostels.services.fee_structure import get_fee_tier
+
+    room_types = Room.objects.filter(floor__block__hostel__in=qs).values(
+        'floor__block__hostel_id', 'category', 'capacity', 'is_air_conditioned'
+    ).distinct()
+
+    hostel_fees = defaultdict(list)
+    for rt in room_types:
+        h_id = rt['floor__block__hostel_id']
+        cooling = 'AIR_CONDITIONED' if rt['is_air_conditioned'] else 'AIR_COOLED'
+        tier = get_fee_tier(rt['category'], rt['capacity'], cooling)
+        if tier and tier.standard_fee:
+            hostel_fees[h_id].append(float(tier.standard_fee))
+
     hostels_data = []
     for h in qs:
-        # Aggregated room & bed metrics
-        rooms_qs = Room.objects.filter(floor__block__hostel=h)
-        total_rooms = rooms_qs.count()
-        ac_rooms = rooms_qs.filter(is_air_conditioned=True).count()
+        total_rooms = h.annotated_total_rooms
+        ac_rooms = h.annotated_ac_rooms
         cooler_rooms = total_rooms - ac_rooms
 
-        beds_qs = Bed.objects.filter(room__floor__block__hostel=h)
-        total_beds = beds_qs.count()
-        vacant_beds = beds_qs.filter(status=BedStatus.VACANT).count()
-        occupied_beds = beds_qs.filter(status=BedStatus.OCCUPIED).count()
+        total_beds = h.annotated_total_beds
+        vacant_beds = h.annotated_vacant_beds
+        occupied_beds = h.annotated_occupied_beds
         occupancy_pct = round((occupied_beds / total_beds * 100), 1) if total_beds > 0 else 0
 
-        # Calculate fee ranges
-        fees = [r.standard_fee for r in rooms_qs if r.standard_fee is not None]
+        fees = hostel_fees.get(h.id, [])
         min_fee = min(fees) if fees else None
         max_fee = max(fees) if fees else None
 

@@ -3,6 +3,8 @@
  * Automatically manages CSRF tokens and session cookies.
  */
 
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+
 function getCookie(name: string): string | null {
   if (typeof document === 'undefined') return null;
   const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
@@ -13,7 +15,7 @@ export async function getCsrfToken(forceRefresh = false): Promise<string> {
   let token = forceRefresh ? null : getCookie('csrftoken');
   if (!token) {
     try {
-      const resp = await fetch('/api/auth/csrf/', { credentials: 'include' });
+      const resp = await fetch(`${API_BASE}/api/auth/csrf/`, { credentials: 'include' });
       if (resp.ok) {
         const data = await resp.json();
         token = data.csrfToken || getCookie('csrftoken') || null;
@@ -31,7 +33,9 @@ interface RequestOptions extends RequestInit {
 }
 
 export async function apiClient<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-  let url = endpoint;
+  let url = endpoint.startsWith('http://') || endpoint.startsWith('https://')
+    ? endpoint
+    : `${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
   if (options.params) {
     const searchParams = new URLSearchParams();
     Object.entries(options.params).forEach(([k, v]) => {

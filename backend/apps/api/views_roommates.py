@@ -161,11 +161,17 @@ def discover_candidates_view(request):
     recommendations = []
     if cycle and has_pref:
         recs = get_roommate_recommendations(student, cycle, limit=15)
+        pending_cand_ids = set(
+            RoommateRequest.objects.filter(
+                sender=student,
+                cycle=cycle,
+                status=RequestStatus.PENDING,
+                receiver__in=[r['candidate'] for r in recs]
+            ).values_list('receiver_id', flat=True)
+        )
         for r in recs:
             cand = r['candidate']
-            has_pending = RoommateRequest.objects.filter(
-                sender=student, receiver=cand, cycle=cycle, status=RequestStatus.PENDING
-            ).exists()
+            has_pending = cand.pk in pending_cand_ids
 
             recommendations.append({
                 'student_id': cand.student_id,

@@ -5,6 +5,7 @@ Shared across development and production environments.
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -14,11 +15,25 @@ load_dotenv(BASE_DIR / '.env')
 load_dotenv(BASE_DIR.parent / '.env')
 
 # Security settings from environment
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-dev-fallback-key-2026')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', os.getenv('SECRET_KEY', 'django-insecure-dev-fallback-key-2026'))
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 ALLOWED_HOSTS = [h.strip() for h in os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if h.strip()]
 
-# CSRF Trusted Origins (enables Vite development server and local API clients)
+# CORS Configuration (enables decoupled React frontend on Vercel)
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        'CORS_ALLOWED_ORIGINS',
+        'http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:8000,http://localhost:8000'
+    ).split(',')
+    if origin.strip()
+]
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^https:\/\/.*\.vercel\.app$',
+]
+
+# CSRF Trusted Origins (enables Vite development server and Vercel production origin)
 CSRF_TRUSTED_ORIGINS = [
     orig.strip()
     for orig in os.getenv(
@@ -38,6 +53,10 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
+THIRD_PARTY_APPS = [
+    'corsheaders',
+]
+
 LOCAL_APPS = [
     'apps.accounts.apps.AccountsConfig',
     'apps.academics.apps.AcademicsConfig',
@@ -51,10 +70,12 @@ LOCAL_APPS = [
     'apps.api.apps.ApiConfig',
 ]
 
-INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -84,10 +105,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database Configuration
-# Defaults to sqlite3 for frictionless local development. Set DB_ENGINE=postgresql in .env for PostgreSQL.
-DB_ENGINE = os.getenv('DB_ENGINE', 'sqlite3').lower()
-
-if DB_ENGINE == 'postgresql':
+# Automatically supports DATABASE_URL (Supabase / Render) with SSL, falling back to local postgresql or sqlite3.
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=int(os.getenv('CONN_MAX_AGE', '0')),
+            conn_health_checks=True,
+            ssl_require=True if ('supabase' in DATABASE_URL or os.getenv('DB_SSL_REQUIRE', 'False').lower() in ('true', '1')) else False,
+        )
+    }
+elif os.getenv('DB_ENGINE', 'sqlite3').lower() == 'postgresql':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -96,7 +125,7 @@ if DB_ENGINE == 'postgresql':
             'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
             'HOST': os.getenv('DB_HOST', '127.0.0.1'),
             'PORT': os.getenv('DB_PORT', '5432'),
-            'CONN_MAX_AGE': 60,
+            'CONN_MAX_AGE': int(os.getenv('CONN_MAX_AGE', '60')),
         }
     }
 else:
@@ -143,6 +172,15 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = []
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
 # Media files
 MEDIA_URL = '/media/'

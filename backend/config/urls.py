@@ -1,21 +1,36 @@
 """
 Root URL configuration for Hostel Allocation & Roommate Matching System.
 """
+import os
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
 
 def spa_view(request, *args, **kwargs):
-    """Serves the compiled React 19 SPA or redirects to the Vite dev server."""
+    """Serves the compiled React 19 SPA or redirects to the Vite dev server / frontend URL."""
     dist_index = settings.BASE_DIR.parent / 'frontend' / 'dist' / 'index.html'
     if dist_index.exists():
         with open(dist_index, 'r', encoding='utf-8') as f:
             return HttpResponse(f.read(), content_type='text/html')
-    return HttpResponseRedirect('http://localhost:5173/')
+    
+    frontend_url = os.getenv('FRONTEND_URL')
+    if frontend_url:
+        return HttpResponseRedirect(frontend_url)
+    
+    if settings.DEBUG:
+        return HttpResponseRedirect('http://localhost:5173/')
+
+    return JsonResponse({
+        'service': 'Hostel Allocation & Roommate Matching API',
+        'status': 'healthy',
+        'health_check': '/api/health/',
+        'admin_console': '/admin/',
+        'api_endpoints': '/api/',
+    })
 
 
 urlpatterns = [

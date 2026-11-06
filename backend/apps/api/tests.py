@@ -10,6 +10,13 @@ class ApiEndpointsTestCase(TestCase):
     def setUp(self):
         self.client = Client()
 
+    def test_api_health_check(self):
+        resp = self.client.get(reverse('api:health_check'))
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(data['status'], 'healthy')
+        self.assertEqual(data['database'], 'connected')
+
     def test_api_auth_me_unauthenticated(self):
         resp = self.client.get(reverse('api:auth_me'))
         self.assertEqual(resp.status_code, 200)

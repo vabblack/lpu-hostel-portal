@@ -2,6 +2,7 @@
 API Routing Configuration for React Frontend.
 """
 from django.urls import path
+from .views_health import health_check_view
 from .views_auth import me_view, csrf_view, login_view, logout_view, register_view
 from .views_hostels import hostel_list_view, hostel_detail_view, room_catalog_view, room_detail_view
 from .views_roommates import (
@@ -25,6 +26,9 @@ from .views_living import (
 app_name = 'api'
 
 urlpatterns = [
+    # Health check for Render & uptime monitors
+    path('health/', health_check_view, name='health_check'),
+
     # Auth endpoints
     path('auth/me/', me_view, name='auth_me'),
     path('auth/csrf/', csrf_view, name='auth_csrf'),
