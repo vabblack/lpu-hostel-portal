@@ -1,53 +1,32 @@
 """
-Frontend UI and template rendering integration tests for Phase 5.
+Frontend SPA Integration Tests.
+Verifies the modern React 19 SPA routing, fallback, and API integrations.
 """
 import pytest
 from django.urls import reverse
-from apps.academics.models import University
-from apps.hostels.models import Hostel, GenderPolicy
 
 
 @pytest.mark.django_db
-class TestFrontendUI:
-    """Test suite for public and authenticated template rendering."""
+class TestFrontendSPA:
+    """Test suite for React 19 SPA entrypoint and routing."""
 
-    def test_landing_page_renders_successfully(self, client):
-        """Verify the public landing page loads with HTTP 200."""
+    def test_root_routes_to_spa_or_dev_server(self, client):
+        """Verify root URL routes to the React SPA entrypoint."""
         response = client.get(reverse('home'))
+        assert response.status_code in (200, 302)
+        if response.status_code == 302:
+            assert '5173' in response.url
+
+    def test_spa_root_entrypoint(self, client):
+        """Verify /spa/ endpoint redirects to dev server or serves index.html."""
+        response = client.get(reverse('spa_root'))
+        assert response.status_code in (200, 302)
+        if response.status_code == 302:
+            assert '5173' in response.url
+
+    def test_api_auth_csrf_available(self, client):
+        """Verify REST API CSRF endpoint is accessible for React frontend."""
+        response = client.get(reverse('api:auth_csrf'))
         assert response.status_code == 200
-        assert 'Smart University Hostel Allocation' in response.content.decode()
-        assert 'main.css' in response.content.decode()
-
-    def test_login_page_renders_successfully(self, client):
-        """Verify the sign-in form page loads with HTTP 200."""
-        response = client.get(reverse('accounts:login'))
-        assert response.status_code == 200
-        assert 'Sign In to Hostel Portal' in response.content.decode()
-        assert 'Student ID or Institutional Email' in response.content.decode()
-
-    def test_registration_page_renders_successfully(self, client):
-        """Verify the student account claim page loads with HTTP 200."""
-        response = client.get(reverse('accounts:register'))
-        assert response.status_code == 200
-        assert 'Claim Student Account' in response.content.decode()
-        assert 'Student ID / Reg No.' in response.content.decode()
-
-    def test_hostel_catalog_renders_successfully(self, client):
-        """Verify hostel exploration catalog displays hostels and status badges."""
-        univ = University.objects.create(name='UI Test University', code='UI-TEST')
-        Hostel.objects.create(
-            university=univ,
-            name='Alpha Boys Hostel',
-            code='ABH',
-            gender_policy=GenderPolicy.MALE,
-            total_capacity=120
-        )
-
-        response = client.get(reverse('hostels:list'))
-        assert response.status_code == 200
-        content = response.content.decode()
-        assert 'Campus Hostels' in content
-        assert 'Alpha Boys Hostel' in content
-        assert 'ABH' in content
-        assert 'Boys Hostel' in content
-
+        data = response.json()
+        assert 'csrfToken' in data

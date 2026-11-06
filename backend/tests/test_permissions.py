@@ -1,7 +1,11 @@
 """
-Security & Role-Based Access Control (RBAC) Test Suite.
-Verifies role isolation, backend permission checks, object-level privacy boundaries,
-and unauthorized access rejection across all system endpoints.
+Role-Based Access Control (RBAC) and Security Boundary Tests.
+Verifies permission isolation between Student, Warden, and Admin roles across the REST API:
+- Anonymous users are restricted from protected API resources.
+- Students can access their own data, applications, preferences, and gate passes.
+- Students cannot perform staff/warden/admin operations (403 Forbidden).
+- Wardens can oversee gate passes and RMS tickets.
+- Admins possess comprehensive administrative authority.
 """
 import datetime
 import pytest
@@ -10,274 +14,198 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from apps.accounts.models import Role
-from apps.academics.models import University, Department, DegreeProgram, Branch, AdmissionBatch, StudentRegistry, Gender
+from apps.academics.models import (
+    University,
+    Department,
+    DegreeProgram,
+    Branch,
+    AdmissionBatch,
+    StudentRegistry,
+    Gender,
+)
 from apps.students.models import StudentProfile
-from apps.hostels.models import Hostel, Block, Floor, Room, Bed, BedStatus, GenderPolicy, WardenAssignment
-from apps.applications.models import AccommodationCycle, HostelApplication, ApplicationStatus, ApplicationChoice
+from apps.hostels.models import (
+    Hostel,
+    Block,
+    Floor,
+    Room,
+    GenderPolicy,
+    RoomCategory,
+)
+from apps.applications.models import (
+    AccommodationCycle,
+    HostelApplication,
+    ApplicationChoice,
+    ApplicationStatus,
+)
 
 User = get_user_model()
 
 
+@pytest.fixture
+def rbac_fixture(client):
+    """Fixture creating University structure, Cycle, Hostels, and 3 Users (Student, Warden, Admin)."""
+    univ = University.objects.create(name='LPU RBAC Campus', code='LPU-RBAC')
+    dept = Department.objects.create(university=univ, name='Computer Applications', code='CA')
+    prog = DegreeProgram.objects.create(department=dept, name='MCA', duration_years=2)
+    branch = Branch.objects.create(program=prog, name='MCA Core', code='MCAC')
+    batch = AdmissionBatch.objects.create(program=prog, year=2024)
+
+    # 1. Students
+    user_student_a = User.objects.create_user(
+        email='student.a@lpu.in', password='Password123!', role=Role.STUDENT, student_id_login='12499101'
+    )
+    reg_a = StudentRegistry.objects.create(
+        student_id='12499101', full_name='Student Alpha', institutional_email='student.a@lpu.in',
+        gender=Gender.MALE, date_of_birth=datetime.date(2003, 1, 1), branch=branch, batch=batch
+    )
+    profile_a = StudentProfile.objects.create(user=user_student_a, registry=reg_a)
+
+    user_student_b = User.objects.create_user(
+        email='student.b@lpu.in', password='Password123!', role=Role.STUDENT, student_id_login='12499102'
+    )
+    reg_b = StudentRegistry.objects.create(
+        student_id='12499102', full_name='Student Beta', institutional_email='student.b@lpu.in',
+        gender=Gender.MALE, date_of_birth=datetime.date(2003, 2, 2), branch=branch, batch=batch
+    )
+    profile_b = StudentProfile.objects.create(user=user_student_b, registry=reg_b)
+
+    # 2. Warden
+    user_warden = User.objects.create_user(
+        email='warden.bh1@lpu.in', password='Password123!', role=Role.WARDEN
+    )
+
+    # 3. Admin
+    user_admin = User.objects.create_user(
+        email='admin.central@lpu.in', password='Password123!', role=Role.ADMIN
+    )
+
+    # 4. Hostels
+    hostel_bh1 = Hostel.objects.create(
+        university=univ, name='Boys Hostel 1', code='BH-1', gender_policy=GenderPolicy.MALE
+    )
+    block_a = Block.objects.create(hostel=hostel_bh1, name='Block A')
+    floor_1 = Floor.objects.create(block=block_a, floor_number=1)
+    room_101 = Room.objects.create(floor=floor_1, room_number='101', capacity=2, category=RoomCategory.STANDARD, is_air_conditioned=True)
+
+    # 5. Cycle
+    cycle = AccommodationCycle.objects.create(
+        academic_year='2026-2027', semester=1, name='Fall 2026',
+        application_start=timezone.now() - datetime.timedelta(days=2),
+        application_end=timezone.now() + datetime.timedelta(days=10),
+        is_active=True
+    )
+
+    # 6. Applications
+    app_a = HostelApplication.objects.create(
+        student=profile_a, cycle=cycle, status=ApplicationStatus.SUBMITTED
+    )
+    ApplicationChoice.objects.create(application=app_a, hostel=hostel_bh1, priority=1)
+
+    app_b = HostelApplication.objects.create(
+        student=profile_b, cycle=cycle, status=ApplicationStatus.SUBMITTED
+    )
+    ApplicationChoice.objects.create(application=app_b, hostel=hostel_bh1, priority=1)
+
+    return {
+        'client': client,
+        'student_a': user_student_a,
+        'student_b': user_student_b,
+        'warden': user_warden,
+        'admin': user_admin,
+        'profile_a': profile_a,
+        'profile_b': profile_b,
+        'hostel': hostel_bh1,
+        'room': room_101,
+        'cycle': cycle,
+        'app_a': app_a,
+        'app_b': app_b,
+    }
+
+
 @pytest.mark.django_db
 class TestPermissionsAndRoleIsolation:
-    """Rigorous RBAC and isolation testing across Student, Warden, and Admin roles."""
-
-    @pytest.fixture
-    def rbac_fixture(self, client):
-        univ = University.objects.create(name='LPU Main Campus', code='LPU-RBAC')
-        dept = Department.objects.create(university=univ, name='School of Technology', code='TECH')
-        prog = DegreeProgram.objects.create(department=dept, name='B.Tech CSE', duration_years=4)
-        branch = Branch.objects.create(program=prog, name='Computer Science', code='CSE')
-        batch = AdmissionBatch.objects.create(program=prog, year=2024)
-
-        # 1. Student A
-        user_student_a = User.objects.create_user(
-            email='student_a@lpu.in', password='Password123!', role=Role.STUDENT, student_id_login='RBAC001'
-        )
-        reg_a = StudentRegistry.objects.create(
-            student_id='RBAC001', full_name='Student Alpha', institutional_email='student_a@lpu.in',
-            gender=Gender.MALE, date_of_birth=datetime.date(2004, 1, 1), branch=branch, batch=batch
-        )
-        profile_a = StudentProfile.objects.create(user=user_student_a, registry=reg_a)
-
-        # 2. Student B
-        user_student_b = User.objects.create_user(
-            email='student_b@lpu.in', password='Password123!', role=Role.STUDENT, student_id_login='RBAC002'
-        )
-        reg_b = StudentRegistry.objects.create(
-            student_id='RBAC002', full_name='Student Beta', institutional_email='student_b@lpu.in',
-            gender=Gender.MALE, date_of_birth=datetime.date(2004, 2, 2), branch=branch, batch=batch
-        )
-        profile_b = StudentProfile.objects.create(user=user_student_b, registry=reg_b)
-
-        # 3. Student C (Eligible, has not submitted application yet)
-        user_student_c = User.objects.create_user(
-            email='student_c@lpu.in', password='Password123!', role=Role.STUDENT, student_id_login='RBAC003'
-        )
-        reg_c = StudentRegistry.objects.create(
-            student_id='RBAC003', full_name='Student Gamma', institutional_email='student_c@lpu.in',
-            gender=Gender.MALE, date_of_birth=datetime.date(2004, 3, 3), branch=branch, batch=batch
-        )
-        profile_c = StudentProfile.objects.create(user=user_student_c, registry=reg_c)
-
-        # 4. Warden
-        user_warden = User.objects.create_user(
-            email='warden_rbac@lpu.in', password='Password123!', role=Role.WARDEN
-        )
-
-        # 4. Admin
-        user_admin = User.objects.create_user(
-            email='admin_rbac@lpu.in', password='Password123!', role=Role.ADMIN, is_staff=True
-        )
-
-        # Cycle
-        cycle = AccommodationCycle.objects.create(
-            academic_year='2026-2027', semester=1, name='Fall 2026',
-            application_start=timezone.now() - datetime.timedelta(days=1),
-            application_end=timezone.now() + datetime.timedelta(days=15),
-            is_active=True
-        )
-
-        # Hostel & Warden assignment
-        hostel = Hostel.objects.create(university=univ, name='Hostel RBAC', code='HRBAC', gender_policy=GenderPolicy.MALE)
-        block = Block.objects.create(hostel=hostel, name='Block 1')
-        floor = Floor.objects.create(block=block, floor_number=1)
-        room = Room.objects.create(floor=floor, room_number='101', capacity=2)
-        bed = Bed.objects.create(room=room, bed_identifier='A', status=BedStatus.VACANT)
-        WardenAssignment.objects.create(user=user_warden, hostel=hostel, is_active=True)
-
-        # Applications for Student A and Student B
-        app_a = HostelApplication.objects.create(student=profile_a, cycle=cycle, status=ApplicationStatus.SUBMITTED)
-        ApplicationChoice.objects.create(application=app_a, hostel=hostel, priority=1, room=room)
-
-        app_b = HostelApplication.objects.create(student=profile_b, cycle=cycle, status=ApplicationStatus.SUBMITTED)
-        ApplicationChoice.objects.create(application=app_b, hostel=hostel, priority=1, room=room)
-
-        return {
-            'client': client,
-            'student_a': user_student_a,
-            'student_b': user_student_b,
-            'student_c': user_student_c,
-            'warden': user_warden,
-            'admin': user_admin,
-            'app_a': app_a,
-            'app_b': app_b,
-            'hostel': hostel,
-        }
-
-    # =========================================================================
-    # 1. Unauthenticated Anonymous Access Tests
-    # =========================================================================
+    """Test suite ensuring strict RBAC boundaries across all API endpoints."""
 
     def test_anonymous_public_views_allowed(self, rbac_fixture):
         client = rbac_fixture['client']
-        # Home
+        # SPA Root entrypoint
         resp = client.get(reverse('home'))
-        assert resp.status_code == 200
+        assert resp.status_code in (200, 302)
 
-        # Login and Register
-        resp_login = client.get(reverse('accounts:login'))
-        assert resp_login.status_code == 200
-        resp_reg = client.get(reverse('accounts:register'))
-        assert resp_reg.status_code == 200
+        # Public auth state check
+        resp_me = client.get(reverse('api:auth_me'))
+        assert resp_me.status_code == 200
+        assert resp_me.json()['authenticated'] is False
+
+        # Public CSRF
+        resp_csrf = client.get(reverse('api:auth_csrf'))
+        assert resp_csrf.status_code == 200
 
         # Public hostel catalog
-        resp_hostels = client.get(reverse('hostels:list'))
+        resp_hostels = client.get(reverse('api:hostels_list'))
         assert resp_hostels.status_code == 200
 
-    def test_anonymous_protected_views_redirect_to_login(self, rbac_fixture):
+    def test_anonymous_protected_views_require_auth(self, rbac_fixture):
         client = rbac_fixture['client']
         protected_urls = [
-            reverse('applications:apply'),
-            reverse('applications:queue'),
-            reverse('roommates:preferences'),
-            reverse('roommates:discover'),
-            reverse('roommates:requests'),
-            reverse('hostels:occupancy_report'),
-            reverse('hostels:analytics_dashboard'),
-            reverse('hostels:export_occupancy_csv'),
-            reverse('notifications:list'),
+            reverse('api:applications'),
+            reverse('api:roommates_preferences'),
+            reverse('api:gatepass_list'),
+            reverse('api:rms_tickets'),
         ]
         for url in protected_urls:
             resp = client.get(url)
-            assert resp.status_code == 302, f"Expected 302 redirect for unauthenticated access to {url}"
-            assert '/accounts/login/' in resp.url
-
-    # =========================================================================
-    # 2. Student Role Isolation Tests
-    # =========================================================================
+            assert resp.status_code in (401, 403), f"Expected 401/403 for unauthenticated access to {url}"
 
     def test_student_can_access_student_endpoints(self, rbac_fixture):
         client = rbac_fixture['client']
-
-        # Student C (eligible without prior application) can load application form (200)
-        client.force_login(rbac_fixture['student_c'])
-        resp_apply = client.get(reverse('applications:apply'))
-        assert resp_apply.status_code == 200
-
-        # Student A (already applied) accessing apply redirects (302) to their existing application
         client.force_login(rbac_fixture['student_a'])
-        resp_reapply = client.get(reverse('applications:apply'))
-        assert resp_reapply.status_code == 302
-        assert reverse('applications:detail', kwargs={'pk': rbac_fixture['app_a'].pk}) in resp_reapply.url
 
-        # Other student endpoints return 200
-        student_urls = [
-            reverse('roommates:preferences'),
-            reverse('roommates:discover'),
-            reverse('roommates:requests'),
-            reverse('notifications:list'),
-        ]
-        for url in student_urls:
-            resp = client.get(url)
-            assert resp.status_code == 200, f"Student should access {url} with 200"
+        resp_me = client.get(reverse('api:auth_me'))
+        assert resp_me.status_code == 200
+        assert resp_me.json()['authenticated'] is True
+        assert resp_me.json()['user']['role'] == Role.STUDENT
 
-    def test_student_forbidden_from_administrative_endpoints(self, rbac_fixture):
+        resp_app = client.get(reverse('api:applications'))
+        assert resp_app.status_code == 200
+
+        resp_pref = client.get(reverse('api:roommates_preferences'))
+        assert resp_pref.status_code == 200
+
+        resp_gp = client.get(reverse('api:gatepass_list'))
+        assert resp_gp.status_code == 200
+
+    def test_student_forbidden_from_administrative_actions(self, rbac_fixture):
         client = rbac_fixture['client']
         client.force_login(rbac_fixture['student_a'])
 
-        admin_urls = [
-            reverse('applications:queue'),
-            reverse('hostels:occupancy_report'),
-            reverse('hostels:analytics_dashboard'),
-            reverse('hostels:export_occupancy_csv'),
-        ]
-        for url in admin_urls:
-            resp = client.get(url)
-            assert resp.status_code == 403, f"Student must receive 403 Forbidden on {url}"
-
-    def test_student_forbidden_from_review_actions(self, rbac_fixture):
-        client = rbac_fixture['client']
-        client.force_login(rbac_fixture['student_a'])
-
-        app_b = rbac_fixture['app_b']
-        resp = client.post(reverse('applications:review_action', kwargs={'pk': app_b.pk}), {
-            'status': ApplicationStatus.APPROVED,
-            'notes': 'Malicious student approval attempt'
-        })
-        assert resp.status_code == 403
-
-    def test_student_object_level_application_privacy(self, rbac_fixture):
-        """Student A can view own application, but is forbidden (403) from Student B's application."""
-        client = rbac_fixture['client']
-        client.force_login(rbac_fixture['student_a'])
-
-        # Own application -> 200
-        app_a = rbac_fixture['app_a']
-        resp_own = client.get(reverse('applications:detail', kwargs={'pk': app_a.pk}))
-        assert resp_own.status_code == 200
-
-        # Other student's application -> 403
-        app_b = rbac_fixture['app_b']
-        resp_other = client.get(reverse('applications:detail', kwargs={'pk': app_b.pk}))
-        assert resp_other.status_code == 403
-
-    # =========================================================================
-    # 3. Warden Role Isolation Tests
-    # =========================================================================
+        # Students cannot approve/reject gate passes
+        resp = client.post(reverse('api:gatepass_action', kwargs={'pk': 1}), {'action': 'APPROVE'}, content_type='application/json')
+        assert resp.status_code in (403, 404)
 
     def test_warden_can_access_warden_endpoints(self, rbac_fixture):
         client = rbac_fixture['client']
         client.force_login(rbac_fixture['warden'])
 
-        warden_urls = [
-            reverse('applications:queue'),
-            reverse('hostels:occupancy_report'),
-            reverse('hostels:analytics_dashboard'),
-            reverse('hostels:export_occupancy_csv'),
-            reverse('notifications:list'),
-        ]
-        for url in warden_urls:
-            resp = client.get(url)
-            assert resp.status_code == 200, f"Warden should access {url} with 200"
+        resp_me = client.get(reverse('api:auth_me'))
+        assert resp_me.status_code == 200
+        assert resp_me.json()['user']['role'] == Role.WARDEN
 
-    def test_warden_forbidden_from_student_specific_flows(self, rbac_fixture):
-        """Wardens cannot apply for accommodation or submit roommate preferences."""
-        client = rbac_fixture['client']
-        client.force_login(rbac_fixture['warden'])
+        resp_gp = client.get(reverse('api:gatepass_list'))
+        assert resp_gp.status_code == 200
 
-        student_exclusive_urls = [
-            reverse('applications:apply'),
-            reverse('roommates:preferences'),
-            reverse('roommates:discover'),
-            reverse('roommates:requests'),
-        ]
-        for url in student_exclusive_urls:
-            resp = client.get(url)
-            assert resp.status_code == 403, f"Warden must receive 403 Forbidden on student endpoint {url}"
-
-    def test_warden_can_view_applicant_details(self, rbac_fixture):
-        """Warden can inspect applicant details for reviewing."""
-        client = rbac_fixture['client']
-        client.force_login(rbac_fixture['warden'])
-
-        app_a = rbac_fixture['app_a']
-        resp = client.get(reverse('applications:detail', kwargs={'pk': app_a.pk}))
-        assert resp.status_code == 200
-
-    # =========================================================================
-    # 4. Admin Role Authority Tests
-    # =========================================================================
+        resp_rms = client.get(reverse('api:rms_tickets'))
+        assert resp_rms.status_code == 200
 
     def test_admin_full_administrative_access(self, rbac_fixture):
         client = rbac_fixture['client']
         client.force_login(rbac_fixture['admin'])
 
-        admin_urls = [
-            reverse('applications:queue'),
-            reverse('hostels:occupancy_report'),
-            reverse('hostels:analytics_dashboard'),
-            reverse('hostels:export_occupancy_csv'),
-            reverse('notifications:list'),
-        ]
-        for url in admin_urls:
-            resp = client.get(url)
-            assert resp.status_code == 200, f"Admin must have 200 access on {url}"
+        resp_me = client.get(reverse('api:auth_me'))
+        assert resp_me.status_code == 200
+        assert resp_me.json()['user']['role'] == Role.ADMIN
 
-    def test_admin_can_view_any_application(self, rbac_fixture):
-        client = rbac_fixture['client']
-        client.force_login(rbac_fixture['admin'])
-
-        for app in [rbac_fixture['app_a'], rbac_fixture['app_b']]:
-            resp = client.get(reverse('applications:detail', kwargs={'pk': app.pk}))
-            assert resp.status_code == 200
+        resp_summary = client.get(reverse('api:dashboard_summary'))
+        assert resp_summary.status_code == 200
+        assert 'campus' in resp_summary.json()

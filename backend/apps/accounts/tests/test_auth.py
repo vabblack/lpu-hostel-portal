@@ -144,28 +144,30 @@ class TestAuthenticationAndVerification:
         )
 
         # 1. Login with Institutional Email
-        response_email = client.post(reverse('accounts:login'), {
+        response_email = client.post(reverse('api:auth_login'), {
             'username': 'active.student@lpu.in',
             'password': 'ValidPassword123!'
-        })
-        assert response_email.status_code == 302
+        }, content_type='application/json')
+        assert response_email.status_code == 200
+        assert response_email.json()['success'] is True
         client.logout()
 
         # 2. Login with Student ID
-        response_id = client.post(reverse('accounts:login'), {
+        response_id = client.post(reverse('api:auth_login'), {
             'username': '12499001',
             'password': 'ValidPassword123!'
-        })
-        assert response_id.status_code == 302
+        }, content_type='application/json')
+        assert response_id.status_code == 200
+        assert response_id.json()['success'] is True
 
     def test_login_invalid_credentials(self, client):
         """Verify invalid credentials return error."""
-        response = client.post(reverse('accounts:login'), {
+        response = client.post(reverse('api:auth_login'), {
             'username': 'nonexistent@lpu.in',
             'password': 'WrongPassword123!'
-        })
-        assert response.status_code == 200
-        assert 'Invalid credentials' in response.content.decode()
+        }, content_type='application/json')
+        assert response.status_code == 401
+        assert 'Invalid' in response.json()['error']
 
     def test_logout(self, registry_setup, client):
         """Verify user logout clears session."""
@@ -175,9 +177,9 @@ class TestAuthenticationAndVerification:
             password='ValidPassword123!'
         )
         client.login(username='12499001', password='ValidPassword123!')
-        response = client.get(reverse('accounts:logout'))
-        assert response.status_code == 302
-        assert response.url == reverse('accounts:login')
+        response = client.post(reverse('api:auth_logout'))
+        assert response.status_code == 200
+        assert response.json()['success'] is True
 
     def test_rbac_admin_required_decorator(self):
         """Verify @admin_required rejects non-admin users."""

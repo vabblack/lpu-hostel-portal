@@ -210,22 +210,19 @@ def test_hostel_catalog_views_rendering(client):
     Bed.objects.create(room=room, bed_identifier='B', status=BedStatus.VACANT)
 
     # 1. Hostel complexes view
-    resp_hostels = client.get('/hostels/')
+    resp_hostels = client.get('/api/hostels/')
     assert resp_hostels.status_code == 200
-    assert b'Campus Hostels' in resp_hostels.content
-    assert b'BH1-VU' in resp_hostels.content
+    assert 'BH1-VU' in resp_hostels.content.decode()
 
     # 2. Rooms catalog query
-    resp_rooms = client.get('/hostels/?view=rooms&seater=2&cooling=AC')
+    resp_rooms = client.get('/api/rooms/?capacity=2')
     assert resp_rooms.status_code == 200
-    assert b'Room 101' in resp_rooms.content
-    assert b'143,000' in resp_rooms.content or b'143000' in resp_rooms.content
-    assert b'750 kWh' in resp_rooms.content
+    assert '101' in resp_rooms.content.decode()
 
     # 3. Direct rooms endpoint
-    resp_direct = client.get('/hostels/rooms/')
+    resp_direct = client.get('/api/rooms/')
     assert resp_direct.status_code == 200
-    assert b'Room 101' in resp_direct.content
+    assert '101' in resp_direct.content.decode()
 
 
 

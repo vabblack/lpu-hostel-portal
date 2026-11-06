@@ -5,7 +5,6 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import TemplateView
 from django.views.static import serve
 from django.http import HttpResponse, HttpResponseRedirect
 
@@ -29,13 +28,8 @@ urlpatterns = [
     re_path(r'^spa/.*$', spa_view, name='spa_catchall'),
     path('assets/<path:path>', serve, {'document_root': settings.BASE_DIR.parent / 'frontend' / 'dist' / 'assets'}),
 
-    # Legacy Server-Rendered Django Template Endpoints (for backwards compatibility & tests)
-    path('accounts/', include('apps.accounts.urls')),
-    path('hostels/', include('apps.hostels.urls')),
-    path('applications/', include('apps.applications.urls')),
-    path('roommates/', include('apps.roommates.urls')),
-    path('notifications/', include('apps.notifications.urls')),
-    path('', TemplateView.as_view(template_name='landing.html'), name='home'),
+    # Root redirects to React Frontend (or serves React SPA)
+    path('', spa_view, name='home'),
 ]
 
 if settings.DEBUG:

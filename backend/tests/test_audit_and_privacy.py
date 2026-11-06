@@ -115,7 +115,7 @@ class TestAuditLoggingAndPrivacyCompliance:
             temperature_pref=3
         )
 
-        resp = client.get(reverse('roommates:discover'))
+        resp = client.get(reverse('api:roommates_discover'))
         assert resp.status_code == 200
 
         # Sensitive guardian or DOB information must never be exposed
