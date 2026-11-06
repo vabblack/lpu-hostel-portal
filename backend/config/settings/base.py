@@ -9,8 +9,9 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Load environment variables from .env file
+# Load environment variables from .env file (supports backend/.env or root .env)
 load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR.parent / '.env')
 
 # Security settings from environment
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-dev-fallback-key-2026')
@@ -83,7 +84,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database Configuration
-DB_ENGINE = os.getenv('DB_ENGINE', 'postgresql').lower()
+# Defaults to sqlite3 for frictionless local development. Set DB_ENGINE=postgresql in .env for PostgreSQL.
+DB_ENGINE = os.getenv('DB_ENGINE', 'sqlite3').lower()
 
 if DB_ENGINE == 'postgresql':
     DATABASES = {
