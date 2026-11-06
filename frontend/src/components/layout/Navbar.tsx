@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Badge } from '../common/Badge';
@@ -7,7 +7,6 @@ import { Button } from '../common/Button';
 export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -16,13 +15,15 @@ export const Navbar: React.FC = () => {
 
   const navLinkStyle = ({ isActive }: { isActive: boolean }): React.CSSProperties => ({
     textDecoration: 'none',
-    color: isActive ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+    color: isActive ? '#FFFFFF' : '#DDD8CF',
     fontWeight: isActive ? 600 : 500,
-    fontSize: '0.9375rem',
-    padding: '0.5rem 0.75rem',
+    fontSize: '0.875rem',
+    fontFamily: 'var(--font-sans)',
+    padding: '0.375rem 0.625rem',
     borderRadius: 'var(--radius-md)',
-    backgroundColor: isActive ? 'var(--color-primary-light)' : 'transparent',
-    transition: 'all var(--transition-fast)',
+    backgroundColor: isActive ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+    borderBottom: isActive ? '2px solid var(--brand)' : '2px solid transparent',
+    transition: 'color var(--transition-fast), background-color var(--transition-fast)',
   });
 
   return (
@@ -31,10 +32,9 @@ export const Navbar: React.FC = () => {
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(8px)',
-        borderBottom: '1px solid var(--color-border)',
-        boxShadow: 'var(--shadow-sm)',
+        backgroundColor: 'var(--ink)',
+        color: '#FFFFFF',
+        borderBottom: '3px solid var(--brand)',
       }}
     >
       <div
@@ -46,48 +46,40 @@ export const Navbar: React.FC = () => {
           height: '4rem',
         }}
       >
-        {/* Brand */}
+        {/* Official LPU Typographic Mark */}
         <Link
           to="/"
           style={{
             display: 'flex',
-            alignItems: 'center',
-            gap: '0.625rem',
+            flexDirection: 'column',
             textDecoration: 'none',
-            color: 'var(--color-text-primary)',
+            color: '#FFFFFF',
           }}
         >
-          <div
+          <span
             style={{
-              width: '2.25rem',
-              height: '2.25rem',
-              borderRadius: 'var(--radius-md)',
-              backgroundColor: 'var(--color-primary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ffffff',
+              fontFamily: 'var(--font-sans)',
               fontWeight: 700,
-              fontSize: '1.125rem',
+              fontSize: '0.875rem',
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              color: '#FFFFFF',
+              lineHeight: 1.2,
             }}
           >
-            H
-          </div>
-          <div>
-            <span style={{ fontWeight: 700, fontSize: '1.125rem', letterSpacing: '-0.02em' }}>
-              Hostel Portal
-            </span>
-            <span
-              style={{
-                display: 'block',
-                fontSize: '0.6875rem',
-                color: 'var(--color-text-muted)',
-                lineHeight: 1,
-              }}
-            >
-              Lovely Professional University
-            </span>
-          </div>
+            Lovely Professional University
+          </span>
+          <span
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: '0.8125rem',
+              color: '#DDD8CF',
+              fontStyle: 'italic',
+              lineHeight: 1.2,
+            }}
+          >
+            Residential Accommodation Portal
+          </span>
         </Link>
 
         {/* Desktop Nav Links */}
@@ -125,33 +117,42 @@ export const Navbar: React.FC = () => {
           {isAuthenticated && user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>
+                <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#FFFFFF' }}>
                   {user.student ? user.student.full_name : user.email.split('@')[0]}
                 </span>
-                <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'flex-end', alignItems: 'center' }}>
                   <Badge variant={user.role === 'STUDENT' ? 'info' : 'warning'} size="sm">
                     {user.role}
                   </Badge>
                   {user.student && (
-                    <span style={{ fontSize: '0.6875rem', color: 'var(--color-text-muted)' }}>
+                    <span style={{ fontSize: '0.6875rem', color: '#DDD8CF', fontFamily: 'var(--font-sans)' }} className="tabular-nums">
                       #{user.student.student_id}
                     </span>
                   )}
                 </div>
               </div>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                style={{ color: '#FFFFFF', borderColor: '#5C5750', height: '32px' }}
+              >
                 Sign Out
               </Button>
             </div>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Link to="/login" style={{ textDecoration: 'none' }}>
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  style={{ color: '#FFFFFF', borderColor: '#5C5750', height: '32px' }}
+                >
                   Sign In
                 </Button>
               </Link>
               <Link to="/register" style={{ textDecoration: 'none' }}>
-                <Button variant="primary" size="sm">
+                <Button variant="primary" size="sm" style={{ height: '32px' }}>
                   Claim Account
                 </Button>
               </Link>

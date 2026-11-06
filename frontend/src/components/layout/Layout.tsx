@@ -9,7 +9,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
-        backgroundColor: 'var(--color-bg)',
+        backgroundColor: 'var(--bg)',
       }}
     >
       <Navbar />
