@@ -106,6 +106,32 @@ LPU_FEE_CATALOG: Dict[Tuple[str, int, str], FeeTierConfig] = {
         'STANDARD', 8, 'AIR_CONDITIONED',
         Decimal('90000.00'), Decimal('80000.00'), Decimal('350.00')
     ),
+
+    # Dormitories (High occupancy shared washroom 6, 7, 8-seaters)
+    ('DORMITORY', 6, 'AIR_COOLED'): FeeTierConfig(
+        'DORMITORY', 6, 'AIR_COOLED',
+        Decimal('80000.00'), Decimal('70000.00'), Decimal('250.00')
+    ),
+    ('DORMITORY', 6, 'AIR_CONDITIONED'): FeeTierConfig(
+        'DORMITORY', 6, 'AIR_CONDITIONED',
+        Decimal('90000.00'), Decimal('80000.00'), Decimal('350.00')
+    ),
+    ('DORMITORY', 7, 'AIR_COOLED'): FeeTierConfig(
+        'DORMITORY', 7, 'AIR_COOLED',
+        Decimal('80000.00'), Decimal('70000.00'), Decimal('250.00')
+    ),
+    ('DORMITORY', 7, 'AIR_CONDITIONED'): FeeTierConfig(
+        'DORMITORY', 7, 'AIR_CONDITIONED',
+        Decimal('90000.00'), Decimal('80000.00'), Decimal('350.00')
+    ),
+    ('DORMITORY', 8, 'AIR_COOLED'): FeeTierConfig(
+        'DORMITORY', 8, 'AIR_COOLED',
+        Decimal('80000.00'), Decimal('70000.00'), Decimal('250.00')
+    ),
+    ('DORMITORY', 8, 'AIR_CONDITIONED'): FeeTierConfig(
+        'DORMITORY', 8, 'AIR_CONDITIONED',
+        Decimal('90000.00'), Decimal('80000.00'), Decimal('350.00')
+    ),
 }
 
 

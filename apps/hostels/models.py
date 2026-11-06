@@ -21,6 +21,13 @@ class HostelStatus(models.TextChoices):
     INACTIVE = 'INACTIVE', _('Inactive / Closed')
 
 
+class RoomCategory(models.TextChoices):
+    """LPU room classification."""
+    STANDARD = 'STANDARD', _('Standard Room')
+    STUDIO_APARTMENT = 'STUDIO_APARTMENT', _('Studio Apartment')
+    DORMITORY = 'DORMITORY', _('Dormitory')
+
+
 class RoomStatus(models.TextChoices):
     """Availability status of a room."""
     AVAILABLE = 'AVAILABLE', _('Available')
@@ -201,9 +208,19 @@ class Room(models.Model):
             (2, _('2-Seater / Double')),
             (3, _('3-Seater / Triple')),
             (4, _('4-Seater / Four-Bed')),
+            (5, _('5-Seater / Five-Bed')),
+            (6, _('6-Seater / Six-Bed')),
+            (7, _('7-Seater / Seven-Bed')),
+            (8, _('8-Seater / Eight-Bed')),
         ],
         default=2,
         help_text=_('Maximum number of occupants allowed.')
+    )
+    category = models.CharField(
+        _('Room Category'),
+        max_length=30,
+        choices=RoomCategory.choices,
+        default=RoomCategory.STANDARD
     )
     washroom_type = models.CharField(
         _('Washroom Type'),
@@ -244,13 +261,41 @@ class Room(models.Model):
         return f"Room {self.room_number} ({self.floor.block.hostel.code}) - {self.capacity}B ({ac_label})"
 
     @property
+    def cooling_type(self) -> str:
+        return 'AIR_CONDITIONED' if self.is_air_conditioned else 'AIR_COOLED'
+
+    @property
+    def fee_tier(self):
+        from apps.hostels.services.fee_structure import get_fee_tier
+        return get_fee_tier(self.category, self.capacity, self.cooling_type)
+
+    @property
+    def standard_fee(self):
+        tier = self.fee_tier
+        return tier.standard_fee if tier else None
+
+    @property
+    def edb_fee(self):
+        tier = self.fee_tier
+        return tier.edb_fee if tier else None
+
+    @property
+    def quota_kwh(self):
+        tier = self.fee_tier
+        return tier.quota_kwh if tier else None
+
+    @property
     def vacant_beds_count(self) -> int:
         """Count of currently vacant beds in this room."""
+        if hasattr(self, '_prefetched_objects_cache') and 'beds' in self._prefetched_objects_cache:
+            return sum(1 for b in self.beds.all() if b.status == BedStatus.VACANT)
         return self.beds.filter(status=BedStatus.VACANT).count()
 
     @property
     def occupied_beds_count(self) -> int:
         """Count of currently occupied beds in this room."""
+        if hasattr(self, '_prefetched_objects_cache') and 'beds' in self._prefetched_objects_cache:
+            return sum(1 for b in self.beds.all() if b.status == BedStatus.OCCUPIED)
         return self.beds.filter(status=BedStatus.OCCUPIED).count()
 
     @property

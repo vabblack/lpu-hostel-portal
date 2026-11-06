@@ -28,12 +28,23 @@ htmlcov/
 .env
 .env.local
 
-# IDEs & Editors
+# IDEs, Editors & Agents
 .vscode/
 .idea/
 *.swp
 *.swo
+.agent/
+.agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/

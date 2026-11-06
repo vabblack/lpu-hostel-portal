@@ -258,18 +258,23 @@ class TestAllocationConcurrencyAndIntegrity:
         end_date = data['end_date']
 
         def worker_task(app_id):
-            try:
-                if connection.vendor == 'sqlite':
-                    with connection.cursor() as cursor:
-                        cursor.execute("PRAGMA busy_timeout = 20000;")
-                app = HostelApplication.objects.get(pk=app_id)
-                admin_user = User.objects.get(pk=admin_id)
-                res = allocate_individual_student(app, admin_user, start_date, end_date)
-                return ('SUCCESS', res.pk if res else None)
-            except Exception as e:
-                return ('ERROR', str(e))
-            finally:
-                connection.close()
+            import time
+            for attempt in range(5):
+                try:
+                    if connection.vendor == 'sqlite':
+                        with connection.cursor() as cursor:
+                            cursor.execute("PRAGMA busy_timeout = 20000;")
+                    app = HostelApplication.objects.get(pk=app_id)
+                    admin_user = User.objects.get(pk=admin_id)
+                    res = allocate_individual_student(app, admin_user, start_date, end_date)
+                    return ('SUCCESS', res.pk if res else None)
+                except Exception as e:
+                    if 'locked' in str(e).lower() and attempt < 4:
+                        time.sleep(0.3 * (attempt + 1))
+                        continue
+                    return ('ERROR', str(e))
+                finally:
+                    connection.close()
 
         with ThreadPoolExecutor(max_workers=2) as executor:
             future1 = executor.submit(worker_task, app1_id)

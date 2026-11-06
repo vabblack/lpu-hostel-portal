@@ -9,6 +9,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('apps.api.urls')),
     path('accounts/', include('apps.accounts.urls')),
     path('hostels/', include('apps.hostels.urls')),
     path('applications/', include('apps.applications.urls')),

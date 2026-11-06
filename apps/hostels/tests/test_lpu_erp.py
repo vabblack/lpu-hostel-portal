@@ -153,3 +153,79 @@ def test_room_consolidation_ignores_at_or_above_fifty_percent():
     assert report['occupancy_percentage'] == Decimal('50.00')
 
 
+@pytest.mark.django_db
+def test_lpu_room_category_and_fee_properties():
+    """Verify Room model properties correctly resolve LPU catalog fee and electricity quotas."""
+    from apps.hostels.models import RoomCategory
+    univ = University.objects.create(name='LPU Test Univ', code='LPU-FEE')
+    hostel = Hostel.objects.create(university=univ, name='BH-1 Test', code='BH1-TEST', gender_policy=GenderPolicy.MALE)
+    block = Block.objects.create(hostel=hostel, name='Block A')
+    floor = Floor.objects.create(block=block, floor_number=1)
+
+    # 1. Standard 2-Seater AC
+    room_std = Room.objects.create(
+        floor=floor, room_number='101', capacity=2,
+        category=RoomCategory.STANDARD, is_air_conditioned=True
+    )
+    assert room_std.cooling_type == 'AIR_CONDITIONED'
+    assert room_std.standard_fee == Decimal('143000.00')
+    assert room_std.edb_fee == Decimal('133000.00')
+    assert room_std.quota_kwh == Decimal('750.00')
+
+    # 2. Studio Apartment 1-Seater AC
+    room_studio = Room.objects.create(
+        floor=floor, room_number='102', capacity=1,
+        category=RoomCategory.STUDIO_APARTMENT, is_air_conditioned=True
+    )
+    assert room_studio.standard_fee == Decimal('200000.00')
+    assert room_studio.edb_fee == Decimal('190000.00')
+    assert room_studio.quota_kwh == Decimal('1000.00')
+
+    # 3. Dormitory 8-Seater Air-Cooled
+    room_dorm = Room.objects.create(
+        floor=floor, room_number='103', capacity=8,
+        category=RoomCategory.DORMITORY, is_air_conditioned=False
+    )
+    assert room_dorm.standard_fee == Decimal('80000.00')
+    assert room_dorm.edb_fee == Decimal('70000.00')
+    assert room_dorm.quota_kwh == Decimal('250.00')
+
+
+@pytest.mark.django_db
+def test_hostel_catalog_views_rendering(client):
+    """Verify both Hostel Complexes directory and Room Inventory catalog render with HTTP 200."""
+    from apps.hostels.models import RoomCategory
+    univ = University.objects.create(name='LPU Views Univ', code='LPU-VU')
+    hostel = Hostel.objects.create(
+        university=univ, name='Shivalik BH-1 Views', code='BH1-VU',
+        gender_policy=GenderPolicy.MALE, total_capacity=100
+    )
+    block = Block.objects.create(hostel=hostel, name='Wing A')
+    floor = Floor.objects.create(block=block, floor_number=1)
+    room = Room.objects.create(
+        floor=floor, room_number='101', capacity=2,
+        category=RoomCategory.STANDARD, is_air_conditioned=True
+    )
+    Bed.objects.create(room=room, bed_identifier='A', status=BedStatus.VACANT)
+    Bed.objects.create(room=room, bed_identifier='B', status=BedStatus.VACANT)
+
+    # 1. Hostel complexes view
+    resp_hostels = client.get('/hostels/')
+    assert resp_hostels.status_code == 200
+    assert b'Campus Hostels' in resp_hostels.content
+    assert b'BH1-VU' in resp_hostels.content
+
+    # 2. Rooms catalog query
+    resp_rooms = client.get('/hostels/?view=rooms&seater=2&cooling=AC')
+    assert resp_rooms.status_code == 200
+    assert b'Room 101' in resp_rooms.content
+    assert b'143,000' in resp_rooms.content or b'143000' in resp_rooms.content
+    assert b'750 kWh' in resp_rooms.content
+
+    # 3. Direct rooms endpoint
+    resp_direct = client.get('/hostels/rooms/')
+    assert resp_direct.status_code == 200
+    assert b'Room 101' in resp_direct.content
+
+
+

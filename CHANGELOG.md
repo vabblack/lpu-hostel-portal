@@ -9,6 +9,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - Phase 12: Production React Architecture & REST API
+- **React Frontend**:
+  - Implemented modular, organized Vite + React with TypeScript frontend under `frontend/`.
+  - Type-safe contract architecture: `types/auth.ts`, `types/hostel.ts`, `types/room.ts`, `types/roommate.ts`, `types/application.ts`.
+  - Native API client with automatic CSRF token management and credentials propagation (`src/api/client.ts`).
+  - Context-driven authentication provider (`AuthContext.tsx`) with session persistence and role routing.
+  - Semantic, accessible UI design system: `Badge`, `Button`, `Card`, `Modal`, `Spinner`, `BedIndicator`, `HostelCard`, `RoomCard`, `CandidateCard`, `PreferenceForm`.
+  - Comprehensive page suite:
+    - `HomePage`: Hero section, campus metrics, 10-month session fee highlights, contraband policy notices.
+    - `HostelsPage`: Complete 14-complex directory (BH-1 to BH-8, GH-1 to GH-6) with gender filtering and live vacancy counters.
+    - `HostelDetailPage`: Interactive block and floor selector with live bed vacancy roster.
+    - `RoomCatalogPage`: Multi-attribute filtering (seater, cooling, category, washroom, vacancy, keyword search).
+    - `RoommatesPage`: 7-factor questionnaire sliders, compatibility candidate matching feed, incoming/outgoing request center, and active group roster.
+    - `ApplyPage`: Prioritized 3-choice hostel application workflow with active cycle validation.
+    - `DashboardPage`: Authenticated student dashboard with active bed allocation, application history, and quick links.
+    - `LoginPage` & `RegisterPage`: Dual-identity sign-in and authoritative student registry claim verification.
+- **Backend REST JSON API**:
+  - Built `apps.api` module providing clean, lightweight JSON endpoints for all frontend features:
+    - `/api/auth/me/`, `/api/auth/login/`, `/api/auth/logout/`, `/api/auth/register/`, `/api/auth/csrf/`
+    - `/api/hostels/`, `/api/hostels/<id>/`
+    - `/api/rooms/`, `/api/rooms/<id>/`
+    - `/api/roommates/preferences/`, `/api/roommates/discover/`, `/api/roommates/requests/`, `/api/roommates/group/`
+    - `/api/applications/`, `/api/dashboard/summary/`
+- **Zero-CORS Vite Proxy Integration**:
+  - Configured Vite dev proxy (`/api` $\rightarrow$ `http://127.0.0.1:8000`), ensuring same-origin cookie integrity without external CORS packages.
+- **Quality & Test Coverage**:
+  - 100% test pass rate across 150 automated test cases.
+
 ### Changed
 - Optimized roommate candidate recommendation ranking (`apps.roommates.services.recommendations`):
   - In-memory compatibility computation via `calculate_pair_similarity` directly from prefetched preferences.

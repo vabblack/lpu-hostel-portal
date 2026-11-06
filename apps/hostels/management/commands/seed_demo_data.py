@@ -15,8 +15,8 @@ from apps.academics.models import (
 )
 from apps.students.models import StudentProfile
 from apps.hostels.models import (
-    Hostel, Block, Floor, Room, Bed, BedStatus,
-    GenderPolicy, HostelStatus, WashroomType,
+    Hostel, Block, Floor, Room, Bed, BedStatus, RoomCategory,
+    GenderPolicy, HostelStatus, WashroomType, RoomStatus,
     Facility, RoomFacility, WardenAssignment
 )
 from apps.applications.models import (
@@ -90,96 +90,146 @@ class Command(BaseCommand):
         fac_balcony, _ = Facility.objects.get_or_create(name='Private Balcony', defaults={'description': 'Outdoor balcony with campus view.'})
         fac_geyser, _ = Facility.objects.get_or_create(name='Geyser / Hot Water', defaults={'description': 'Instant hot water heating unit.'})
 
-        # 4. Hostels
-        h1, _ = Hostel.objects.get_or_create(
-            code='BH-1',
-            defaults={
-                'university': univ,
-                'name': 'Shivalik Boys Hostel (BH-1)',
-                'gender_policy': GenderPolicy.MALE,
-                'status': HostelStatus.ACTIVE,
-                'total_capacity': 120,
-                'description': 'Premier multi-storey residential tower for male undergraduate scholars featuring air-conditioned suites and recreational amenities.'
-            }
-        )
+        # 4. Hostels Fleet (LPU Boys Hostels BH-1..BH-8 & Girls Hostels GH-1..GH-6)
+        boys_hostels_info = [
+            ('BH-1', 'Shivalik Boys Hostel (BH-1)', 'Premier multi-storey residential tower for male undergraduate scholars featuring air-conditioned suites and recreational amenities.'),
+            ('BH-2', 'Himalaya Boys Hostel (BH-2)', 'Quiet academic residence with spacious rooms, attached washrooms, and high-speed fiber optic connectivity.'),
+            ('BH-3', 'Vindhyachal Boys Hostel (BH-3)', 'Dynamic student accommodation hub with sports courts, study halls, and air-cooled standard suites.'),
+            ('BH-4', 'Aravali Boys Hostel (BH-4)', 'Modern high-rise residential wing with smart laundry access, attached washrooms, and all-weather dining.'),
+            ('BH-5', 'Nilgiri Boys Hostel (BH-5)', 'Dedicated upperclassmen scholars residence with specialized study pods and quiet floor protocols.'),
+            ('BH-6', 'Satpura Boys Hostel (BH-6)', 'Spacious accommodation equipped with solar water heating, high-speed Wi-Fi, and studio configurations.'),
+            ('BH-7', 'Sahyadri Boys Hostel (BH-7)', 'Lively complex close to university athletic facilities with gym access, cooler, and AC options.'),
+            ('BH-8', 'Karakoram Boys Hostel (BH-8)', 'Contemporary multi-block hostel offering standard, studio, and dormitory configurations for senior batches.'),
+        ]
 
-        h2, _ = Hostel.objects.get_or_create(
-            code='BH-2',
-            defaults={
-                'university': univ,
-                'name': 'Himalaya Boys Hostel (BH-2)',
-                'gender_policy': GenderPolicy.MALE,
-                'status': HostelStatus.ACTIVE,
-                'total_capacity': 80,
-                'description': 'Quiet academic residence with spacious rooms, attached washrooms, and high-speed fiber optic connectivity.'
-            }
-        )
+        girls_hostels_info = [
+            ('GH-1', 'Nilgiri Girls Hostel (GH-1)', 'Modern, secure residential facility with 24x7 security, biometric access, fitness gym, and indoor recreation halls.'),
+            ('GH-2', 'Himalaya Girls Hostel (GH-2)', 'Peaceful residential living with spacious rooms, attached pantry setups, and lush garden surroundings.'),
+            ('GH-3', 'Ganga Girls Hostel (GH-3)', 'Secure academic residential complex featuring air-conditioned studio apartments and attached washrooms.'),
+            ('GH-4', 'Yamuna Girls Hostel (GH-4)', 'Centrally located complex with multi-tier seating, recreational activity areas, and round-the-clock wardens.'),
+            ('GH-5', 'Kaveri Girls Hostel (GH-5)', 'Modern student housing offering air-cooled and air-conditioned standard options with high-speed internet.'),
+            ('GH-6', 'Saraswati Girls Hostel (GH-6)', 'Premier girls residential facility with biometric security, reading library, and attached washroom suites.'),
+        ]
 
-        h3, _ = Hostel.objects.get_or_create(
-            code='GH-1',
-            defaults={
-                'university': univ,
-                'name': 'Nilgiri Girls Hostel (GH-1)',
-                'gender_policy': GenderPolicy.FEMALE,
-                'status': HostelStatus.ACTIVE,
-                'total_capacity': 100,
-                'description': 'Modern, secure residential facility with 24x7 security, biometric access, fitness gym, and indoor recreation halls.'
-            }
-        )
+        # Blueprint room configurations representing LPU 10-month session fee catalog
+        room_blueprint_floor1 = [
+            # 1-Seaters
+            ('101', 1, RoomCategory.STANDARD, True, WashroomType.ATTACHED),
+            ('102', 1, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            # 2-Seaters
+            ('103', 2, RoomCategory.STANDARD, True, WashroomType.ATTACHED),
+            ('104', 2, RoomCategory.STANDARD, False, WashroomType.SHARED),
+            ('105', 2, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            # 3-Seaters
+            ('106', 3, RoomCategory.STANDARD, True, WashroomType.ATTACHED),
+            ('107', 3, RoomCategory.STANDARD, False, WashroomType.SHARED),
+            ('108', 3, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+        ]
 
-        # Populate rooms and beds for BH-1
-        for block_name in ['Block A', 'Block B']:
-            block, _ = Block.objects.get_or_create(hostel=h1, name=block_name)
-            for floor_num in [1, 2]:
-                floor, _ = Floor.objects.get_or_create(block=block, floor_number=floor_num)
-                for r_num in [1, 2, 3]:
-                    room_number = f"{floor_num}0{r_num}"
-                    room, _ = Room.objects.get_or_create(
-                        floor=floor,
-                        room_number=room_number,
-                        defaults={
-                            'capacity': 2 if r_num % 2 == 1 else 3,
-                            'washroom_type': WashroomType.ATTACHED,
-                            'is_air_conditioned': True
-                        }
-                    )
-                    for fac in [fac_wifi, fac_ac, fac_geyser]:
-                        RoomFacility.objects.get_or_create(room=room, facility=fac)
-                    # Generate beds
-                    bed_count = room.capacity
-                    for b_idx in range(bed_count):
-                        b_ident = chr(ord('A') + b_idx)
-                        Bed.objects.get_or_create(
-                            room=room,
-                            bed_identifier=b_ident,
-                            defaults={'status': BedStatus.VACANT}
+        room_blueprint_floor2 = [
+            # 4-Seaters
+            ('201', 4, RoomCategory.STANDARD, True, WashroomType.ATTACHED),
+            ('202', 4, RoomCategory.STANDARD, False, WashroomType.SHARED),
+            ('203', 4, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            # 5-Seaters
+            ('204', 5, RoomCategory.STANDARD, True, WashroomType.ATTACHED),
+            ('205', 5, RoomCategory.STANDARD, False, WashroomType.SHARED),
+            # 6, 7, 8 Seaters & Dormitories
+            ('206', 6, RoomCategory.STANDARD, True, WashroomType.ATTACHED),
+            ('207', 6, RoomCategory.STANDARD, False, WashroomType.SHARED),
+            ('208', 7, RoomCategory.STANDARD, False, WashroomType.SHARED),
+            ('209', 8, RoomCategory.DORMITORY, False, WashroomType.SHARED),
+        ]
+
+        boys_hostel_objects = []
+        girls_hostel_objects = []
+
+        def populate_hostel(hostel_obj, is_female=False):
+            blocks = ['Block A', 'Block B'] if not is_female else ['Wing Alpha', 'Wing Beta']
+            total_beds_created = 0
+
+            for block_name in blocks:
+                block, _ = Block.objects.get_or_create(hostel=hostel_obj, name=block_name)
+                for floor_num, blueprint in [(1, room_blueprint_floor1), (2, room_blueprint_floor2)]:
+                    floor, _ = Floor.objects.get_or_create(block=block, floor_number=floor_num)
+                    for r_num, cap, cat, is_ac, washroom in blueprint:
+                        prefix = f"{'G-' if is_female else ''}"
+                        full_room_number = f"{prefix}{r_num}"
+                        room, _ = Room.objects.get_or_create(
+                            floor=floor,
+                            room_number=full_room_number,
+                            defaults={
+                                'capacity': cap,
+                                'category': cat,
+                                'washroom_type': washroom,
+                                'is_air_conditioned': is_ac,
+                                'status': RoomStatus.AVAILABLE,
+                            }
                         )
+                        if room.category != cat:
+                            room.category = cat
+                            room.save()
 
-        # Populate rooms and beds for GH-1
-        for block_name in ['Wing Alpha', 'Wing Beta']:
-            block, _ = Block.objects.get_or_create(hostel=h3, name=block_name)
-            for floor_num in [1, 2]:
-                floor, _ = Floor.objects.get_or_create(block=block, floor_number=floor_num)
-                for r_num in [1, 2]:
-                    room_number = f"G-{floor_num}0{r_num}"
-                    room, _ = Room.objects.get_or_create(
-                        floor=floor,
-                        room_number=room_number,
-                        defaults={
-                            'capacity': 2,
-                            'washroom_type': WashroomType.ATTACHED,
-                            'is_air_conditioned': True
-                        }
-                    )
-                    for fac in [fac_wifi, fac_ac, fac_balcony, fac_geyser]:
-                        RoomFacility.objects.get_or_create(room=room, facility=fac)
-                    for b_idx in range(2):
-                        b_ident = chr(ord('A') + b_idx)
-                        Bed.objects.get_or_create(
-                            room=room,
-                            bed_identifier=b_ident,
-                            defaults={'status': BedStatus.VACANT}
-                        )
+                        # Attach facilities
+                        facs_to_add = [fac_wifi]
+                        if is_ac:
+                            facs_to_add.append(fac_ac)
+                        if washroom == WashroomType.ATTACHED:
+                            facs_to_add.append(fac_geyser)
+                        if cat == RoomCategory.STUDIO_APARTMENT:
+                            facs_to_add.append(fac_balcony)
+
+                        for f in facs_to_add:
+                            RoomFacility.objects.get_or_create(room=room, facility=f)
+
+                        # Generate beds
+                        for b_idx in range(cap):
+                            b_ident = chr(ord('A') + b_idx)
+                            Bed.objects.get_or_create(
+                                room=room,
+                                bed_identifier=b_ident,
+                                defaults={'status': BedStatus.VACANT}
+                            )
+                            total_beds_created += 1
+
+            hostel_obj.total_capacity = total_beds_created
+            hostel_obj.save()
+
+        # Seed Boys Hostels
+        for code, name, desc in boys_hostels_info:
+            h, _ = Hostel.objects.get_or_create(
+                code=code,
+                defaults={
+                    'university': univ,
+                    'name': name,
+                    'gender_policy': GenderPolicy.MALE,
+                    'status': HostelStatus.ACTIVE,
+                    'total_capacity': 150,
+                    'description': desc
+                }
+            )
+            populate_hostel(h, is_female=False)
+            boys_hostel_objects.append(h)
+
+        # Seed Girls Hostels
+        for code, name, desc in girls_hostels_info:
+            h, _ = Hostel.objects.get_or_create(
+                code=code,
+                defaults={
+                    'university': univ,
+                    'name': name,
+                    'gender_policy': GenderPolicy.FEMALE,
+                    'status': HostelStatus.ACTIVE,
+                    'total_capacity': 150,
+                    'description': desc
+                }
+            )
+            populate_hostel(h, is_female=True)
+            girls_hostel_objects.append(h)
+
+        h1 = boys_hostel_objects[0] # BH-1
+        h2 = boys_hostel_objects[1] # BH-2
+        h3 = girls_hostel_objects[0] # GH-1
 
         # 5. Core Administrative Accounts
         admin_user, created = User.objects.get_or_create(
@@ -205,16 +255,12 @@ class Command(BaseCommand):
             warden_boys.set_password('Password123!')
             warden_boys.save()
 
-        WardenAssignment.objects.get_or_create(
-            user=warden_boys,
-            hostel=h1,
-            defaults={'can_approve_allocation': True, 'is_active': True}
-        )
-        WardenAssignment.objects.get_or_create(
-            user=warden_boys,
-            hostel=h2,
-            defaults={'can_approve_allocation': True, 'is_active': True}
-        )
+        for bh in boys_hostel_objects:
+            WardenAssignment.objects.get_or_create(
+                user=warden_boys,
+                hostel=bh,
+                defaults={'can_approve_allocation': True, 'is_active': True}
+            )
 
         warden_girls, created = User.objects.get_or_create(
             email='warden.girls@lpu.in',
@@ -227,11 +273,12 @@ class Command(BaseCommand):
             warden_girls.set_password('Password123!')
             warden_girls.save()
 
-        WardenAssignment.objects.get_or_create(
-            user=warden_girls,
-            hostel=h3,
-            defaults={'can_approve_allocation': True, 'is_active': True}
-        )
+        for gh in girls_hostel_objects:
+            WardenAssignment.objects.get_or_create(
+                user=warden_girls,
+                hostel=gh,
+                defaults={'can_approve_allocation': True, 'is_active': True}
+            )
 
         # 6. Student Accounts & Profiles
         students_data = [
@@ -408,7 +455,7 @@ class Command(BaseCommand):
                 }
             )
 
-        self.stdout.write(self.style.SUCCESS("Demo data successfully seeded!"))
+        self.stdout.write(self.style.SUCCESS(f"Demo data successfully seeded! Generated {Hostel.objects.count()} hostels, {Room.objects.count()} rooms, {Bed.objects.count()} beds."))
         self.stdout.write(self.style.SUCCESS("Available login accounts (Password: Password123!):"))
         self.stdout.write("  Admin:   admin@lpu.in")
         self.stdout.write("  Warden:  warden.boys@lpu.in, warden.girls@lpu.in")

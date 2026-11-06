@@ -37,6 +37,7 @@ LOCAL_APPS = [
     'apps.allocations.apps.AllocationsConfig',
     'apps.notifications.apps.NotificationsConfig',
     'apps.audit.apps.AuditConfig',
+    'apps.api.apps.ApiConfig',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
