@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
+import { EconomicsCalculatorModal } from '../economics/EconomicsCalculatorModal';
+import { Calculator } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const [isCalcOpen, setIsCalcOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -97,6 +100,28 @@ export const Navbar: React.FC = () => {
           <NavLink to="/rooms" style={navLinkStyle}>
             Room Catalog
           </NavLink>
+          <button
+            type="button"
+            onClick={() => setIsCalcOpen(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              background: 'none',
+              border: 'none',
+              color: '#DDD8CF',
+              fontWeight: 500,
+              fontSize: '0.875rem',
+              fontFamily: 'var(--font-sans)',
+              padding: '0.375rem 0.625rem',
+              borderRadius: 'var(--radius-md)',
+              cursor: 'pointer',
+              transition: 'color var(--transition-fast)',
+            }}
+          >
+            <Calculator size={13} color="var(--brand)" />
+            Fee Simulator
+          </button>
           {isAuthenticated && (
             <>
               <NavLink to="/roommates" style={navLinkStyle}>
@@ -160,6 +185,12 @@ export const Navbar: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Residential Economics & Tariff Simulator Modal */}
+      <EconomicsCalculatorModal
+        isOpen={isCalcOpen}
+        onClose={() => setIsCalcOpen(false)}
+      />
     </header>
   );
 };

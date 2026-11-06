@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CandidateMatch } from '../../types/roommate';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
+import { RoommateHarmonyRadar } from './RoommateHarmonyRadar';
+import { Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface CandidateCardProps {
   candidate: CandidateMatch;
@@ -15,6 +17,7 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
   onSendRequest,
   isSending = false,
 }) => {
+  const [showRadar, setShowRadar] = useState(false);
   const score = candidate.score ? Math.round(candidate.score) : null;
 
   return (
@@ -90,8 +93,44 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
 
       {/* Target Room Choice */}
       {candidate.target_room && (
-        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
           Preferred Room: <strong>{candidate.target_room}</strong>
+        </div>
+      )}
+
+      {/* 7-Factor Radar Trigger */}
+      {score !== null && (
+        <div style={{ marginBottom: '0.75rem' }}>
+          <button
+            type="button"
+            onClick={() => setShowRadar(!showRadar)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              padding: '0.35rem 0.65rem',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: 'var(--primary)',
+              backgroundColor: '#FFF7ED',
+              border: '1px solid #FFEDD5',
+              borderRadius: '2px',
+              cursor: 'pointer',
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+              <Sparkles size={12} />
+              7-Factor Lifestyle Radar
+            </span>
+            {showRadar ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+
+          {showRadar && (
+            <div style={{ marginTop: '0.5rem' }}>
+              <RoommateHarmonyRadar score={score} compact />
+            </div>
+          )}
         </div>
       )}
 

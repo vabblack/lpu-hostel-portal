@@ -7,6 +7,9 @@ import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { Spinner } from '../components/common/Spinner';
+import { GatePassWidget } from '../components/living/GatePassWidget';
+import { RMSDeskWidget } from '../components/living/RMSDeskWidget';
+import { WardenCommandCenter } from '../components/warden/WardenCommandCenter';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -28,7 +31,16 @@ export const DashboardPage: React.FC = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  if (isLoading) return <Spinner label="Loading student dashboard..." />;
+  if (isLoading) return <Spinner label="Loading dashboard..." />;
+
+  // Render Warden & Administrator Command Center if logged in with staff credentials
+  if (user && (user.role === 'WARDEN' || user.role === 'ADMIN')) {
+    return (
+      <div className="container">
+        <WardenCommandCenter userEmail={user.email} role={user.role} />
+      </div>
+    );
+  }
 
   const student = user?.student;
   const activeAllocation = student?.active_allocation;
@@ -335,6 +347,31 @@ export const DashboardPage: React.FC = () => {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Student Living Experience Hub: Turnstile Gate Pass & RMS Maintenance */}
+      <section style={{ marginBottom: '2.5rem' }}>
+        <h2
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: '1.375rem',
+            fontWeight: 600,
+            color: 'var(--ink)',
+            marginBottom: '1rem',
+          }}
+        >
+          Daily Residence &amp; Campus Operations
+        </h2>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+            gap: '1.25rem',
+          }}
+        >
+          <GatePassWidget />
+          <RMSDeskWidget />
+        </div>
       </section>
 
       {/* Quick Services */}
