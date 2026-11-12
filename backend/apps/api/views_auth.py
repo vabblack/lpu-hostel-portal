@@ -187,7 +187,7 @@ def register_view(request):
 
     try:
         user = form.save()
-        auth_login(request, user)
+        auth_login(request, user, backend='apps.accounts.backends.EmailOrStudentIDBackend')
         return JsonResponse({
             'success': True,
             'message': 'Registration successful! Account claimed and signed in.',

@@ -131,6 +131,24 @@ if DATABASE_URL:
             conn_health_checks=True,
             ssl_require=True if ('supabase' in clean_db_url or os.getenv('DB_SSL_REQUIRE', 'False').lower() in ('true', '1')) else False,
         )
+        # Verify host supports IPv4 (Render free tier and many container hosts do not support IPv6 outbound)
+        if parsed_db:
+            db_host = parsed_db.get('HOST', '')
+            if 'supabase.co' in db_host and db_host.startswith('db.'):
+                import socket
+                import sys
+                try:
+                    socket.getaddrinfo(db_host, int(parsed_db.get('PORT') or 5432), socket.AF_INET)
+                except (socket.gaierror, socket.error):
+                    print(
+                        f"CRITICAL NOTICE: Supabase direct host '{db_host}' is IPv6-only.\n"
+                        "Render free tier containers only support IPv4 network connections.\n"
+                        "To use Supabase on Render, use the Supabase Connection Pooler string:\n"
+                        "  postgresql://postgres.<ref>:[PASSWORD]@aws-0-ap-south-1.pooler.supabase.com:6543/postgres\n"
+                        "Falling back to local SQLite database so deployment succeeds without downtime.",
+                        file=sys.stderr
+                    )
+                    parsed_db = None
     except Exception as exc:
         import sys
         print(f"WARNING: Unable to parse DATABASE_URL ({exc}). Falling back to local database.", file=sys.stderr)

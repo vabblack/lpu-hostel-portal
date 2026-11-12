@@ -16,3 +16,4 @@ jobs:
           curl -s -o /dev/null -w "%{http_code}\n" https://lpu-hostel-api.onrender.com/api/health/ || true
           echo "Pinging LPU Hostel Web frontend..."
           curl -s -o /dev/null -w "%{http_code}\n" https://lpu-hostel-web.onrender.com/ || true
+
