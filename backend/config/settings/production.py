@@ -23,12 +23,12 @@ for host in custom_hosts.split(','):
     if host and host not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(host)
 
-# Frontend Integration (Render Static Site & Vercel)
-default_frontend = 'https://lpu-hostel-web.onrender.com'
-if default_frontend not in CORS_ALLOWED_ORIGINS:
-    CORS_ALLOWED_ORIGINS.append(default_frontend)
-if default_frontend not in CSRF_TRUSTED_ORIGINS:
-    CSRF_TRUSTED_ORIGINS.append(default_frontend)
+# Frontend Integration (Render Static Site, Vercel & is-a.dev custom domain)
+for domain in ['https://lpu-hostel-web.onrender.com', 'https://lpu-hostel.is-a.dev']:
+    if domain not in CORS_ALLOWED_ORIGINS:
+        CORS_ALLOWED_ORIGINS.append(domain)
+    if domain not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(domain)
 
 FRONTEND_URL = os.getenv('FRONTEND_URL', '').strip()
 if FRONTEND_URL:

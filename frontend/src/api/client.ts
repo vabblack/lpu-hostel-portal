@@ -8,8 +8,8 @@ const getApiBase = (): string => {
     return (import.meta.env.VITE_API_BASE_URL as string).replace(/\/+$/, '');
   }
   if (typeof window !== 'undefined') {
-    // If running on Render static site (e.g. lpu-hostel-web.onrender.com), automatically point to companion API
-    if (window.location.hostname.includes('onrender.com')) {
+    // If running on Render static site or custom is-a.dev domain, automatically point to companion API
+    if (window.location.hostname.includes('onrender.com') || window.location.hostname.includes('is-a.dev')) {
       return 'https://lpu-hostel-api.onrender.com';
     }
   }
