@@ -49,8 +49,9 @@ export const RoomInspectionModal: React.FC<RoomInspectionModalProps> = ({
         style={{
           position: 'fixed',
           inset: 0,
-          backgroundColor: 'rgba(26, 26, 26, 0.65)',
-          backdropFilter: 'blur(3px)',
+          backgroundColor: 'rgba(13, 12, 11, 0.78)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -65,14 +66,14 @@ export const RoomInspectionModal: React.FC<RoomInspectionModalProps> = ({
           exit={{ opacity: 0, scale: 0.96, y: 8 }}
           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            backgroundColor: '#FFFFFF',
-            borderRadius: '4px',
-            border: '1px solid var(--border)',
+            backgroundColor: 'var(--surface)',
+            borderRadius: 'var(--radius-md)',
+            border: '1.5px solid var(--border-strong)',
             width: '100%',
             maxWidth: '580px',
             maxHeight: '90vh',
             overflowY: 'auto',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            boxShadow: '8px 8px 0 #0a0908',
           }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -84,7 +85,7 @@ export const RoomInspectionModal: React.FC<RoomInspectionModalProps> = ({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
-            backgroundColor: '#FAF8F5',
+            backgroundColor: 'var(--surface-alt)',
           }}
         >
           <div>
@@ -158,7 +159,7 @@ export const RoomInspectionModal: React.FC<RoomInspectionModalProps> = ({
               gridTemplateColumns: 'repeat(2, 1fr)',
               gap: '1rem',
               padding: '1rem',
-              backgroundColor: '#FAF9F6',
+              backgroundColor: 'var(--bg)',
               border: '1px solid var(--border)',
               marginBottom: '1.25rem',
             }}
@@ -245,10 +246,10 @@ export const RoomInspectionModal: React.FC<RoomInspectionModalProps> = ({
                           : 'var(--border-strong)'
                       }`,
                       backgroundColor: isSelected
-                        ? '#FFF5ED'
+                        ? 'var(--status-pending-bg)'
                         : isOccupied
-                        ? '#F5F5F4'
-                        : '#FFFFFF',
+                        ? 'var(--status-waitlisted-bg)'
+                        : 'var(--surface-alt)',
                       borderRadius: '4px',
                       cursor: isOccupied ? 'not-allowed' : 'pointer',
                       display: 'flex',
@@ -310,8 +311,8 @@ export const RoomInspectionModal: React.FC<RoomInspectionModalProps> = ({
           {standardFee > 0 && (
             <div
               style={{
-                backgroundColor: '#FAF5EE',
-                border: '1px solid #E4D8C7',
+                backgroundColor: 'var(--surface-alt)',
+                border: '1px solid var(--border-strong)',
                 padding: '1rem',
                 borderRadius: '4px',
                 marginBottom: '1.5rem',

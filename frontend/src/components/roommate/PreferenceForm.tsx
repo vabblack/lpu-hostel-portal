@@ -176,7 +176,7 @@ export const PreferenceForm: React.FC<PreferenceFormProps> = ({ initialValues, o
                 padding: '0.625rem 0.5rem',
                 borderRadius: 'var(--radius-md)',
                 border: `1px solid ${foodPreference === item.val ? 'var(--primary)' : 'var(--border)'}`,
-                backgroundColor: foodPreference === item.val ? '#FAF8F3' : 'var(--surface)',
+                backgroundColor: foodPreference === item.val ? 'var(--surface-alt)' : 'var(--surface)',
                 textAlign: 'center',
                 fontSize: '0.8125rem',
                 cursor: 'pointer',

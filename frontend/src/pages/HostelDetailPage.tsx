@@ -214,7 +214,7 @@ export const HostelDetailPage: React.FC = () => {
                     borderColor: isSelected ? 'var(--ink)' : 'var(--border)',
                     cursor: 'pointer',
                     backgroundColor: isSelected ? 'var(--ink)' : 'var(--surface)',
-                    color: isSelected ? '#ffffff' : 'var(--text)',
+                    color: isSelected ? 'var(--primary-foreground)' : 'var(--text)',
                     transition: 'all var(--transition-fast)',
                   }}
                 >
@@ -252,7 +252,7 @@ export const HostelDetailPage: React.FC = () => {
                         border: '1px solid',
                         borderColor: isSelected ? 'var(--primary)' : 'var(--border-strong)',
                         backgroundColor: isSelected ? 'var(--primary)' : 'var(--surface)',
-                        color: isSelected ? '#ffffff' : 'var(--text)',
+                        color: isSelected ? 'var(--primary-foreground)' : 'var(--text)',
                         cursor: 'pointer',
                       }}
                     >
@@ -283,13 +283,13 @@ export const HostelDetailPage: React.FC = () => {
                     fontSize: '0.8125rem',
                     fontWeight: viewMode === 'BLUEPRINT' ? 600 : 400,
                     backgroundColor: viewMode === 'BLUEPRINT' ? 'var(--ink)' : 'transparent',
-                    color: viewMode === 'BLUEPRINT' ? '#ffffff' : 'var(--text)',
+                    color: viewMode === 'BLUEPRINT' ? 'var(--primary-foreground)' : 'var(--text)',
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all var(--transition-fast)',
                   }}
                 >
-                  <Compass size={14} color={viewMode === 'BLUEPRINT' ? '#ffffff' : 'var(--primary)'} />
+                  <Compass size={14} color={viewMode === 'BLUEPRINT' ? 'var(--primary-foreground)' : 'var(--primary)'} />
                   Architectural Blueprint
                 </button>
                 <button
@@ -303,7 +303,7 @@ export const HostelDetailPage: React.FC = () => {
                     fontSize: '0.8125rem',
                     fontWeight: viewMode === 'GRID' ? 600 : 400,
                     backgroundColor: viewMode === 'GRID' ? 'var(--ink)' : 'transparent',
-                    color: viewMode === 'GRID' ? '#ffffff' : 'var(--text)',
+                    color: viewMode === 'GRID' ? 'var(--primary-foreground)' : 'var(--text)',
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all var(--transition-fast)',

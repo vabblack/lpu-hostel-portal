@@ -3,7 +3,15 @@ API Routing Configuration for React Frontend.
 """
 from django.urls import path
 from .views_health import health_check_view
-from .views_auth import me_view, csrf_view, login_view, logout_view, register_view
+from .views_auth import (
+    me_view,
+    csrf_view,
+    login_view,
+    logout_view,
+    register_view,
+    google_auth_view,
+    import_ums_allotment_view,
+)
 from .views_hostels import hostel_list_view, hostel_detail_view, room_catalog_view, room_detail_view
 from .views_roommates import (
     preferences_api_view,
@@ -35,6 +43,8 @@ urlpatterns = [
     path('auth/login/', login_view, name='auth_login'),
     path('auth/logout/', logout_view, name='auth_logout'),
     path('auth/register/', register_view, name='auth_register'),
+    path('auth/google/', google_auth_view, name='auth_google'),
+    path('students/import-allotment/', import_ums_allotment_view, name='import_ums_allotment'),
 
     # Hostels & Rooms
     path('hostels/', hostel_list_view, name='hostels_list'),

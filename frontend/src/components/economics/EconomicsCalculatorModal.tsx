@@ -75,14 +75,14 @@ export const EconomicsCalculatorModal: React.FC<EconomicsCalculatorModalProps> =
           exit={{ opacity: 0, scale: 0.96, y: 10 }}
           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            backgroundColor: '#FFFFFF',
-            borderRadius: '4px',
-            border: '1px solid var(--border)',
+            backgroundColor: 'var(--surface)',
+            borderRadius: 'var(--radius-md)',
+            border: '1.5px solid var(--border-strong)',
             width: '100%',
             maxWidth: '780px',
             maxHeight: '92vh',
             overflowY: 'auto',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            boxShadow: '8px 8px 0 #0a0908',
           }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -94,7 +94,7 @@ export const EconomicsCalculatorModal: React.FC<EconomicsCalculatorModalProps> =
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: '#FAF8F5',
+            backgroundColor: 'var(--surface-alt)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -122,10 +122,10 @@ export const EconomicsCalculatorModal: React.FC<EconomicsCalculatorModalProps> =
                   color: 'var(--ink)',
                 }}
               >
-                Residential Economics & Tariff Simulator
+                Demo fee estimator
               </h2>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                10-Month Academic Session • LPU Standard Fee, Mess & Metered Power Master
+                Sample calculation for exploring room, mess and electricity costs
               </div>
             </div>
           </div>
@@ -294,7 +294,7 @@ export const EconomicsCalculatorModal: React.FC<EconomicsCalculatorModalProps> =
                       {c.name} — ₹{c.monthly_fee}/month
                     </option>
                   )) || (
-                    <option value="NORTH_INDIAN">North Indian Royal Feast — ₹4,500/month</option>
+                    <option value="NORTH_INDIAN">North Indian Standard Vegetarian — ₹4,500/month</option>
                   )}
                 </select>
               </div>
@@ -386,7 +386,7 @@ export const EconomicsCalculatorModal: React.FC<EconomicsCalculatorModalProps> =
             {/* Right Column: Real-Time Cost Summary & Transparency Breakdown */}
             <div
               style={{
-                backgroundColor: '#FAF9F6',
+                backgroundColor: 'var(--bg)',
                 border: '1px solid var(--border)',
                 borderRadius: '2px',
                 padding: '1.25rem',
@@ -527,8 +527,7 @@ export const EconomicsCalculatorModal: React.FC<EconomicsCalculatorModalProps> =
                     lineHeight: 1.4,
                   }}
                 >
-                  * Includes 10-month residence, dining subscription, and metered power allocation.
-                  No hidden campus maintenance surcharges.
+                  * Managed by Pro Bricks: includes 10-month room tariff, regional mess, and electricity unit quota. Optional add-ons on campus: Laundry ₹5,400/yr (up to 70 clothes/mo) &amp; Indoor Stadium/Gym ₹2,500–₹5,000/yr.
                 </div>
 
                 <div style={{ marginTop: '1rem' }}>

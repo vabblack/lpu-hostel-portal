@@ -10,12 +10,14 @@ import { Spinner } from '../components/common/Spinner';
 import { GatePassWidget } from '../components/living/GatePassWidget';
 import { RMSDeskWidget } from '../components/living/RMSDeskWidget';
 import { WardenCommandCenter } from '../components/warden/WardenCommandCenter';
+import { UmsAllotmentSyncModal } from '../components/living/UmsAllotmentSyncModal';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [applications, setApplications] = useState<HostelApplicationItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUmsModalOpen, setIsUmsModalOpen] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -173,16 +175,18 @@ export const DashboardPage: React.FC = () => {
                   border: '1px solid var(--border)',
                 }}
               >
-                <div
-                  style={{
-                    fontSize: '1.125rem',
-                    fontFamily: 'var(--font-serif)',
-                    fontWeight: 600,
-                    color: 'var(--ink)',
-                    marginBottom: '0.25rem',
-                  }}
-                >
-                  {activeAllocation.hostel_name} ({activeAllocation.hostel_code})
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
+                  <div
+                    style={{
+                      fontSize: '1.125rem',
+                      fontFamily: 'var(--font-serif)',
+                      fontWeight: 600,
+                      color: 'var(--ink)',
+                    }}
+                  >
+                    {activeAllocation.hostel_name} ({activeAllocation.hostel_code})
+                  </div>
+                  <Badge variant="success">UMS Synced</Badge>
                 </div>
                 <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text)' }}>
                   Room <span className="tabular-nums">{activeAllocation.room_number}</span> • Bed{' '}
@@ -190,13 +194,27 @@ export const DashboardPage: React.FC = () => {
                 </div>
                 <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
                   <span className="tabular-nums">{activeAllocation.seater}</span>-Seater •{' '}
-                  {activeAllocation.cooling_type === 'AIR_CONDITIONED' ? 'Air-Conditioned' : 'Air-Cooled'}
+                  {activeAllocation.cooling_type === 'AIR_CONDITIONED' || activeAllocation.is_ac ? 'Air-Conditioned' : 'Air-Cooled'}
                 </div>
               </div>
 
-              <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-                Session Tenancy: <span className="tabular-nums">{activeAllocation.start_date}</span> to{' '}
-                <span className="tabular-nums">{activeAllocation.end_date}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                <span>Session: <span className="tabular-nums">{activeAllocation.start_date}</span> to <span className="tabular-nums">{activeAllocation.end_date}</span></span>
+                <button
+                  type="button"
+                  onClick={() => setIsUmsModalOpen(true)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--brand)',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    padding: 0,
+                  }}
+                >
+                  Update UMS Slip ↗
+                </button>
               </div>
             </div>
           ) : (
@@ -209,13 +227,24 @@ export const DashboardPage: React.FC = () => {
                   lineHeight: 1.5,
                 }}
               >
-                No active bed allocation on file for the 2026–27 session. Submit your residential preferences to be considered in the upcoming allocation cycle.
+                No active bed allocation on file for the 2026–27 session. Submit your residential preferences or sync directly from your official LPU UMS allotment record.
               </p>
-              <Link to="/apply" style={{ textDecoration: 'none' }}>
-                <Button variant="primary" size="sm">
-                  Submit Room Preferences &rarr;
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <Link to="/apply" style={{ textDecoration: 'none' }}>
+                  <Button variant="primary" size="sm">
+                    Submit Room Preferences &rarr;
+                  </Button>
+                </Link>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setIsUmsModalOpen(true)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                >
+                  <span>Sync from UMS Portal</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--brand)' }}>⚡</span>
                 </Button>
-              </Link>
+              </div>
             </div>
           )}
         </Card>
@@ -453,12 +482,18 @@ export const DashboardPage: React.FC = () => {
                 Room &amp; Tariff Explorer
               </strong>
               <span style={{ fontSize: '0.8125rem', color: 'var(--text)', lineHeight: 1.5 }}>
-                Browse 1-seater through 6-seater AC and Cooler accommodations across 14 towers.
+                Browse 1-seater through 8-seater AC, Air-Cooled, and Studio Apartment rooms across 19 hostels (BH-1–BH-10 incl. Boys Studio 9 &amp; GH-1–GS-9).
               </span>
             </Card>
           </Link>
         </div>
       </section>
+
+      {/* UMS Allotment Sync Modal */}
+      <UmsAllotmentSyncModal
+        isOpen={isUmsModalOpen}
+        onClose={() => setIsUmsModalOpen(false)}
+      />
     </div>
   );
 };

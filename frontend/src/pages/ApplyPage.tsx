@@ -348,8 +348,8 @@ export const ApplyPage: React.FC = () => {
               <div
                 style={{
                   padding: '0.85rem 1rem',
-                  backgroundColor: '#FFF7ED',
-                  border: '1px solid #FFEDD5',
+                  backgroundColor: 'var(--status-pending-bg)',
+                  border: '1px solid var(--brand)',
                   borderRadius: 'var(--radius-sm)',
                   marginBottom: '1.25rem',
                   display: 'flex',

@@ -50,7 +50,7 @@ LPU_FEE_CATALOG: Dict[Tuple[str, int, str], FeeTierConfig] = {
     ),
     ('STANDARD', 3, 'AIR_CONDITIONED'): FeeTierConfig(
         'STANDARD', 3, 'AIR_CONDITIONED',
-        Decimal('123000.00'), Decimal('113000.00'), Decimal('550.00')
+        Decimal('113000.00'), Decimal('103000.00'), Decimal('550.00')
     ),
     ('STUDIO_APARTMENT', 3, 'AIR_CONDITIONED'): FeeTierConfig(
         'STUDIO_APARTMENT', 3, 'AIR_CONDITIONED',

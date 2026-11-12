@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
+import { LpuGoogleAuthButton } from '../components/auth/LpuGoogleAuthButton';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
@@ -83,6 +84,31 @@ export const LoginPage: React.FC = () => {
             {errorMsg}
           </div>
         )}
+
+        {/* LPU Google Workspace SSO */}
+        <div style={{ marginBottom: '1.25rem' }}>
+          <LpuGoogleAuthButton
+            onSuccess={() => navigate(from, { replace: true })}
+            onError={(msg) => setErrorMsg(msg)}
+          />
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            margin: '1.25rem 0',
+            color: 'var(--text-muted)',
+            fontSize: '0.75rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border)' }} />
+          <span>Or sign in with student password</span>
+          <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border)' }} />
+        </div>
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '1rem' }}>

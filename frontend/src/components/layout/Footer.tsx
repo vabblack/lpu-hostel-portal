@@ -24,16 +24,16 @@ export const Footer: React.FC = () => {
         >
           <div>
             <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 600, fontSize: '1.125rem', color: 'var(--ink)' }}>
-              Lovely Professional University
+              Lovely Professional University (NAAC Grade A++)
             </div>
             <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-              Office of Residential Life &amp; Accommodation Services • 10-Month Academic Session
+              Jalandhar–Delhi G.T. Road, Phagwara, Punjab (144411) • Helpline: +91-1824-517000 • admissions@lpu.co.in
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.875rem', color: 'var(--text)' }}>
-            <span>Boys Towers: BH-1 to BH-8</span>
-            <span>Girls Towers: GH-1 to GH-6</span>
-            <span>Pro Bricks Dining</span>
+          <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.875rem', color: 'var(--text)', flexWrap: 'wrap' }}>
+            <a href="https://www.lpu.in/student-services/residence.php/" target="_blank" rel="noreferrer">LPU residential facilities</a>
+            <a href="https://www.lpu.in/SUSTAINABLE/sdg11/residential-facility.php" target="_blank" rel="noreferrer">LPU published figures</a>
+            <a href="https://www.lpu.in/lpu-assets/download/hostel-brochure.pdf" target="_blank" rel="noreferrer">Official hostel brochure</a>
           </div>
         </div>
         <div
@@ -48,8 +48,8 @@ export const Footer: React.FC = () => {
             gap: '0.5rem',
           }}
         >
-          <div>© {new Date().getFullYear()} Lovely Professional University. All official rights reserved.</div>
-          <div>Strict Contraband Policy Enforced • Transparent Metered Electricity Quotas</div>
+          <div>© {new Date().getFullYear()} LPU Residential Accommodation &amp; Roommate Portal</div>
+          <div>Residential fees, Pro Bricks mess, laundry &amp; gym data referenced from lpu.in. Official booking runs through LPU UMS.</div>
         </div>
       </div>
     </footer>

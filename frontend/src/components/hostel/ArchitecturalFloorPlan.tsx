@@ -55,11 +55,11 @@ export const ArchitecturalFloorPlan: React.FC<ArchitecturalFloorPlanProps> = ({
   return (
     <div
       style={{
-        backgroundColor: '#FCFAF7',
+        backgroundColor: '#141312',
         border: '1px solid var(--border)',
         borderRadius: 'var(--radius-md)',
         overflow: 'hidden',
-        boxShadow: 'inset 0 0 40px rgba(0, 0, 0, 0.02)',
+        boxShadow: 'inset 0 0 40px rgba(0, 0, 0, 0.45)',
       }}
     >
       {/* Blueprint Top Header & Controls */}
@@ -71,7 +71,7 @@ export const ArchitecturalFloorPlan: React.FC<ArchitecturalFloorPlanProps> = ({
           flexWrap: 'wrap',
           gap: '1rem',
           padding: '1.25rem 1.5rem',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'var(--surface)',
           borderBottom: '1px solid var(--border)',
         }}
       >
@@ -80,7 +80,7 @@ export const ArchitecturalFloorPlan: React.FC<ArchitecturalFloorPlanProps> = ({
             style={{
               width: '38px',
               height: '38px',
-              backgroundColor: '#FAF5EE',
+              backgroundColor: 'var(--surface-alt)',
               border: '1px solid var(--border-strong)',
               display: 'flex',
               alignItems: 'center',
@@ -126,7 +126,7 @@ export const ArchitecturalFloorPlan: React.FC<ArchitecturalFloorPlanProps> = ({
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>
               Capacity:
             </span>
-            <div style={{ display: 'flex', border: '1px solid var(--border)', backgroundColor: '#fff' }}>
+            <div style={{ display: 'flex', border: '1px solid var(--border)', backgroundColor: 'var(--bg)' }}>
               {(['ALL', 1, 2, 3, 4] as const).map((cap) => (
                 <button
                   key={cap}
@@ -137,7 +137,7 @@ export const ArchitecturalFloorPlan: React.FC<ArchitecturalFloorPlanProps> = ({
                     fontSize: '0.75rem',
                     fontWeight: capacityFilter === cap ? 600 : 400,
                     backgroundColor: capacityFilter === cap ? 'var(--ink)' : 'transparent',
-                    color: capacityFilter === cap ? '#fff' : 'var(--text)',
+                    color: capacityFilter === cap ? 'var(--primary-foreground)' : 'var(--text)',
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all var(--transition-fast)',
@@ -154,7 +154,7 @@ export const ArchitecturalFloorPlan: React.FC<ArchitecturalFloorPlanProps> = ({
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>
               Cooling:
             </span>
-            <div style={{ display: 'flex', border: '1px solid var(--border)', backgroundColor: '#fff' }}>
+            <div style={{ display: 'flex', border: '1px solid var(--border)', backgroundColor: 'var(--bg)' }}>
               {(['ALL', 'AC', 'AIR_COOLED'] as const).map((cool) => (
                 <button
                   key={cool}
@@ -165,7 +165,7 @@ export const ArchitecturalFloorPlan: React.FC<ArchitecturalFloorPlanProps> = ({
                     fontSize: '0.75rem',
                     fontWeight: coolingFilter === cool ? 600 : 400,
                     backgroundColor: coolingFilter === cool ? 'var(--ink)' : 'transparent',
-                    color: coolingFilter === cool ? '#fff' : 'var(--text)',
+                    color: coolingFilter === cool ? 'var(--primary-foreground)' : 'var(--text)',
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all var(--transition-fast)',
@@ -207,7 +207,7 @@ export const ArchitecturalFloorPlan: React.FC<ArchitecturalFloorPlanProps> = ({
           position: 'relative',
           overflowX: 'auto',
           backgroundImage:
-            'radial-gradient(circle, #EAE4D8 1px, transparent 1px), radial-gradient(circle, #EAE4D8 1px, transparent 1px)',
+            'radial-gradient(circle, rgba(235, 177, 98, 0.09) 1px, transparent 1px), radial-gradient(circle, rgba(235, 177, 98, 0.05) 1px, transparent 1px)',
           backgroundSize: '24px 24px',
           backgroundPosition: '0 0, 12px 12px',
         }}
@@ -329,7 +329,7 @@ export const ArchitecturalFloorPlan: React.FC<ArchitecturalFloorPlanProps> = ({
           <div
             style={{
               padding: '0.75rem 1.25rem',
-              backgroundColor: '#EDE7DC',
+              backgroundColor: 'var(--surface-alt)',
               border: '2px dashed var(--border-strong)',
               display: 'flex',
               justifyContent: 'space-between',
@@ -438,7 +438,7 @@ export const ArchitecturalFloorPlan: React.FC<ArchitecturalFloorPlanProps> = ({
           style={{
             marginTop: '2rem',
             padding: '1rem 1.25rem',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--surface)',
             border: '1px solid var(--border)',
             display: 'flex',
             justifyContent: 'space-between',
@@ -490,7 +490,7 @@ export const ArchitecturalFloorPlan: React.FC<ArchitecturalFloorPlanProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem' }}>
               <svg width="14" height="14" viewBox="0 0 14 14" style={{ overflow: 'visible' }}>
                 <path d="M 2 12 L 2 2 A 10 10 0 0 1 12 12 Z" fill="none" stroke="#C2410C" strokeWidth="1.2" strokeDasharray="2,2" />
-                <line x1="2" y1="12" x2="2" y2="2" stroke="#1A1A1A" strokeWidth="1.5" />
+                <line x1="2" y1="12" x2="2" y2="2" stroke="var(--ink)" strokeWidth="1.5" />
               </svg>
               <span>Door Clearance Arc</span>
             </div>
@@ -537,7 +537,7 @@ const RoomArchitecturalCell: React.FC<RoomArchitecturalCellProps> = ({
       onMouseLeave={() => setIsHovered(false)}
       style={{
         position: 'relative',
-        backgroundColor: isSelected ? '#FFF8F3' : isHovered ? '#FFFFFF' : '#FBF9F5',
+        backgroundColor: isSelected ? 'var(--status-pending-bg)' : isHovered ? 'var(--surface-alt)' : 'var(--surface)',
         border: `2px solid ${
           isSelected
             ? 'var(--primary)'
@@ -650,9 +650,15 @@ const RoomArchitecturalCell: React.FC<RoomArchitecturalCellProps> = ({
               padding: '0.15rem 0.35rem',
               fontSize: '0.625rem',
               fontWeight: 600,
-              backgroundColor: room.is_air_conditioned ? '#EFF6FF' : '#FEF3C7',
-              color: room.is_air_conditioned ? '#1D4ED8' : '#B45309',
-              border: `1px solid ${room.is_air_conditioned ? '#BFDBFE' : '#FDE68A'}`,
+              backgroundColor: room.is_air_conditioned
+                ? 'rgba(56, 189, 248, 0.14)'
+                : 'var(--status-pending-bg)',
+              color: room.is_air_conditioned ? '#7DD3FC' : 'var(--status-pending)',
+              border: `1px solid ${
+                room.is_air_conditioned
+                  ? 'rgba(56, 189, 248, 0.35)'
+                  : 'rgba(250, 204, 21, 0.35)'
+              }`,
               borderRadius: '2px',
             }}
           >
@@ -670,7 +676,7 @@ const RoomArchitecturalCell: React.FC<RoomArchitecturalCellProps> = ({
           gap: '0.35rem',
           margin: '0.6rem 0 0.5rem',
           padding: '0.35rem',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'var(--bg)',
           border: '1px solid var(--border)',
           borderRadius: '2px',
         }}
@@ -688,22 +694,22 @@ const RoomArchitecturalCell: React.FC<RoomArchitecturalCellProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 padding: '0.3rem 0.1rem',
-                backgroundColor: isOccupied ? '#F5F5F4' : '#E7F2EA',
-                border: `1px solid ${isOccupied ? '#D6D3D1' : '#1E6B3A'}`,
+                backgroundColor: isOccupied ? 'var(--status-waitlisted-bg)' : 'var(--status-success-bg)',
+                border: `1px solid ${isOccupied ? 'var(--border-strong)' : 'var(--status-success)'}`,
                 borderRadius: '1px',
                 transition: 'all 100ms ease',
               }}
             >
               <Bed
                 size={12}
-                color={isOccupied ? '#78716C' : '#1E6B3A'}
+                color={isOccupied ? 'var(--status-waitlisted)' : 'var(--status-success)'}
                 strokeWidth={isOccupied ? 1.5 : 2}
               />
               <span
                 style={{
                   fontSize: '0.5625rem',
                   fontWeight: 700,
-                  color: isOccupied ? '#78716C' : '#1E6B3A',
+                  color: isOccupied ? 'var(--status-waitlisted)' : 'var(--status-success)',
                   marginTop: '0.1rem',
                 }}
               >

@@ -211,7 +211,7 @@ export const WardenCommandCenter: React.FC<WardenCommandCenterProps> = ({ userEm
         {/* Outing Gate Pass Approvals Queue */}
         <div
           style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--surface)',
             border: '1px solid var(--border)',
             borderRadius: 'var(--radius-md)',
             padding: '1.25rem',
@@ -230,8 +230,8 @@ export const WardenCommandCenter: React.FC<WardenCommandCenterProps> = ({ userEm
           </div>
 
           {pendingPasses.length === 0 ? (
-            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', backgroundColor: '#FAF9F6', border: '1px dashed var(--border)', borderRadius: '2px', fontSize: '0.8125rem' }}>
-              <ShieldCheck size={24} color="#1E6B3A" style={{ marginBottom: '0.5rem' }} />
+            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', backgroundColor: 'var(--surface-alt)', border: '1px dashed var(--border)', borderRadius: '2px', fontSize: '0.8125rem' }}>
+              <ShieldCheck size={24} color="var(--status-success)" style={{ marginBottom: '0.5rem' }} />
               <div>All student outing requests are reviewed and up-to-date.</div>
             </div>
           ) : (
@@ -241,7 +241,7 @@ export const WardenCommandCenter: React.FC<WardenCommandCenterProps> = ({ userEm
                   key={p.id}
                   style={{
                     padding: '0.85rem 1rem',
-                    backgroundColor: '#FAF8F5',
+                    backgroundColor: 'var(--surface-alt)',
                     border: '1px solid var(--border)',
                     borderRadius: '2px',
                   }}
@@ -301,7 +301,7 @@ export const WardenCommandCenter: React.FC<WardenCommandCenterProps> = ({ userEm
         {/* RMS Maintenance Dispatch Queue */}
         <div
           style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--surface)',
             border: '1px solid var(--border)',
             borderRadius: 'var(--radius-md)',
             padding: '1.25rem',
@@ -322,8 +322,8 @@ export const WardenCommandCenter: React.FC<WardenCommandCenterProps> = ({ userEm
           </div>
 
           {activeTickets.length === 0 ? (
-            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', backgroundColor: '#FAF9F6', border: '1px dashed var(--border)', borderRadius: '2px', fontSize: '0.8125rem' }}>
-              <CheckCircle size={24} color="#1E6B3A" style={{ marginBottom: '0.5rem' }} />
+            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', backgroundColor: 'var(--surface-alt)', border: '1px dashed var(--border)', borderRadius: '2px', fontSize: '0.8125rem' }}>
+              <CheckCircle size={24} color="var(--status-success)" style={{ marginBottom: '0.5rem' }} />
               <div>Zero room maintenance tickets pending across your towers.</div>
             </div>
           ) : (
@@ -333,7 +333,7 @@ export const WardenCommandCenter: React.FC<WardenCommandCenterProps> = ({ userEm
                   key={t.id}
                   style={{
                     padding: '0.85rem 1rem',
-                    backgroundColor: '#FAF8F5',
+                    backgroundColor: 'var(--surface-alt)',
                     border: '1px solid var(--border)',
                     borderRadius: '2px',
                   }}

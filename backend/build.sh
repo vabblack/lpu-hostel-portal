@@ -9,7 +9,10 @@ pip install -r requirements.txt
 echo "=== [2/3] Collecting production static files (WhiteNoise) ==="
 python manage.py collectstatic --noinput
 
-echo "=== [3/3] Running database migrations ==="
+echo "=== [3/4] Running database migrations ==="
 python manage.py migrate --noinput
+
+echo "=== [4/4] Seeding authoritative LPU residence data ==="
+python manage.py seed_demo_data || true
 
 echo "=== Render build completed successfully ==="

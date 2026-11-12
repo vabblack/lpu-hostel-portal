@@ -74,7 +74,7 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
         style={{
           fontSize: '0.8125rem',
           color: 'var(--text)',
-          backgroundColor: '#FAF8F3',
+          backgroundColor: 'var(--surface-alt)',
           border: '1px solid var(--border)',
           padding: '0.625rem 0.75rem',
           borderRadius: 'var(--radius-md)',
@@ -113,8 +113,8 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
               fontSize: '0.75rem',
               fontWeight: 600,
               color: 'var(--primary)',
-              backgroundColor: '#FFF7ED',
-              border: '1px solid #FFEDD5',
+              backgroundColor: 'var(--status-pending-bg)',
+              border: '1px solid var(--border-strong)',
               borderRadius: '2px',
               cursor: 'pointer',
             }}

@@ -11,6 +11,7 @@ interface AuthContextType {
   isWarden: boolean;
   isAdmin: boolean;
   login: (email_or_id: string, pass: string) => Promise<void>;
+  loginWithGoogle: (payload: { credential?: string; email?: string; name?: string; student_id?: string }) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -59,6 +60,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithGoogle = async (payload: { credential?: string; email?: string; name?: string; student_id?: string }) => {
+    const data = await authApi.googleLogin(payload);
+    if (data.success && data.user) {
+      setUser(data.user);
+      setIsAuthenticated(true);
+      if (data.csrf_token) {
+        setCsrfToken(data.csrf_token);
+      }
+    }
+  };
+
   const logout = async () => {
     try {
       await authApi.logout();
@@ -83,6 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isWarden,
         isAdmin,
         login,
+        loginWithGoogle,
         logout,
         refreshUser,
       }}

@@ -365,49 +365,49 @@ def rms_ticket_update_view(request, pk):
 # 3. RESIDENTIAL ECONOMICS & OVERAGE CALCULATOR
 # =============================================================================
 
-# Pro Bricks 6 Regional Indian Dining Options
+# Pro Bricks Official LPU Regional Dining Options (lpu.in/student-services/residence.php)
 MESS_CUISINE_OPTIONS = [
     {
         'id': 'NORTH_INDIAN',
-        'name': 'North Indian Royal Feast',
-        'description': 'Rotis, paneer, dals, curd, rice, seasonal vegetable subzi, and dessert.',
+        'name': 'North Indian Standard Vegetarian',
+        'description': 'Rotis (automatic chapatti kitchen), paneer, dals, curd, rice, seasonal subzi — 4 meals/day.',
         'monthly_fee': 4500,
-        'tags': ['Vegetarian', 'High Protein', 'Popular'],
+        'tags': ['Vegetarian', 'Standard Menu', 'Unlimited Staples'],
     },
     {
         'id': 'SOUTH_INDIAN',
-        'name': 'South Indian Traditional',
-        'description': 'Idli, dosa, medu vada, sambar, rasam, curd rice, coconut chutneys, and poriyal.',
-        'monthly_fee': 4400,
-        'tags': ['Vegetarian', 'Nutritious', 'Fermented'],
+        'name': 'South Indian Regional',
+        'description': 'Idli, dosa, medu vada, sambar, rasam, curd rice, coconut chutneys, and regional poriyal.',
+        'monthly_fee': 4500,
+        'tags': ['Vegetarian', 'Standard Menu', 'Regional'],
     },
     {
         'id': 'RAJASTHANI',
-        'name': 'Rajasthani Marwari Thali',
-        'description': 'Dal baati churma, gatte ki subzi, ker sangri, bajra roti, and chaas.',
+        'name': 'Rajasthani Regional',
+        'description': 'Dal baati, gatte ki subzi, ker sangri, bajra roti, and buttermilk at designated kitchens.',
         'monthly_fee': 4600,
-        'tags': ['Rich', 'Desi Ghee', 'Specialty'],
-    },
-    {
-        'id': 'GUJARATI',
-        'name': 'Kathiyawadi & Gujarati Sattvik',
-        'description': 'Sweet & savory dals, thepla, khichdi kadhi, farsan, and shrikhand.',
-        'monthly_fee': 4400,
-        'tags': ['Mild Spice', 'Wholesome', 'Sattvik'],
+        'tags': ['Vegetarian', 'Regional Kitchen', 'Specialty'],
     },
     {
         'id': 'HARYANVI',
-        'name': 'Haryanvi Desi Diet',
-        'description': 'Fresh malai curd, kadhi pakora, missed roti, paneer bhurji, and lassi.',
+        'name': 'Haryanvi Regional',
+        'description': 'Fresh curd, kadhi pakora, missi roti, paneer bhurji, and traditional dairy sides.',
         'monthly_fee': 4600,
-        'tags': ['Dairy Rich', 'High Calorie', 'Hearty'],
+        'tags': ['Vegetarian', 'Dairy Rich', 'Hearty'],
     },
     {
-        'id': 'EASTERN',
-        'name': 'Eastern & Bengali Coastal',
-        'description': 'Shukto, chholar dal, luchi, fish curry / paneer curry, and mishti doi.',
-        'monthly_fee': 4800,
-        'tags': ['Non-Veg Option', 'Aromatic', 'Delicacy'],
+        'id': 'NORTH_EASTERN',
+        'name': 'North-Eastern Regional',
+        'description': 'Steamed rice, bamboo-shoot & herb stir-fries, light lentils, and regional side curries.',
+        'monthly_fee': 4700,
+        'tags': ['Regional Kitchen', 'Select Hostels', 'Fresh'],
+    },
+    {
+        'id': 'NORTH_SOUTH_COMBO',
+        'name': 'North & South Combo (Ala Carte)',
+        'description': 'Customizable combo across Breakfast, Lunch, Evening Tea/Snacks & Dinner via Pro Bricks.',
+        'monthly_fee': 5200,
+        'tags': ['Ala Carte', 'Flexible Combo', '4-Time Meal'],
     },
 ]
 

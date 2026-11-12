@@ -23,6 +23,43 @@ export interface RegisterPayload {
   emergency_contact_phone?: string;
 }
 
+export interface GoogleAuthPayload {
+  credential?: string;
+  email?: string;
+  name?: string;
+  student_id?: string;
+}
+
+export interface UmsImportPayload {
+  allotment_text?: string;
+  hostel_code?: string;
+  room_number?: string;
+  bed_letter?: string;
+  seater?: number;
+  is_ac?: boolean;
+  slip_id?: string;
+}
+
+export interface UmsImportResponse {
+  success: boolean;
+  message: string;
+  slip_id: string;
+  allocation: {
+    id: number;
+    hostel_name: string;
+    hostel_code: string;
+    room_number: string;
+    bed_identifier: string;
+    seater: number;
+    is_ac: boolean;
+    cooling_type: string;
+    start_date: string;
+    end_date: string;
+  };
+  user: User;
+  csrf_token: string;
+}
+
 export const authApi = {
   getMe: () => apiClient<MeResponse>('/api/auth/me/'),
   
@@ -30,6 +67,18 @@ export const authApi = {
     apiClient<LoginResponse>('/api/auth/login/', {
       method: 'POST',
       body: JSON.stringify({ email_or_id, password }),
+    }),
+
+  googleLogin: (payload: GoogleAuthPayload) =>
+    apiClient<LoginResponse>('/api/auth/google/', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  importUmsAllotment: (payload: UmsImportPayload) =>
+    apiClient<UmsImportResponse>('/api/students/import-allotment/', {
+      method: 'POST',
+      body: JSON.stringify(payload),
     }),
 
   logout: () =>

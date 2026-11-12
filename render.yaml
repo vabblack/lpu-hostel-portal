@@ -1,10 +1,11 @@
 services:
+  # 1. Django REST Backend Web Service (Free Tier)
   - type: web
-    name: hostel-allocation-api
+    name: lpu-hostel-api
     runtime: python
     rootDir: backend
     buildCommand: ./build.sh
-    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --timeout 120
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     healthCheckPath: /api/health/
     autoDeploy: true
     envVars:
@@ -24,3 +25,15 @@ services:
         sync: false
       - key: CSRF_TRUSTED_ORIGINS
         sync: false
+
+  # 2. React Vite Frontend Static Site (100% Free Forever)
+  - type: web
+    name: lpu-hostel-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

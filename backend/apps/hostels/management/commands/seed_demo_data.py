@@ -90,25 +90,30 @@ class Command(BaseCommand):
         fac_balcony, _ = Facility.objects.get_or_create(name='Private Balcony', defaults={'description': 'Outdoor balcony with campus view.'})
         fac_geyser, _ = Facility.objects.get_or_create(name='Geyser / Hot Water', defaults={'description': 'Instant hot water heating unit.'})
 
-        # 4. Hostels Fleet (LPU Boys Hostels BH-1..BH-8 & Girls Hostels GH-1..GH-6)
+        # 4. Hostels Fleet — Official LPU 19 Hostels (BH-1..BH-10 incl. Boys Studio 9 & GH-1..GH-8 incl. Girls Studio 9)
         boys_hostels_info = [
-            ('BH-1', 'Shivalik Boys Hostel (BH-1)', 'Premier multi-storey residential tower for male undergraduate scholars featuring air-conditioned suites and recreational amenities.'),
-            ('BH-2', 'Himalaya Boys Hostel (BH-2)', 'Quiet academic residence with spacious rooms, attached washrooms, and high-speed fiber optic connectivity.'),
-            ('BH-3', 'Vindhyachal Boys Hostel (BH-3)', 'Dynamic student accommodation hub with sports courts, study halls, and air-cooled standard suites.'),
-            ('BH-4', 'Aravali Boys Hostel (BH-4)', 'Modern high-rise residential wing with smart laundry access, attached washrooms, and all-weather dining.'),
-            ('BH-5', 'Nilgiri Boys Hostel (BH-5)', 'Dedicated upperclassmen scholars residence with specialized study pods and quiet floor protocols.'),
-            ('BH-6', 'Satpura Boys Hostel (BH-6)', 'Spacious accommodation equipped with solar water heating, high-speed Wi-Fi, and studio configurations.'),
-            ('BH-7', 'Sahyadri Boys Hostel (BH-7)', 'Lively complex close to university athletic facilities with gym access, cooler, and AC options.'),
-            ('BH-8', 'Karakoram Boys Hostel (BH-8)', 'Contemporary multi-block hostel offering standard, studio, and dormitory configurations for senior batches.'),
+            ('BH-1', 'Boys Hostel 1', 'Official LPU residential block offering 4x2-seater (incl. above-porch), multi-seater, and standard AC/air-cooled rooms with biometric turnstile gates, Pro Bricks vegetarian mess, and 24x7 hotline backup.'),
+            ('BH-2', 'Boys Hostel 2', 'Centrally positioned boys residential complex featuring 1 to 6-seater AC and air-cooled rooms, attached washrooms with winter geyser supply, 650 Mbps campus Wi-Fi, and study rooms.'),
+            ('BH-3', 'Boys Hostel 3', 'Multi-storey student residence near academic blocks with attached washrooms, tuck shop, indoor recreation hall, CCTV surveillance, and automated metro-style turnstile entry.'),
+            ('BH-4', 'Boys Hostel 4', 'Large boys residential block with Pro Bricks standard 4-cuisine mess hall, in-house automated laundry (up to 70 garments/mo), designated two-wheeler parking, and 24x7 security.'),
+            ('BH-5', 'Boys Hostel 5', 'Popular boys residential wing providing Standard Rooms and Studio Apartments, box-storage beds, automatic chapatti dining kitchen, vending kiosks, and 24x7 Uni-Hospital emergency access.'),
+            ('BH-6', 'Boys Hostel 6', 'Multi-storey residential block offering Standard AC/air-cooled suites and Studio Apartments, elevator access, reading hall, departmental kiosk, and subsidized Indoor Stadium gym connectivity.'),
+            ('BH-7', 'Boys Hostel 7', 'High-capacity boys block near LPU Indoor Stadium and sports courts, featuring AC and cooler wings, 24-hour water supply, generator light-load backup, and Pro Bricks dining.'),
+            ('BH-8', 'Boys Hostel 8', 'Modern Boys Hostel & Studio Apartment complex equipped with Hot & Cold Split ACs (select suites), attached washrooms, pantry space (5A appliance load), and biometric gate control.'),
+            ('BH-9', 'Boys Studio 9 (BH-9)', 'Dedicated Boys Studio Apartment complex featuring 1 to 4-seater Hot & Cold Split AC suites, box-storage beds, kitchenette/pantry lobby (5A load), attached geysers, and biometric turnstiles.'),
+            ('BH-10', 'Boys Hostel 10 (BH-10)', 'Newer high-rise boys residential expansion offering 1 to 4-seater AC and Studio Apartment configurations, high-speed elevators, study lounges, and Pro Bricks dining.'),
         ]
 
         girls_hostels_info = [
-            ('GH-1', 'Nilgiri Girls Hostel (GH-1)', 'Modern, secure residential facility with 24x7 security, biometric access, fitness gym, and indoor recreation halls.'),
-            ('GH-2', 'Himalaya Girls Hostel (GH-2)', 'Peaceful residential living with spacious rooms, attached pantry setups, and lush garden surroundings.'),
-            ('GH-3', 'Ganga Girls Hostel (GH-3)', 'Secure academic residential complex featuring air-conditioned studio apartments and attached washrooms.'),
-            ('GH-4', 'Yamuna Girls Hostel (GH-4)', 'Centrally located complex with multi-tier seating, recreational activity areas, and round-the-clock wardens.'),
-            ('GH-5', 'Kaveri Girls Hostel (GH-5)', 'Modern student housing offering air-cooled and air-conditioned standard options with high-speed internet.'),
-            ('GH-6', 'Saraswati Girls Hostel (GH-6)', 'Premier girls residential facility with biometric security, reading library, and attached washroom suites.'),
+            ('GH-1', 'Girls Hostel 1', 'Official LPU girls residential complex featuring 24x7 female security personnel, biometric turnstile gates, CCTV surveillance, Pro Bricks vegetarian mess, and attached washrooms with winter geysers.'),
+            ('GH-2', 'Girls Hostel 2', 'Secure multi-storey girls block near Uni-Mall with Standard AC and air-cooled wings, in-house laundry service, quiet study room, and 650 Mbps leased-line Wi-Fi + Intranet UMS access.'),
+            ('GH-3', 'Girls Hostel 3', 'Residential girls complex offering 1 to 4-seater Standard Rooms and Studio Apartments, elevator access, scheduled hot water supply, vending kiosks, and indoor fitness hall.'),
+            ('GH-4', 'Girls Hostel 4', 'Well-connected girls block close to Central Library (Block 37) and academic blocks, featuring Standard AC/cooler suites, study lounge, and 24x7 30-bed Uni-Hospital ambulance support.'),
+            ('GH-5', 'Girls Hostel 5', 'Multi-wing girls residential tower offering Pro Bricks regional vegetarian menus (North/South Indian, Rajasthani, Haryanvi, North-Eastern), automated laundry, and common recreation lounge.'),
+            ('GH-6', 'Girls Hostel 6', 'Modern girls complex with Standard Rooms and Studio Apartments, ergonomic study tables, box-storage beds, tuck/utility stores, and RFID campus security perimeter.'),
+            ('GH-7', 'Girls Hostel 7', 'Modern LPU girls residence and Studio Apartment complex offering AC suites, attached pantry & washrooms, green landscaped courtyard, and round-the-clock warden supervision.'),
+            ('GH-8', 'Girls Hostel 8 (GH-8)', 'Expanded girls residential block offering 1 to 6-seater AC and air-cooled suites, attached washrooms with winter geysers, biometric gate security, and 24x7 female residential wardens.'),
+            ('GS-9', 'Girls Studio 9 (Apartments)', 'Dedicated Girls Studio Apartment block offering 1 to 4-seater Hot & Cold Split AC suites, pantry lobby (5A load), modular wardrobes, attached geysers, and direct Uni-Hospital hotline.'),
         ]
 
         # Blueprint room configurations representing LPU 10-month session fee catalog
@@ -141,16 +146,39 @@ class Command(BaseCommand):
             ('209', 8, RoomCategory.DORMITORY, False, WashroomType.SHARED),
         ]
 
+        studio_blueprint_floor1 = [
+            ('101', 1, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            ('102', 1, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            ('103', 2, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            ('104', 2, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            ('105', 3, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            ('106', 3, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+        ]
+
+        studio_blueprint_floor2 = [
+            ('201', 2, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            ('202', 3, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            ('203', 4, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            ('204', 4, RoomCategory.STUDIO_APARTMENT, True, WashroomType.ATTACHED),
+            ('205', 1, RoomCategory.STANDARD, True, WashroomType.ATTACHED),
+            ('206', 2, RoomCategory.STANDARD, True, WashroomType.ATTACHED),
+        ]
+
         boys_hostel_objects = []
         girls_hostel_objects = []
 
-        def populate_hostel(hostel_obj, is_female=False):
+        def populate_hostel(hostel_obj, is_female=False, is_studio_complex=False):
             blocks = ['Block A', 'Block B'] if not is_female else ['Wing Alpha', 'Wing Beta']
+            floor_blueprints = (
+                [(1, studio_blueprint_floor1), (2, studio_blueprint_floor2)]
+                if is_studio_complex
+                else [(1, room_blueprint_floor1), (2, room_blueprint_floor2)]
+            )
             total_beds_created = 0
 
             for block_name in blocks:
                 block, _ = Block.objects.get_or_create(hostel=hostel_obj, name=block_name)
-                for floor_num, blueprint in [(1, room_blueprint_floor1), (2, room_blueprint_floor2)]:
+                for floor_num, blueprint in floor_blueprints:
                     floor, _ = Floor.objects.get_or_create(block=block, floor_number=floor_num)
                     for r_num, cap, cat, is_ac, washroom in blueprint:
                         prefix = f"{'G-' if is_female else ''}"
@@ -195,36 +223,34 @@ class Command(BaseCommand):
             hostel_obj.total_capacity = total_beds_created
             hostel_obj.save()
 
-        # Seed Boys Hostels
+        # Seed Boys Hostels (use update_or_create so official LPU names/descriptions sync cleanly)
         for code, name, desc in boys_hostels_info:
-            h, _ = Hostel.objects.get_or_create(
+            h, _ = Hostel.objects.update_or_create(
                 code=code,
                 defaults={
                     'university': univ,
                     'name': name,
                     'gender_policy': GenderPolicy.MALE,
                     'status': HostelStatus.ACTIVE,
-                    'total_capacity': 150,
                     'description': desc
                 }
             )
-            populate_hostel(h, is_female=False)
+            populate_hostel(h, is_female=False, is_studio_complex=(code in ('BH-9', 'BH-10')))
             boys_hostel_objects.append(h)
 
         # Seed Girls Hostels
         for code, name, desc in girls_hostels_info:
-            h, _ = Hostel.objects.get_or_create(
+            h, _ = Hostel.objects.update_or_create(
                 code=code,
                 defaults={
                     'university': univ,
                     'name': name,
                     'gender_policy': GenderPolicy.FEMALE,
                     'status': HostelStatus.ACTIVE,
-                    'total_capacity': 150,
                     'description': desc
                 }
             )
-            populate_hostel(h, is_female=True)
+            populate_hostel(h, is_female=True, is_studio_complex=(code == 'GS-9'))
             girls_hostel_objects.append(h)
 
         h1 = boys_hostel_objects[0] # BH-1

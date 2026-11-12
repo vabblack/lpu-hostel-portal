@@ -104,7 +104,7 @@ export const RoommateHarmonyRadar: React.FC<RoommateHarmonyRadarProps> = ({
   return (
     <div
       style={{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'var(--surface)',
         border: '1px solid var(--border)',
         borderRadius: '2px',
         padding: compact ? '0.75rem' : '1.25rem',
@@ -142,17 +142,17 @@ export const RoommateHarmonyRadar: React.FC<RoommateHarmonyRadarProps> = ({
             alignItems: 'center',
             gap: '0.35rem',
             padding: '0.2rem 0.5rem',
-            backgroundColor: matchPct >= 80 ? '#E7F2EA' : '#FBF1DC',
-            border: `1px solid ${matchPct >= 80 ? '#1E6B3A' : '#8A5A00'}`,
+            backgroundColor: matchPct >= 80 ? 'var(--status-success-bg)' : 'var(--status-pending-bg)',
+            border: `1px solid ${matchPct >= 80 ? 'var(--status-success)' : 'var(--status-pending)'}`,
             borderRadius: '2px',
           }}
         >
-          <Sparkles size={12} color={matchPct >= 80 ? '#1E6B3A' : '#8A5A00'} />
+          <Sparkles size={12} color={matchPct >= 80 ? 'var(--status-success)' : 'var(--status-pending)'} />
           <span
             style={{
               fontWeight: 700,
               fontSize: '0.8125rem',
-              color: matchPct >= 80 ? '#1E6B3A' : '#8A5A00',
+              color: matchPct >= 80 ? 'var(--status-success)' : 'var(--status-pending)',
             }}
           >
             {matchPct}% Match
@@ -169,7 +169,7 @@ export const RoommateHarmonyRadar: React.FC<RoommateHarmonyRadarProps> = ({
               key={idx}
               points={pts}
               fill="none"
-              stroke="#E8E4DC"
+              stroke="var(--border)"
               strokeWidth="0.8"
               strokeDasharray={idx < 3 ? '2,2' : undefined}
             />
@@ -185,7 +185,7 @@ export const RoommateHarmonyRadar: React.FC<RoommateHarmonyRadarProps> = ({
                 y1={center}
                 x2={x}
                 y2={y}
-                stroke="#E8E4DC"
+                stroke="var(--border)"
                 strokeWidth="0.8"
               />
             );

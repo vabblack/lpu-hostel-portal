@@ -81,7 +81,7 @@ export const GatePassWidget: React.FC = () => {
   return (
     <div
       style={{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'var(--surface)',
         border: '1px solid var(--border)',
         borderRadius: 'var(--radius-md)',
         padding: '1.25rem',
@@ -139,7 +139,7 @@ export const GatePassWidget: React.FC = () => {
           style={{
             padding: '1.5rem',
             textAlign: 'center',
-            backgroundColor: '#FAF8F5',
+            backgroundColor: 'var(--surface-alt)',
             border: '1px dashed var(--border)',
             borderRadius: '2px',
           }}
@@ -161,7 +161,7 @@ export const GatePassWidget: React.FC = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '0.75rem 1rem',
-                backgroundColor: '#FAF8F5',
+                backgroundColor: 'var(--surface-alt)',
                 border: '1px solid var(--border)',
                 borderRadius: '2px',
               }}
@@ -192,7 +192,7 @@ export const GatePassWidget: React.FC = () => {
                     padding: '0.35rem 0.65rem',
                     fontSize: '0.75rem',
                     fontWeight: 600,
-                    backgroundColor: '#fff',
+                    backgroundColor: 'var(--bg)',
                     border: '1px solid var(--border-strong)',
                     borderRadius: '2px',
                     cursor: 'pointer',
@@ -214,7 +214,9 @@ export const GatePassWidget: React.FC = () => {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(26, 26, 26, 0.7)',
+            backgroundColor: 'rgba(13, 12, 11, 0.78)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -225,13 +227,14 @@ export const GatePassWidget: React.FC = () => {
         >
           <div
             style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '4px',
+              backgroundColor: 'var(--surface)',
+              borderRadius: 'var(--radius-md)',
               padding: '1.75rem',
               maxWidth: '380px',
               width: '100%',
               textAlign: 'center',
-              border: '2px solid var(--border)',
+              border: '1.5px solid var(--border-strong)',
+              boxShadow: '8px 8px 0 #0a0908',
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -300,7 +303,9 @@ export const GatePassWidget: React.FC = () => {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(26, 26, 26, 0.7)',
+            backgroundColor: 'rgba(13, 12, 11, 0.78)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -311,12 +316,13 @@ export const GatePassWidget: React.FC = () => {
         >
           <div
             style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '4px',
+              backgroundColor: 'var(--surface)',
+              borderRadius: 'var(--radius-md)',
               maxWidth: '480px',
               width: '100%',
               padding: '1.5rem',
-              border: '1px solid var(--border)',
+              border: '1.5px solid var(--border-strong)',
+              boxShadow: '8px 8px 0 #0a0908',
             }}
             onClick={(e) => e.stopPropagation()}
           >

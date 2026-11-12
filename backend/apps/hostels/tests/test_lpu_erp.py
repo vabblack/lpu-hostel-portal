@@ -197,7 +197,7 @@ def test_hostel_catalog_views_rendering(client):
     from apps.hostels.models import RoomCategory
     univ = University.objects.create(name='LPU Views Univ', code='LPU-VU')
     hostel = Hostel.objects.create(
-        university=univ, name='Shivalik BH-1 Views', code='BH1-VU',
+        university=univ, name='Boys Hostel 1 Views', code='BH1-VU',
         gender_policy=GenderPolicy.MALE, total_capacity=100
     )
     block = Block.objects.create(hostel=hostel, name='Wing A')

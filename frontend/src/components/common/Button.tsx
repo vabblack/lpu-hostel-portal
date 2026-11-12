@@ -46,7 +46,7 @@ export const Button: React.FC<ButtonProps> = ({
   const variantStyles: Record<ButtonVariant, React.CSSProperties> = {
     primary: {
       backgroundColor: 'var(--primary)',
-      color: '#FFFFFF',
+      color: 'var(--primary-foreground, #FFFFFF)',
       borderColor: 'var(--primary)',
     },
     secondary: {
@@ -79,7 +79,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       disabled={disabled || isLoading}
-      style={{ ...baseStyle, ...sizeStyles[size], ...variantStyles[variant] }}
+      style={{ ...baseStyle, ...sizeStyles[size], ...variantStyles[variant], ...style }}
       className={`btn ${className}`}
       {...rest}
     >
