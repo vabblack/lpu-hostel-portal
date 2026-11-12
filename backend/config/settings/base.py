@@ -105,17 +105,38 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database Configuration
-# Automatically supports DATABASE_URL (Supabase / Render) with SSL, falling back to local postgresql or sqlite3.
-DATABASE_URL = os.getenv('DATABASE_URL')
+# Automatically supports DATABASE_URL (Supabase / Render) with SSL, safely encoding special chars, falling back to local postgresql or sqlite3.
+DATABASE_URL = os.getenv('DATABASE_URL', '').strip()
+if DATABASE_URL.startswith(('"', "'")) and DATABASE_URL.endswith(('"', "'")):
+    DATABASE_URL = DATABASE_URL[1:-1].strip()
+
+parsed_db = None
 if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.parse(
-            DATABASE_URL,
+    clean_db_url = DATABASE_URL
+    import re
+    import urllib.parse
+    # Auto-encode unescaped special characters in credentials (e.g. [brackets], #, @, etc.)
+    m = re.match(r'^([^:]+)://([^:]+):(.+)@([^@/:]+)(?::(\d+))?/(.*)$', clean_db_url)
+    if m:
+        scheme, user, raw_pass, host, port, rest = m.groups()
+        quoted_pass = urllib.parse.quote(urllib.parse.unquote(raw_pass), safe='')
+        port_part = f":{port}" if port else ""
+        clean_db_url = f"{scheme}://{user}:{quoted_pass}@{host}{port_part}/{rest}"
+
+    try:
+        parsed_db = dj_database_url.parse(
+            clean_db_url,
             conn_max_age=int(os.getenv('CONN_MAX_AGE', '0')),
             conn_health_checks=True,
-            ssl_require=True if ('supabase' in DATABASE_URL or os.getenv('DB_SSL_REQUIRE', 'False').lower() in ('true', '1')) else False,
+            ssl_require=True if ('supabase' in clean_db_url or os.getenv('DB_SSL_REQUIRE', 'False').lower() in ('true', '1')) else False,
         )
-    }
+    except Exception as exc:
+        import sys
+        print(f"WARNING: Unable to parse DATABASE_URL ({exc}). Falling back to local database.", file=sys.stderr)
+        parsed_db = None
+
+if parsed_db:
+    DATABASES = {'default': parsed_db}
 elif os.getenv('DB_ENGINE', 'sqlite3').lower() == 'postgresql':
     DATABASES = {
         'default': {
