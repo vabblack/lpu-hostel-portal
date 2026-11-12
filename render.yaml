@@ -2,6 +2,7 @@ services:
   # 1. Django REST Backend Web Service (Free Tier)
   - type: web
     name: lpu-hostel-api
+    plan: free
     runtime: python
     rootDir: backend
     buildCommand: ./build.sh
