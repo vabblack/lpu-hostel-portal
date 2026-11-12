@@ -35,8 +35,8 @@ class TestStudentProfileModel:
 
         registry = StudentRegistry.objects.create(
             student_id='12411002',
-            full_name='Basit Test Student',
-            institutional_email='basit.student@lpu.in',
+            full_name='Vaibhav Test Student',
+            institutional_email='vaibhav.student@lpu.in',
             gender=Gender.MALE,
             date_of_birth=datetime.date(2004, 8, 12),
             branch=branch,
@@ -44,7 +44,7 @@ class TestStudentProfileModel:
         )
 
         user = User.objects.create_user(
-            email='basit.student@lpu.in',
+            email='vaibhav.student@lpu.in',
             password='StrongPassword123!',
             student_id_login='12411002',
             role=Role.STUDENT
@@ -66,11 +66,11 @@ class TestStudentProfileModel:
         )
 
         assert profile.student_id == '12411002'
-        assert profile.full_name == 'Basit Test Student'
+        assert profile.full_name == 'Vaibhav Test Student'
         assert profile.gender == Gender.MALE
-        assert profile.institutional_email == 'basit.student@lpu.in'
+        assert profile.institutional_email == 'vaibhav.student@lpu.in'
         assert profile.profile_completed is True
-        assert str(profile) == 'Profile of 12411002 - Basit Test Student'
+        assert str(profile) == 'Profile of 12411002 - Vaibhav Test Student'
 
     def test_one_to_one_user_constraint(self, student_fixtures):
         """Verify a User cannot have more than one StudentProfile."""

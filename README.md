@@ -128,8 +128,8 @@ Hostel-Allocation-and-Roommate-Matching/
 ### Step 1: Clone Repository & Set Up Environment
 
 ```bash
-git clone https://github.com/Basit0012/Hostel-Allocation-and-Roommate-Matching.git
-cd Hostel-Allocation-and-Roommate-Matching
+git clone https://github.com/vabblack/lpu-hostel-portal.git
+cd lpu-hostel-portal
 ```
 
 Create a `.env` file from the example:

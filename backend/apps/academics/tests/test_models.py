@@ -48,8 +48,8 @@ class TestAcademicsModels:
         """Verify creating a student registry record."""
         student = StudentRegistry.objects.create(
             student_id='12400001',
-            full_name='Basit Ahmad',
-            institutional_email='basit.12400001@lpu.in',
+            full_name='Vaibhav Pareta',
+            institutional_email='vaibhav.12400001@lpu.in',
             gender=Gender.MALE,
             date_of_birth=datetime.date(2004, 5, 15),
             branch=academic_setup['branch'],
@@ -59,7 +59,7 @@ class TestAcademicsModels:
         assert student.student_id == '12400001'
         assert student.gender == Gender.MALE
         assert student.is_registered is False
-        assert str(student) == '12400001 - Basit Ahmad'
+        assert str(student) == '12400001 - Vaibhav Pareta'
 
     def test_student_registry_uniqueness(self, academic_setup):
         """Verify student_id and institutional_email uniqueness constraints."""
