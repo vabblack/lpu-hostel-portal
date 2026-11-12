@@ -10,6 +10,7 @@ from .views_auth import (
     logout_view,
     register_view,
     google_auth_view,
+    update_profile_view,
     import_ums_allotment_view,
 )
 from .views_hostels import hostel_list_view, hostel_detail_view, room_catalog_view, room_detail_view
@@ -44,6 +45,7 @@ urlpatterns = [
     path('auth/logout/', logout_view, name='auth_logout'),
     path('auth/register/', register_view, name='auth_register'),
     path('auth/google/', google_auth_view, name='auth_google'),
+    path('auth/profile/update/', update_profile_view, name='update_profile'),
     path('students/import-allotment/', import_ums_allotment_view, name='import_ums_allotment'),
 
     # Hostels & Rooms

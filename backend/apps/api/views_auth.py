@@ -355,6 +355,60 @@ def google_auth_view(request):
 
 
 @require_POST
+def update_profile_view(request):
+    """
+    Update student full name, registration ID, or emergency contact information.
+    """
+    if not request.user.is_authenticated or request.user.role != Role.STUDENT:
+        return JsonResponse({'error': 'Student authentication required.'}, status=401)
+
+    profile = getattr(request.user, 'student_profile', None)
+    if not profile:
+        return JsonResponse({'error': 'Student profile not found.'}, status=404)
+
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+    except Exception:
+        body = request.POST
+
+    full_name = (body.get('full_name') or '').strip()
+    new_student_id = (body.get('student_id') or '').strip()
+    emergency_name = (body.get('emergency_contact_name') or '').strip()
+    emergency_phone = (body.get('emergency_contact_phone') or '').strip()
+
+    registry = profile.registry
+    if registry:
+        updates = []
+        if full_name and registry.full_name != full_name:
+            registry.full_name = full_name
+            updates.append('full_name')
+        if new_student_id and registry.student_id != new_student_id:
+            if not StudentRegistry.objects.filter(student_id__iexact=new_student_id).exclude(pk=registry.pk).exists():
+                registry.student_id = new_student_id
+                updates.append('student_id')
+                request.user.student_id_login = new_student_id
+                request.user.save(update_fields=['student_id_login'])
+            else:
+                return JsonResponse({'error': 'This Student ID is already claimed by another record.'}, status=400)
+        if updates:
+            registry.save(update_fields=updates)
+
+    if emergency_name:
+        profile.emergency_contact_name = emergency_name
+    if emergency_phone:
+        profile.emergency_contact_phone = emergency_phone
+    if emergency_name and emergency_phone:
+        profile.profile_completed = True
+    profile.save()
+
+    return JsonResponse({
+        'success': True,
+        'message': 'Profile details updated successfully.',
+        'user': _serialize_user(request.user, request),
+    })
+
+
+@require_POST
 def import_ums_allotment_view(request):
     """
     Import and sync authentic hostel allotment record from LPU UMS portal.

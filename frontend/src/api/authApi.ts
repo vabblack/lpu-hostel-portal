@@ -91,4 +91,15 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
+
+  updateProfile: (payload: {
+    full_name?: string;
+    student_id?: string;
+    emergency_contact_name?: string;
+    emergency_contact_phone?: string;
+  }) =>
+    apiClient<LoginResponse>('/api/auth/profile/update/', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
 };

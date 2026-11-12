@@ -1,23 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { authApi } from '../api/authApi';
 import { applicationsApi } from '../api/applicationsApi';
 import { DashboardSummary, HostelApplicationItem } from '../types/application';
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { Spinner } from '../components/common/Spinner';
+import { Modal } from '../components/common/Modal';
 import { GatePassWidget } from '../components/living/GatePassWidget';
 import { RMSDeskWidget } from '../components/living/RMSDeskWidget';
 import { WardenCommandCenter } from '../components/warden/WardenCommandCenter';
 import { UmsAllotmentSyncModal } from '../components/living/UmsAllotmentSyncModal';
 
 export const DashboardPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [applications, setApplications] = useState<HostelApplicationItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUmsModalOpen, setIsUmsModalOpen] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editStudentId, setEditStudentId] = useState('');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [profileMsg, setProfileMsg] = useState<{ text: string; isError?: boolean } | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -46,6 +53,37 @@ export const DashboardPage: React.FC = () => {
 
   const student = user?.student;
   const activeAllocation = student?.active_allocation;
+
+  const openEditProfile = () => {
+    setEditName(student?.full_name || '');
+    setEditStudentId(student?.student_id || user?.student_id_login || '');
+    setProfileMsg(null);
+    setIsEditProfileOpen(true);
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingProfile(true);
+    setProfileMsg(null);
+    try {
+      await authApi.updateProfile({
+        full_name: editName.trim(),
+        student_id: editStudentId.trim(),
+      });
+      await refreshUser();
+      setProfileMsg({ text: 'Profile updated successfully!' });
+      setTimeout(() => {
+        setIsEditProfileOpen(false);
+      }, 700);
+    } catch (err: unknown) {
+      setProfileMsg({
+        text: err instanceof Error ? err.message : 'Failed to update profile.',
+        isError: true,
+      });
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
 
   return (
     <div className="container">
@@ -129,6 +167,28 @@ export const DashboardPage: React.FC = () => {
                 </strong>
               </div>
             )}
+          </div>
+
+          <div style={{ marginTop: '0.875rem', paddingTop: '0.625rem', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              onClick={openEditProfile}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--brand)',
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.25rem 0.5rem',
+                borderRadius: 'var(--radius-sm)',
+              }}
+            >
+              <span>✏️</span> Edit Name &amp; Registration ID
+            </button>
           </div>
         </Card>
 
@@ -494,6 +554,88 @@ export const DashboardPage: React.FC = () => {
         isOpen={isUmsModalOpen}
         onClose={() => setIsUmsModalOpen(false)}
       />
+
+      {/* Edit Student Record Modal */}
+      <Modal
+        isOpen={isEditProfileOpen}
+        onClose={() => setIsEditProfileOpen(false)}
+        title="Edit Official Student Record"
+        maxWidth="460px"
+      >
+        <form onSubmit={handleSaveProfile} style={{ display: 'grid', gap: '1rem' }}>
+          {profileMsg && (
+            <div
+              style={{
+                padding: '0.625rem 0.875rem',
+                backgroundColor: profileMsg.isError ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                color: profileMsg.isError ? 'var(--status-danger)' : 'var(--status-success)',
+                border: `1px solid ${profileMsg.isError ? 'var(--status-danger)' : 'var(--status-success)'}`,
+                borderRadius: 'var(--radius-sm)',
+                fontSize: '0.875rem',
+              }}
+            >
+              {profileMsg.text}
+            </div>
+          )}
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '0.35rem' }}>
+              Student Full Name
+            </label>
+            <input
+              type="text"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              placeholder="e.g. Vaibhav Pareta"
+              style={{
+                width: '100%',
+                padding: '0.625rem 0.875rem',
+                backgroundColor: 'var(--surface)',
+                border: '1.5px solid var(--border-strong)',
+                borderRadius: 'var(--radius-sm)',
+                color: 'var(--ink)',
+                fontSize: '0.9375rem',
+              }}
+              required
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '0.35rem' }}>
+              Official LPU Registration ID
+            </label>
+            <input
+              type="text"
+              value={editStudentId}
+              onChange={(e) => setEditStudentId(e.target.value)}
+              placeholder="e.g. 12450130 or your official university ID"
+              style={{
+                width: '100%',
+                padding: '0.625rem 0.875rem',
+                backgroundColor: 'var(--surface)',
+                border: '1.5px solid var(--border-strong)',
+                borderRadius: 'var(--radius-sm)',
+                color: 'var(--ink)',
+                fontSize: '0.9375rem',
+                fontFamily: 'monospace',
+              }}
+              required
+            />
+            <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem', display: 'block', marginTop: '0.35rem' }}>
+              Enter your real 8-digit LPU registration number if different from the auto-generated code.
+            </small>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+            <Button type="button" variant="ghost" onClick={() => setIsEditProfileOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" isLoading={isSavingProfile}>
+              Save Changes
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };
