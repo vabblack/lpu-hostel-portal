@@ -1,0 +1,18 @@
+name: Render Instance Keep-Alive
+
+on:
+  schedule:
+    # Run every 10 minutes to prevent Render free instance from spinning down (15 min inactivity timeout)
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Backend & Frontend
+        run: |
+          echo "Pinging LPU Hostel API backend..."
+          curl -s -o /dev/null -w "%{http_code}\n" https://lpu-hostel-api.onrender.com/api/health/ || true
+          echo "Pinging LPU Hostel Web frontend..."
+          curl -s -o /dev/null -w "%{http_code}\n" https://lpu-hostel-web.onrender.com/ || true

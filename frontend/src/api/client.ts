@@ -3,7 +3,20 @@
  * Automatically manages CSRF tokens and session cookies.
  */
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+const getApiBase = (): string => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return (import.meta.env.VITE_API_BASE_URL as string).replace(/\/+$/, '');
+  }
+  if (typeof window !== 'undefined') {
+    // If running on Render static site (e.g. lpu-hostel-web.onrender.com), automatically point to companion API
+    if (window.location.hostname.includes('onrender.com')) {
+      return 'https://lpu-hostel-api.onrender.com';
+    }
+  }
+  return '';
+};
+
+const API_BASE = getApiBase();
 
 function getCookie(name: string): string | null {
   if (typeof document === 'undefined') return null;

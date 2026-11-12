@@ -49,15 +49,15 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="container" style={{ maxWidth: '520px', padding: '3rem 1rem' }}>
-      <Card style={{ padding: '2rem', borderTop: '3px solid var(--brand)' }}>
-        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+    <div className="container" style={{ maxWidth: '540px', padding: '3.5rem 1.25rem' }}>
+      <Card style={{ padding: '2.5rem 2.25rem', borderTop: '3px solid var(--brand)', borderRadius: 'var(--radius-md)' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div
             style={{
-              fontSize: '0.6875rem',
+              fontSize: '0.75rem',
               fontWeight: 600,
               color: 'var(--primary)',
-              letterSpacing: '0.06em',
+              letterSpacing: '0.08em',
               textTransform: 'uppercase',
               marginBottom: '0.5rem',
             }}
@@ -67,15 +67,15 @@ export const RegisterPage: React.FC = () => {
           <h1
             style={{
               fontFamily: 'var(--font-serif)',
-              fontSize: '1.625rem',
+              fontSize: '1.75rem',
               fontWeight: 600,
               color: 'var(--ink)',
-              margin: '0 0 0.35rem',
+              margin: '0 0 0.5rem',
             }}
           >
             Claim Student Residence Record
           </h1>
-          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.5 }}>
             Verify your official university enrollment record to activate residential services
           </p>
         </div>
@@ -83,13 +83,13 @@ export const RegisterPage: React.FC = () => {
         {errorMsg && (
           <div
             style={{
-              padding: '0.75rem 1rem',
+              padding: '0.875rem 1rem',
               backgroundColor: 'var(--surface)',
               color: 'var(--status-danger)',
               border: '1px solid var(--status-danger)',
               borderRadius: 'var(--radius-sm)',
               fontSize: '0.875rem',
-              marginBottom: '1.25rem',
+              marginBottom: '1.5rem',
             }}
           >
             {errorMsg}
@@ -97,7 +97,7 @@ export const RegisterPage: React.FC = () => {
         )}
 
         {/* 1-Click LPU Google Workspace Claim */}
-        <div style={{ marginBottom: '1.25rem' }}>
+        <div style={{ marginBottom: '1.5rem' }}>
           <LpuGoogleAuthButton
             onSuccess={() => navigate('/dashboard')}
             onError={(msg) => setErrorMsg(msg)}
@@ -109,11 +109,11 @@ export const RegisterPage: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
-            margin: '1.25rem 0',
+            margin: '1.5rem 0',
             color: 'var(--text-muted)',
             fontSize: '0.75rem',
             textTransform: 'uppercase',
-            letterSpacing: '0.05em',
+            letterSpacing: '0.06em',
           }}
         >
           <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border)' }} />
@@ -122,12 +122,12 @@ export const RegisterPage: React.FC = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+          <div style={{ marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
               <label
                 style={{
                   display: 'block',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
                   color: 'var(--text-muted)',
                   textTransform: 'uppercase',
@@ -166,28 +166,28 @@ export const RegisterPage: React.FC = () => {
               }}
               style={{
                 width: '100%',
-                height: '38px',
-                padding: '0 0.75rem',
+                height: '42px',
+                padding: '0 0.875rem',
                 borderRadius: 'var(--radius-sm)',
                 border: '1px solid var(--border-strong)',
                 backgroundColor: 'var(--surface)',
                 color: 'var(--ink)',
-                fontSize: '0.875rem',
+                fontSize: '0.9375rem',
                 boxSizing: 'border-box',
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '1rem' }}>
+          <div style={{ marginBottom: '1.25rem' }}>
             <label
               style={{
                 display: 'block',
-                fontSize: '0.6875rem',
+                fontSize: '0.75rem',
                 fontWeight: 600,
                 color: 'var(--text-muted)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
-                marginBottom: '0.35rem',
+                marginBottom: '0.45rem',
               }}
             >
               Institutional Email Address *
@@ -200,29 +200,29 @@ export const RegisterPage: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               style={{
                 width: '100%',
-                height: '38px',
-                padding: '0 0.75rem',
+                height: '42px',
+                padding: '0 0.875rem',
                 borderRadius: 'var(--radius-sm)',
                 border: '1px solid var(--border-strong)',
                 backgroundColor: 'var(--surface)',
                 color: 'var(--ink)',
-                fontSize: '0.875rem',
+                fontSize: '0.9375rem',
                 boxSizing: 'border-box',
               }}
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
             <div>
               <label
                 style={{
                   display: 'block',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
                   color: 'var(--text-muted)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  marginBottom: '0.35rem',
+                  marginBottom: '0.45rem',
                 }}
               >
                 Password *
@@ -235,13 +235,13 @@ export const RegisterPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 style={{
                   width: '100%',
-                  height: '38px',
-                  padding: '0 0.75rem',
+                  height: '42px',
+                  padding: '0 0.875rem',
                   borderRadius: 'var(--radius-sm)',
                   border: '1px solid var(--border-strong)',
                   backgroundColor: 'var(--surface)',
                   color: 'var(--ink)',
-                  fontSize: '0.875rem',
+                  fontSize: '0.9375rem',
                   boxSizing: 'border-box',
                 }}
               />
@@ -250,12 +250,12 @@ export const RegisterPage: React.FC = () => {
               <label
                 style={{
                   display: 'block',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
                   color: 'var(--text-muted)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  marginBottom: '0.35rem',
+                  marginBottom: '0.45rem',
                 }}
               >
                 Confirm Password *
@@ -268,33 +268,33 @@ export const RegisterPage: React.FC = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 style={{
                   width: '100%',
-                  height: '38px',
-                  padding: '0 0.75rem',
+                  height: '42px',
+                  padding: '0 0.875rem',
                   borderRadius: 'var(--radius-sm)',
                   border: '1px solid var(--border-strong)',
                   backgroundColor: 'var(--surface)',
                   color: 'var(--ink)',
-                  fontSize: '0.875rem',
+                  fontSize: '0.9375rem',
                   boxSizing: 'border-box',
                 }}
               />
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.75rem' }}>
             <div>
               <label
                 style={{
                   display: 'block',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
                   color: 'var(--text-muted)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  marginBottom: '0.35rem',
+                  marginBottom: '0.45rem',
                 }}
               >
-                Guardian Name
+                Guardian Name (Optional)
               </label>
               <input
                 type="text"
@@ -303,13 +303,13 @@ export const RegisterPage: React.FC = () => {
                 onChange={(e) => setEmergencyName(e.target.value)}
                 style={{
                   width: '100%',
-                  height: '38px',
-                  padding: '0 0.75rem',
+                  height: '42px',
+                  padding: '0 0.875rem',
                   borderRadius: 'var(--radius-sm)',
                   border: '1px solid var(--border-strong)',
                   backgroundColor: 'var(--surface)',
                   color: 'var(--ink)',
-                  fontSize: '0.875rem',
+                  fontSize: '0.9375rem',
                   boxSizing: 'border-box',
                 }}
               />
@@ -318,15 +318,15 @@ export const RegisterPage: React.FC = () => {
               <label
                 style={{
                   display: 'block',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
                   color: 'var(--text-muted)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  marginBottom: '0.35rem',
+                  marginBottom: '0.45rem',
                 }}
               >
-                Emergency Phone
+                Emergency Phone (Optional)
               </label>
               <input
                 type="text"
@@ -335,25 +335,25 @@ export const RegisterPage: React.FC = () => {
                 onChange={(e) => setEmergencyPhone(e.target.value)}
                 style={{
                   width: '100%',
-                  height: '38px',
-                  padding: '0 0.75rem',
+                  height: '42px',
+                  padding: '0 0.875rem',
                   borderRadius: 'var(--radius-sm)',
                   border: '1px solid var(--border-strong)',
                   backgroundColor: 'var(--surface)',
                   color: 'var(--ink)',
-                  fontSize: '0.875rem',
+                  fontSize: '0.9375rem',
                   boxSizing: 'border-box',
                 }}
               />
             </div>
           </div>
 
-          <Button type="submit" variant="primary" size="lg" isLoading={isLoading} style={{ width: '100%' }}>
+          <Button type="submit" variant="primary" size="lg" isLoading={isLoading} style={{ width: '100%', height: '44px', fontSize: '0.9375rem', fontWeight: 600 }}>
             Verify &amp; Create Account
           </Button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+        <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
           Already claimed your account?{' '}
           <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600 }}>
             Sign In &rarr;

@@ -14,28 +14,6 @@ export const LpuGoogleAuthButton: React.FC<LpuGoogleAuthButtonProps> = ({ onSucc
   const [isLoading, setIsLoading] = useState(false);
   const [localError, setLocalError] = useState('');
 
-  const sampleAccounts = [
-    { email: '12400001@lpu.in', name: 'Aarav Sharma', id: '12400001', branch: 'CSE • Batch 2024' },
-    { email: '12400002@lpu.in', name: 'Vihaan Verma', id: '12400002', branch: 'CSE • Batch 2024' },
-    { email: '12400004@lpu.in', name: 'Diya Patel', id: '12400004', branch: 'ECE • Batch 2024' },
-  ];
-
-  const handleSelect = async (email: string, name: string, studentId: string) => {
-    setIsLoading(true);
-    setLocalError('');
-    try {
-      await loginWithGoogle({ email, name, student_id: studentId });
-      setIsOpen(false);
-      onSuccess?.();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Google authentication failed.';
-      setLocalError(msg);
-      onError?.(msg);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleCustomSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError('');
@@ -218,88 +196,7 @@ export const LpuGoogleAuthButton: React.FC<LpuGoogleAuthButtonProps> = ({ onSucc
               </div>
             )}
 
-            {/* Quick LPU Student Selection */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <div
-                style={{
-                  fontSize: '0.6875rem',
-                  fontWeight: 600,
-                  color: 'var(--text-muted)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                Choose an LPU Student Account:
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {sampleAccounts.map((acc) => (
-                  <button
-                    key={acc.email}
-                    type="button"
-                    disabled={isLoading}
-                    onClick={() => handleSelect(acc.email, acc.name, acc.id)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '0.625rem 0.875rem',
-                      backgroundColor: 'var(--bg)',
-                      border: '1px solid var(--border)',
-                      borderRadius: 'var(--radius-sm)',
-                      cursor: isLoading ? 'not-allowed' : 'pointer',
-                      textAlign: 'left',
-                      transition: 'border-color 0.15s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--brand)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--border)';
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--ink)' }}>
-                        {acc.name}
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--primary)' }}>
-                        {acc.email}
-                      </div>
-                    </div>
-                    <span
-                      style={{
-                        fontSize: '0.6875rem',
-                        padding: '0.15rem 0.4rem',
-                        borderRadius: '2px',
-                        backgroundColor: 'var(--surface)',
-                        color: 'var(--text-muted)',
-                        border: '1px solid var(--border)',
-                      }}
-                    >
-                      {acc.branch}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                margin: '1rem 0',
-                color: 'var(--text-muted)',
-                fontSize: '0.75rem',
-              }}
-            >
-              <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border)' }} />
-              <span>OR ENTER ANY OFFICIAL LPU ACCOUNT</span>
-              <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border)' }} />
-            </div>
-
-            {/* Custom Student Email Entry */}
+            {/* Student Email Entry */}
             <form onSubmit={handleCustomSubmit}>
               <div style={{ marginBottom: '0.75rem' }}>
                 <label

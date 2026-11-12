@@ -31,14 +31,15 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r'^https:\/\/.*\.vercel\.app$',
+    r'^https:\/\/.*\.onrender\.com$',
 ]
 
-# CSRF Trusted Origins (enables Vite development server and Vercel production origin)
+# CSRF Trusted Origins (enables Vite development server, Render, and Vercel production origins)
 CSRF_TRUSTED_ORIGINS = [
     orig.strip()
     for orig in os.getenv(
         'CSRF_TRUSTED_ORIGINS',
-        'http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:8000,http://localhost:8000'
+        'http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:8000,http://localhost:8000,https://*.onrender.com,https://*.vercel.app'
     ).split(',')
     if orig.strip()
 ]
